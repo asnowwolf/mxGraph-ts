@@ -1,0 +1,18 @@
+{
+  "name": "mxclient",
+  "version": "1.0.0",
+  "description": "Migrate mxGraph to ts",
+  "main": "index.js",
+  "scripts": {
+    "generate": "jsdoc2ts ts ./ts ./js/*.js ./js/**/*.js --types config/types.json",
+    "fix": "cd ts && tslint --fix --project . -c tslint.json > lint.log"
+  },
+  "author": "Zhicheng WANG<asnowwolf@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@awesome-fe/jsdoc-to-ts": "0.0.4",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4"
+  }
+}
