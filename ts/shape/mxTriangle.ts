@@ -7,6 +7,10 @@
  *
  * Constructs a new triangle shape.
  */
+import { mxConstants } from '../util/mxConstants';
+import { mxPoint } from '../util/mxPoint';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxTriangle {
   /**
    * Function: isRoundable

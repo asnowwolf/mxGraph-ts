@@ -189,7 +189,26 @@
  *
  * root - <mxCell> that represents the root cell.
  */
+import { mxDictionary } from '../util/mxDictionary';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxObjectIdentity } from '../util/mxObjectIdentity';
+import { mxPoint } from '../util/mxPoint';
+import { mxUndoableEdit } from '../util/mxUndoableEdit';
+import { mxUtils } from '../util/mxUtils';
+import { mxCell } from './mxCell';
+import { mxCellPath } from './mxCellPath';
+
 export class mxGraphModel {
+  constructor(root: any) {
+    this.currentEdit = this.createUndoableEdit();
+    if (root != null) {
+      this.setRoot(root);
+    } else {
+      this.clear();
+    }
+  }
+
   currentEdit: any;
   /**
    * Variable: root
@@ -262,15 +281,6 @@ export class mxGraphModel {
    * True if the program flow is currently inside endUpdate.
    */
   endingUpdate: boolean;
-
-  constructor(root: any) {
-    this.currentEdit = this.createUndoableEdit();
-    if (root != null) {
-      this.setRoot(root);
-    } else {
-      this.clear();
-    }
-  }
 
   /**
    * Function: clear
@@ -592,7 +602,7 @@ export class mxGraphModel {
             collision = this.getCell(cell.getId());
           }
           if (this.cells == null) {
-            this.cells = new Object();
+            this.cells = {};
           }
           this.cells[cell.getId()] = cell;
         }
@@ -1671,7 +1681,7 @@ export class mxGraphModel {
     cloneAllEdges = (cloneAllEdges != null) ? cloneAllEdges : true;
     this.beginUpdate();
     try {
-      const mapping = new Object();
+      const mapping = {};
       this.mergeChildrenImpl(from, to, cloneAllEdges, mapping);
       for (const key in mapping) {
         const cell = mapping[key];
@@ -1783,7 +1793,7 @@ export class mxGraphModel {
    * mapping - Optional mapping for existing clones.
    */
   cloneCells(cells: mxCell[], includeChildren: any, mapping: any): any {
-    mapping = (mapping != null) ? mapping : new Object();
+    mapping = (mapping != null) ? mapping : {};
     const clones = [];
     for (let i = 0; i < cells.length; i++) {
       if (cells[i] != null) {
@@ -1871,15 +1881,15 @@ export class mxGraphModel {
  * specified model.
  */
 export class mxRootChange {
-  model: any;
-  root: any;
-  previous: any;
-
   constructor(model: any, root: any) {
     this.model = model;
     this.root = root;
     this.previous = root;
   }
+
+  model: any;
+  root: any;
+  previous: any;
 
   /**
    * Function: execute
@@ -1904,13 +1914,6 @@ export class mxRootChange {
  * specified model.
  */
 export class mxChildChange {
-  model: any;
-  parent: any;
-  previous: any;
-  child: any;
-  index: number;
-  previousIndex: any;
-
   constructor(model: any, parent: any, child: any, index: number) {
     this.model = model;
     this.parent = parent;
@@ -1919,6 +1922,13 @@ export class mxChildChange {
     this.index = index;
     this.previousIndex = index;
   }
+
+  model: any;
+  parent: any;
+  previous: any;
+  child: any;
+  index: number;
+  previousIndex: any;
 
   /**
    * Function: execute
@@ -1991,12 +2001,6 @@ export class mxChildChange {
  * specified model.
  */
 export class mxTerminalChange {
-  model: any;
-  cell: mxCell;
-  terminal: any;
-  previous: any;
-  source: any;
-
   constructor(model: any, cell: mxCell, terminal: any, source: any) {
     this.model = model;
     this.cell = cell;
@@ -2004,6 +2008,12 @@ export class mxTerminalChange {
     this.previous = terminal;
     this.source = source;
   }
+
+  model: any;
+  cell: mxCell;
+  terminal: any;
+  previous: any;
+  source: any;
 
   /**
    * Function: execute
@@ -2030,17 +2040,17 @@ export class mxTerminalChange {
  * specified model.
  */
 export class mxValueChange {
-  model: any;
-  cell: mxCell;
-  value: any;
-  previous: any;
-
   constructor(model: any, cell: mxCell, value: any) {
     this.model = model;
     this.cell = cell;
     this.value = value;
     this.previous = value;
   }
+
+  model: any;
+  cell: mxCell;
+  value: any;
+  previous: any;
 
   /**
    * Function: execute
@@ -2067,17 +2077,17 @@ export class mxValueChange {
  * specified model.
  */
 export class mxStyleChange {
-  model: any;
-  cell: mxCell;
-  style: any;
-  previous: any;
-
   constructor(model: any, cell: mxCell, style: any) {
     this.model = model;
     this.cell = cell;
     this.style = style;
     this.previous = style;
   }
+
+  model: any;
+  cell: mxCell;
+  style: any;
+  previous: any;
 
   /**
    * Function: execute
@@ -2104,17 +2114,17 @@ export class mxStyleChange {
  * specified model.
  */
 export class mxGeometryChange {
-  model: any;
-  cell: mxCell;
-  geometry: any;
-  previous: any;
-
   constructor(model: any, cell: mxCell, geometry: any) {
     this.model = model;
     this.cell = cell;
     this.geometry = geometry;
     this.previous = geometry;
   }
+
+  model: any;
+  cell: mxCell;
+  geometry: any;
+  previous: any;
 
   /**
    * Function: execute
@@ -2141,17 +2151,17 @@ export class mxGeometryChange {
  * specified model.
  */
 export class mxCollapseChange {
-  model: any;
-  cell: mxCell;
-  collapsed: any;
-  previous: any;
-
   constructor(model: any, cell: mxCell, collapsed: any) {
     this.model = model;
     this.cell = cell;
     this.collapsed = collapsed;
     this.previous = collapsed;
   }
+
+  model: any;
+  cell: mxCell;
+  collapsed: any;
+  previous: any;
 
   /**
    * Function: execute
@@ -2178,17 +2188,17 @@ export class mxCollapseChange {
  * specified model.
  */
 export class mxVisibleChange {
-  model: any;
-  cell: mxCell;
-  visible: any;
-  previous: any;
-
   constructor(model: any, cell: mxCell, visible: any) {
     this.model = model;
     this.cell = cell;
     this.visible = visible;
     this.previous = visible;
   }
+
+  model: any;
+  cell: mxCell;
+  visible: any;
+  previous: any;
 
   /**
    * Function: execute
@@ -2237,17 +2247,17 @@ export class mxVisibleChange {
  * stored as the value of the given <mxCell>.
  */
 export class mxCellAttributeChange {
-  cell: mxCell;
-  attribute: any;
-  value: any;
-  previous: any;
-
   constructor(cell: mxCell, attribute: any, value: any) {
     this.cell = cell;
     this.attribute = attribute;
     this.value = value;
     this.previous = value;
   }
+
+  cell: mxCell;
+  attribute: any;
+  value: any;
+  previous: any;
 
   /**
    * Function: execute

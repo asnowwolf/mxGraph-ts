@@ -22,15 +22,6 @@
  * (end)
  */
 export class mxEventObject {
-  name: string;
-  properties: any[];
-  /**
-   * Variable: consumed
-   *
-   * Holds the consumed state. Default is false.
-   */
-  consumed: boolean;
-
   constructor(name: string) {
     this.name = name;
     this.properties = [];
@@ -40,6 +31,15 @@ export class mxEventObject {
       }
     }
   }
+
+  name: string;
+  properties: any[];
+  /**
+   * Variable: consumed
+   *
+   * Holds the consumed state. Default is false.
+   */
+  consumed: boolean;
 
   /**
    * Function: getName

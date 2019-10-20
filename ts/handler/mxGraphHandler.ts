@@ -18,8 +18,46 @@
  *
  * graph - Reference to the enclosing <mxGraph>.
  */
+import { mxCell } from '../model/mxCell';
+import { mxClient } from '../mxClient';
+import { mxRectangleShape } from '../shape/mxRectangleShape';
+import { mxConstants } from '../util/mxConstants';
+import { mxDictionary } from '../util/mxDictionary';
+import { mxEvent } from '../util/mxEvent';
+import { mxGuide } from '../util/mxGuide';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxCellHighlight } from './mxCellHighlight';
+
 export class mxGraphHandler {
-  graph: any;
+  constructor(graph: mxGraph) {
+    this.graph = graph;
+    this.graph.addMouseListener(this);
+    this.panHandler = mxUtils.bind(this, function () {
+      this.updatePreviewShape();
+      this.updateHint();
+    });
+    this.graph.addListener(mxEvent.PAN, this.panHandler);
+    this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
+      this.reset();
+    });
+    this.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
+    this.refreshHandler = mxUtils.bind(this, function (sender, evt) {
+      if (this.first != null) {
+        try {
+          this.bounds = this.graph.getView().getBounds(this.cells);
+          this.pBounds = this.getPreviewBounds(this.cells);
+          this.updatePreviewShape();
+        } catch (e) {
+          this.reset();
+        }
+      }
+    });
+    this.graph.getModel().addListener(mxEvent.CHANGE, this.refreshHandler);
+  }
+
+  graph: mxGraph;
   panHandler: Function;
   escapeHandler: Function;
   refreshHandler: Function;
@@ -187,32 +225,6 @@ export class mxGraphHandler {
   highlight: any;
   target: string;
   guides: any;
-
-  constructor(graph: any) {
-    this.graph = graph;
-    this.graph.addMouseListener(this);
-    this.panHandler = mxUtils.bind(this, function () {
-      this.updatePreviewShape();
-      this.updateHint();
-    });
-    this.graph.addListener(mxEvent.PAN, this.panHandler);
-    this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
-      this.reset();
-    });
-    this.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
-    this.refreshHandler = mxUtils.bind(this, function (sender, evt) {
-      if (this.first != null) {
-        try {
-          this.bounds = this.graph.getView().getBounds(this.cells);
-          this.pBounds = this.getPreviewBounds(this.cells);
-          this.updatePreviewShape();
-        } catch (e) {
-          this.reset();
-        }
-      }
-    });
-    this.graph.getModel().addListener(mxEvent.CHANGE, this.refreshHandler);
-  }
 
   /**
    * Function: isEnabled

@@ -42,7 +42,16 @@
  *
  * Constructs a new undoable edit for the given source.
  */
+import { mxEvent } from './mxEvent';
+import { mxEventObject } from './mxEventObject';
+
 export class mxUndoableEdit {
+  constructor(source: any, significant: any) {
+    this.source = source;
+    this.changes = [];
+    this.significant = (significant != null) ? significant : true;
+  }
+
   source: any;
   changes: any[];
   significant: any;
@@ -58,12 +67,6 @@ export class mxUndoableEdit {
    * Specifies if this edit has been redone. Default is false.
    */
   redone: boolean;
-
-  constructor(source: any, significant: any) {
-    this.source = source;
-    this.changes = [];
-    this.significant = (significant != null) ? significant : true;
-  }
 
   /**
    * Function: isEmpty

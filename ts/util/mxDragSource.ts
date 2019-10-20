@@ -11,7 +11,34 @@
  *
  * Constructs a new drag source for the given element.
  */
+import { mxCellHighlight } from '../handler/mxCellHighlight';
+import { mxClient } from '../mxClient';
+import { mxConstants } from './mxConstants';
+import { mxEvent } from './mxEvent';
+import { mxGuide } from './mxGuide';
+import { mxPoint } from './mxPoint';
+import { mxRectangle } from './mxRectangle';
+import { mxUtils } from './mxUtils';
+
 export class mxDragSource {
+  constructor(element: any, dropHandler: Function) {
+    this.element = element;
+    this.dropHandler = dropHandler;
+    mxEvent.addGestureListeners(element, mxUtils.bind(this, function (evt) {
+      this.mouseDown(evt);
+    }));
+    mxEvent.addListener(element, 'dragstart', function (evt) {
+      mxEvent.consume(evt);
+    });
+    this.eventConsumer = function (sender, evt) {
+      const evtName = evt.getProperty('eventName');
+      const me = evt.getProperty('event');
+      if (evtName != mxEvent.MOUSE_DOWN) {
+        me.consume();
+      }
+    };
+  }
+
   element: any;
   dropHandler: Function;
   /**
@@ -45,7 +72,7 @@ export class mxDragSource {
    *
    * Reference to the <mxGraph> that is the current drop target.
    */
-  currentGraph: any;
+  currentgraph: mxGraph;
   /**
    * Variable: currentDropTarget
    *
@@ -123,24 +150,6 @@ export class mxDragSource {
   mouseMoveHandler: Function;
   mouseUpHandler: Function;
   eventSource: any;
-
-  constructor(element: any, dropHandler: Function) {
-    this.element = element;
-    this.dropHandler = dropHandler;
-    mxEvent.addGestureListeners(element, mxUtils.bind(this, function (evt) {
-      this.mouseDown(evt);
-    }));
-    mxEvent.addListener(element, 'dragstart', function (evt) {
-      mxEvent.consume(evt);
-    });
-    this.eventConsumer = function (sender, evt) {
-      const evtName = evt.getProperty('eventName');
-      const me = evt.getProperty('event');
-      if (evtName != mxEvent.MOUSE_DOWN) {
-        me.consume();
-      }
-    };
-  }
 
   eventConsumer(sender: any, evt: Event): void {
     const evtName = evt.getProperty('eventName');
@@ -220,7 +229,7 @@ export class mxDragSource {
    * Returns the drop target for the given graph and coordinates. This
    * implementation uses <mxGraph.getCellAt>.
    */
-  getDropTarget(graph: any, x: number, y: number, evt: Event): any {
+  getDropTarget(graph: mxGraph, x: number, y: number, evt: Event): any {
     return graph.getCellAt(x, y);
   }
 
@@ -240,7 +249,7 @@ export class mxDragSource {
    * Creates and returns an element which can be used as a preview in the given
    * graph.
    */
-  createPreviewElement(graph: any): any {
+  createPreviewElement(graph: mxGraph): any {
     return null;
   }
 
@@ -354,7 +363,7 @@ export class mxDragSource {
    *
    * Returns true if the given graph contains the given event.
    */
-  graphContainsEvent(graph: any, evt: Event): any {
+  graphContainsEvent(graph: mxGraph, evt: Event): any {
     const x = mxEvent.getClientX(evt);
     const y = mxEvent.getClientY(evt);
     const offset = mxUtils.getOffset(graph.container);
@@ -455,7 +464,7 @@ export class mxDragSource {
    *
    * Actives the given graph as a drop target.
    */
-  dragEnter(graph: any, evt: Event): void {
+  dragEnter(graph: mxGraph, evt: Event): void {
     graph.isMouseDown = true;
     graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
     this.previewElement = this.createPreviewElement(graph);
@@ -476,7 +485,7 @@ export class mxDragSource {
    *
    * Deactivates the given graph as a drop target.
    */
-  dragExit(graph: any, evt: Event): void {
+  dragExit(graph: mxGraph, evt: Event): void {
     this.currentDropTarget = null;
     this.currentPoint = null;
     graph.isMouseDown = false;
@@ -503,7 +512,7 @@ export class mxDragSource {
    * Implements autoscroll, updates the <currentPoint>, highlights any drop
    * targets and updates the preview.
    */
-  dragOver(graph: any, evt: Event): void {
+  dragOver(graph: mxGraph, evt: Event): void {
     const offset = mxUtils.getOffset(graph.container);
     const origin = mxUtils.getScrollOrigin(graph.container);
     let x = mxEvent.getClientX(evt) - offset.x + origin.x - graph.panDx;
@@ -560,7 +569,7 @@ export class mxDragSource {
    * Returns the drop target for the given graph and coordinates. This
    * implementation uses <mxGraph.getCellAt>.
    */
-  drop(graph: any, evt: Event, dropTarget: any, x: number, y: number): void {
+  drop(graph: mxGraph, evt: Event, dropTarget: any, x: number, y: number): void {
     this.dropHandler.apply(this, arguments);
     if (graph.container.style.visibility != 'hidden') {
       graph.container.focus();

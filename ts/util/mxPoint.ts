@@ -8,14 +8,16 @@
  * Constructs a new point for the optional x and y coordinates. If no
  * coordinates are given, then the default values for <x> and <y> are used.
  */
-export class mxPoint {
-  x: number;
-  y: number;
+import { mxUtils } from './mxUtils';
 
+export class mxPoint {
   constructor(x: number, y: number) {
     this.x = (x != null) ? x : 0;
     this.y = (y != null) ? y : 0;
   }
+
+  x: number;
+  y: number;
 
   /**
    * Function: equals

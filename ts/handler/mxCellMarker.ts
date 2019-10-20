@@ -38,8 +38,24 @@
  * given coordinate pair. A value of 0 means always highlight. Default is
  * <mxConstants.DEFAULT_HOTSPOT>.
  */
-export class mxCellMarker {
-  graph: any;
+import { mxCell } from '../model/mxCell';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxEventSource } from '../util/mxEventSource';
+import { mxUtils } from '../util/mxUtils';
+import { mxCellHighlight } from './mxCellHighlight';
+
+export class mxCellMarker extends mxEventSource {
+  constructor(graph: mxGraph, validColor: string = mxConstants.DEFAULT_VALID_COLOR, invalidColor: string = mxConstants.DEFAULT_INVALID_COLOR, hotspot: number = mxConstants.DEFAULT_HOTSPOT) {
+    super(graph);
+    if (graph != null) {
+      this.graph = graph;
+      this.highlight = new mxCellHighlight(graph);
+    }
+  }
+
+  graph: mxGraph;
   validColor: string;
   invalidColor: string;
   hotspot: any;
@@ -75,17 +91,6 @@ export class mxCellMarker {
    * Holds the marked <mxCellState>.
    */
   markedState: any;
-
-  constructor(graph: any, validColor: string, invalidColor: string, hotspot: any) {
-    mxEventSource.call(this);
-    if (graph != null) {
-      this.graph = graph;
-      this.validColor = (validColor != null) ? validColor : mxConstants.DEFAULT_VALID_COLOR;
-      this.invalidColor = (invalidColor != null) ? invalidColor : mxConstants.DEFAULT_INVALID_COLOR;
-      this.hotspot = (hotspot != null) ? hotspot : mxConstants.DEFAULT_HOTSPOT;
-      this.highlight = new mxCellHighlight(graph);
-    }
-  }
 
   /**
    * Function: setEnabled

@@ -47,6 +47,10 @@
  *
  * Constructs a new stylesheet and assigns default styles.
  */
+import { mxConstants } from '../util/mxConstants';
+import { mxUtils } from '../util/mxUtils';
+import { mxPerimeter } from './mxPerimeter';
+
 export class mxStylesheet {
   styles: Object;
 
@@ -56,7 +60,7 @@ export class mxStylesheet {
    * Creates and returns the default vertex style.
    */
   createDefaultVertexStyle(): any {
-    const style = new Object();
+    const style = {};
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
     style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
@@ -73,7 +77,7 @@ export class mxStylesheet {
    * Creates and returns the default edge style.
    */
   createDefaultEdgeStyle(): any {
-    const style = new Object();
+    const style = {};
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
     style[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_CLASSIC;
     style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
@@ -183,7 +187,7 @@ export class mxStylesheet {
       if (style != null && name.charAt(0) != ';') {
         style = mxUtils.clone(style);
       } else {
-        style = new Object();
+        style = {};
       }
       for (let i = 0; i < pairs.length; i++) {
         const tmp = pairs[i];

@@ -31,7 +31,17 @@
  * evt - Native mouse event.
  * state - Optional <mxCellState> under the mouse.
  */
+import { mxClient } from '../mxClient';
+import { mxEvent } from './mxEvent';
+import { mxUtils } from './mxUtils';
+
 export class mxMouseEvent {
+  constructor(evt: Event, state: any) {
+    this.evt = evt;
+    this.state = state;
+    this.sourceState = state;
+  }
+
   evt: Event;
   state: any;
   sourceState: any;
@@ -55,12 +65,6 @@ export class mxMouseEvent {
    * <mxGraph.fireMouseEvent>.
    */
   graphY: any;
-
-  constructor(evt: Event, state: any) {
-    this.evt = evt;
-    this.state = state;
-    this.sourceState = state;
-  }
 
   /**
    * Function: getEvent

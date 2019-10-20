@@ -28,6 +28,9 @@
  *
  * Constructs a new image export.
  */
+import { mxShape } from '../shape/mxShape';
+import { mxUtils } from './mxUtils';
+
 export class mxImageExport {
   /**
    * Variable: includeOverlays

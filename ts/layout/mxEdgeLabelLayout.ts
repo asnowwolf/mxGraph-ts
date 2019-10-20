@@ -21,9 +21,13 @@
  *
  * graph - <mxGraph> that contains the cells.
  */
-export class mxEdgeLabelLayout {
-  constructor(graph: any, radius: any) {
-    mxGraphLayout.call(this, graph);
+import { mxPoint } from '../util/mxPoint';
+import { mxUtils } from '../util/mxUtils';
+import { mxGraphLayout } from './mxGraphLayout';
+
+export class mxEdgeLabelLayout extends mxGraphLayout {
+  constructor(graph: mxGraph, radius: any) {
+    super(graph);
   }
 
   /**

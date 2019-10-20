@@ -7,16 +7,21 @@
  *
  * Creates a HTML table using the specified classname.
  */
-export class mxForm {
-  table: boolean;
-  body: any;
+import { mxClient } from '../mxClient';
+import { mxEvent } from './mxEvent';
+import { mxResources } from './mxResources';
+import { mxUtils } from './mxUtils';
 
+export class mxForm {
   constructor(className: string) {
     this.table = document.createElement('table');
     this.table.className = className;
     this.body = document.createElement('tbody');
     this.table.appendChild(this.body);
   }
+
+  table: boolean;
+  body: any;
 
   /**
    * Function: getTable

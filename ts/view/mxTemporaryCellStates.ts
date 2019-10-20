@@ -3,14 +3,11 @@
  *
  * Creates a temporary set of cell states.
  */
-export class mxTemporaryCellStates {
-  view: any;
-  oldValidateCellState: any;
-  oldBounds: any;
-  oldStates: any;
-  oldScale: any;
-  oldDoRedrawShape: any;
+import { mxCell } from '../model/mxCell';
+import { mxDictionary } from '../util/mxDictionary';
+import { mxRectangle } from '../util/mxRectangle';
 
+export class mxTemporaryCellStates {
   constructor(view: any, scale: any, cells: mxCell[], isCellVisibleFn: Function, getLinkForCellState: any) {
     scale = (scale != null) ? scale : 1;
     this.view = view;
@@ -59,6 +56,13 @@ export class mxTemporaryCellStates {
       view.setGraphBounds(bbox || new mxRectangle());
     }
   }
+
+  view: any;
+  oldValidateCellState: any;
+  oldBounds: any;
+  oldStates: any;
+  oldScale: any;
+  oldDoRedrawShape: any;
 
   /**
    * Function: destroy

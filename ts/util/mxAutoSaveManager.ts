@@ -23,14 +23,26 @@
  *
  * graph - Reference to the enclosing graph.
  */
+import { mxEvent } from './mxEvent';
+import { mxUtils } from './mxUtils';
+
 export class mxAutoSaveManager {
+  constructor(graph: mxGraph) {
+    this.changeHandler = mxUtils.bind(this, function (sender, evt) {
+      if (this.isEnabled()) {
+        this.graphModelChanged(evt.getProperty('edit').changes);
+      }
+    });
+    this.setGraph(graph);
+  }
+
   changeHandler: Function;
   /**
    * Variable: graph
    *
    * Reference to the enclosing <mxGraph>.
    */
-  graph: any;
+  graph: mxGraph;
   /**
    * Variable: autoSaveDelay
    *
@@ -80,15 +92,6 @@ export class mxAutoSaveManager {
    */
   enabled: boolean;
 
-  constructor(graph: any) {
-    this.changeHandler = mxUtils.bind(this, function (sender, evt) {
-      if (this.isEnabled()) {
-        this.graphModelChanged(evt.getProperty('edit').changes);
-      }
-    });
-    this.setGraph(graph);
-  }
-
   /**
    * Function: isEnabled
    *
@@ -118,7 +121,7 @@ export class mxAutoSaveManager {
    *
    * Sets the graph that the layouts operate on.
    */
-  setGraph(graph: any): void {
+  setGraph(graph: mxGraph): void {
     if (this.graph != null) {
       this.graph.getModel().removeListener(this.changeHandler);
     }

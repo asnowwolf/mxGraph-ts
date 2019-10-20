@@ -41,7 +41,15 @@
  *
  * Constructs a new fast organic layout for the specified graph.
  */
-export class mxParallelEdgeLayout {
+import { mxObjectIdentity } from '../util/mxObjectIdentity';
+import { mxPoint } from '../util/mxPoint';
+import { mxGraphLayout } from './mxGraphLayout';
+
+export class mxParallelEdgeLayout extends mxGraphLayout {
+  constructor(graph: mxGraph) {
+    super(graph);
+  }
+
   /**
    * Variable: spacing
    *
@@ -49,10 +57,6 @@ export class mxParallelEdgeLayout {
    * @example 20
    */
   spacing: number;
-
-  constructor(graph: any) {
-    mxGraphLayout.call(this, graph);
-  }
 
   /**
    * Function: execute

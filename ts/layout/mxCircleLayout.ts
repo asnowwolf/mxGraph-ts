@@ -21,7 +21,15 @@
  * graph - <mxGraph> that contains the cells.
  * radius - Optional radius as an int. Default is 100.
  */
-export class mxCircleLayout {
+import { mxGraph } from '../view/mxGraph';
+import { mxGraphLayout } from './mxGraphLayout';
+
+export class mxCircleLayout extends mxGraphLayout {
+  constructor(graph: mxGraph, radius: any) {
+    super(graph);
+    this.radius = (radius != null) ? radius : 100;
+  }
+
   radius: any;
   /**
    * Variable: moveCircle
@@ -60,11 +68,6 @@ export class mxCircleLayout {
    * @example true
    */
   disableEdgeStyle: boolean;
-
-  constructor(graph: any, radius: any) {
-    mxGraphLayout.call(this, graph);
-    this.radius = (radius != null) ? radius : 100;
-  }
 
   /**
    * Function: execute

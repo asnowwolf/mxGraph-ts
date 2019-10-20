@@ -1,3 +1,7 @@
+import { mxClient, mxResourceExtension } from '../mxClient';
+import { mxConstants } from './mxConstants';
+import { mxUtils } from './mxUtils';
+
 export let mxResources = {
   resources: {},
   extension: mxResourceExtension,

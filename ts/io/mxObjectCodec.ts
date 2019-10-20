@@ -193,30 +193,30 @@
  * references.
  * mapping - Optional mapping from field- to attributenames.
  */
-export class mxObjectCodec {
-  /**
-   * Variable: allowEval
-   *
-   * Static global switch that specifies if expressions in arrays are allowed.
-   * Default is false. NOTE: Enabling this carries a possible security risk.
-   */
-  static allowEval: boolean;
-  template: any;
-  exclude: any;
-  idrefs: any;
-  mapping: any;
-  reverse: Object;
+import { mxGeometry } from '../model/mxGeometry';
+import { mxConstants } from '../util/mxConstants';
+import { mxLog } from '../util/mxLog';
+import { mxObjectIdentity } from '../util/mxObjectIdentity';
+import { mxPoint } from '../util/mxPoint';
+import { mxUtils } from '../util/mxUtils';
 
+export class mxObjectCodec {
   constructor(template: any, exclude: any, idrefs: any, mapping: any) {
     this.template = template;
     this.exclude = (exclude != null) ? exclude : [];
     this.idrefs = (idrefs != null) ? idrefs : [];
     this.mapping = (mapping != null) ? mapping : [];
-    this.reverse = new Object();
+    this.reverse = {};
     for (const i in this.mapping) {
       this.reverse[this.mapping[i]] = i;
     }
   }
+
+  template: any;
+  exclude: any;
+  idrefs: any;
+  mapping: any;
+  reverse: Object;
 
   /**
    * Function: getName
@@ -898,4 +898,12 @@ export class mxObjectCodec {
   afterDecode(dec: any, node: Node, obj: any): any {
     return obj;
   }
+
+  /**
+   * Variable: allowEval
+   *
+   * Static global switch that specifies if expressions in arrays are allowed.
+   * Default is false. NOTE: Enabling this carries a possible security risk.
+   */
+  static allowEval: boolean;
 }

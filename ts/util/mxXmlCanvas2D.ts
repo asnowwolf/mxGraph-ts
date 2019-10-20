@@ -24,7 +24,17 @@
  *
  * Constructs a new abstract canvas.
  */
-export class mxXmlCanvas2D {
+import { mxAbstractCanvas2D } from './mxAbstractCanvas2D';
+import { mxConstants } from './mxConstants';
+import { mxUtils } from './mxUtils';
+
+export class mxXmlCanvas2D extends mxAbstractCanvas2D {
+  constructor(root: any) {
+    super();
+    this.root = root;
+    this.writeDefaults();
+  }
+
   /**
    * Variable: root
    *
@@ -48,12 +58,6 @@ export class mxXmlCanvas2D {
   compressed: boolean;
   lastX: number;
   lastY: number;
-
-  constructor(root: any) {
-    mxAbstractCanvas2D.call(this);
-    this.root = root;
-    this.writeDefaults();
-  }
 
   /**
    * Function: writeDefaults

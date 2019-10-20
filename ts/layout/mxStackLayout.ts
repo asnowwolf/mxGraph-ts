@@ -17,7 +17,22 @@
  * Constructs a new stack layout layout for the specified graph,
  * spacing, orientation and offset.
  */
-export class mxStackLayout {
+import { mxCell } from '../model/mxCell';
+import { mxConstants } from '../util/mxConstants';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxGraphLayout } from './mxGraphLayout';
+
+export class mxStackLayout extends mxGraphLayout {
+  constructor(graph: mxGraph, horizontal: any, spacing: any, x0: any, y0: any, border: any) {
+    super(graph);
+    this.horizontal = (horizontal != null) ? horizontal : true;
+    this.spacing = (spacing != null) ? spacing : 0;
+    this.x0 = (x0 != null) ? x0 : 0;
+    this.y0 = (y0 != null) ? y0 : 0;
+    this.border = (border != null) ? border : 0;
+  }
+
   horizontal: any;
   spacing: any;
   x0: any;
@@ -107,15 +122,6 @@ export class mxStackLayout {
    * Grid size for alignment of position and size. Default is 0.
    */
   gridSize: number;
-
-  constructor(graph: any, horizontal: any, spacing: any, x0: any, y0: any, border: any) {
-    mxGraphLayout.call(this, graph);
-    this.horizontal = (horizontal != null) ? horizontal : true;
-    this.spacing = (spacing != null) ? spacing : 0;
-    this.x0 = (x0 != null) ? x0 : 0;
-    this.y0 = (y0 != null) ? y0 : 0;
-    this.border = (border != null) ? border : 0;
-  }
 
   /**
    * Function: isHorizontal

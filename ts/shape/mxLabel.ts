@@ -18,7 +18,17 @@
  * strokewidth - Optional integer that defines the stroke width. Default is
  * 1. This is stored in <strokewidth>.
  */
-export class mxLabel {
+import { mxConstants } from '../util/mxConstants';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxRectangleShape } from './mxRectangleShape';
+import { mxShape } from './mxShape';
+
+export class mxLabel extends mxRectangleShape {
+  constructor(bounds: any, fill: any, stroke: any, strokewidth: any) {
+    super(bounds, fill, stroke, strokewidth);
+  }
+
   /**
    * Variable: imageSize
    *
@@ -48,10 +58,6 @@ export class mxLabel {
    */
   indicatorSpacing: number;
   indicator: this;
-
-  constructor(bounds: any, fill: any, stroke: any, strokewidth: any) {
-    mxRectangleShape.call(this, bounds, fill, stroke, strokewidth);
-  }
 
   /**
    * Function: init

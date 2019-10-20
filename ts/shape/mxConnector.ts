@@ -20,12 +20,18 @@
  * strokewidth - Optional integer that defines the stroke width. Default is
  * 1. This is stored in <strokewidth>.
  */
-export class mxConnector {
-  useSvgBoundingBox: any;
+import { mxConstants } from '../util/mxConstants';
+import { mxUtils } from '../util/mxUtils';
+import { mxMarker } from './mxMarker';
+import { mxPolyline } from './mxPolyline';
+import { mxShape } from './mxShape';
 
+export class mxConnector extends mxPolyline {
   constructor(points: any, stroke: any, strokewidth: any) {
-    mxPolyline.call(this, points, stroke, strokewidth);
+    super(points, stroke, strokewidth);
   }
+
+  useSvgBoundingBox: any;
 
   /**
    * Function: updateBoundingBox

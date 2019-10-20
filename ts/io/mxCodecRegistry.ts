@@ -1,3 +1,6 @@
+import { mxUtils } from '../util/mxUtils';
+import { mxObjectCodec } from './mxObjectCodec';
+
 export let mxCodecRegistry = {
   codecs: [], aliases: [], register(codec) {
     if (codec != null) {

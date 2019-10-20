@@ -11,8 +11,24 @@
  *
  * state - <mxCellState> of the cell to be handled.
  */
+import { mxImageShape } from '../shape/mxImageShape';
+import { mxRectangleShape } from '../shape/mxRectangleShape';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxHandle {
-  graph: any;
+  constructor(state: any, cursor: any, image: any) {
+    this.graph = state.view.graph;
+    this.state = state;
+    this.cursor = (cursor != null) ? cursor : this.cursor;
+    this.image = (image != null) ? image : this.image;
+    this.init();
+  }
+
+  graph: mxGraph;
   state: any;
   cursor: any;
   image: any;
@@ -23,14 +39,6 @@ export class mxHandle {
    */
   ignoreGrid: boolean;
   shape: mxRectangle;
-
-  constructor(state: any, cursor: any, image: any) {
-    this.graph = state.view.graph;
-    this.state = state;
-    this.cursor = (cursor != null) ? cursor : this.cursor;
-    this.image = (image != null) ? image : this.image;
-    this.init();
-  }
 
   /**
    * Function: getPosition

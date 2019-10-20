@@ -18,19 +18,24 @@
  * strokewidth - Optional integer that defines the stroke width. Default is
  * 1. This is stored in <strokewidth>.
  */
-export class mxRhombus {
-  bounds: any;
-  fill: any;
-  stroke: any;
-  strokewidth: any;
+import { mxConstants } from '../util/mxConstants';
+import { mxPoint } from '../util/mxPoint';
+import { mxUtils } from '../util/mxUtils';
+import { mxShape } from './mxShape';
 
+export class mxRhombus extends mxShape {
   constructor(bounds: any, fill: any, stroke: any, strokewidth: any) {
-    mxShape.call(this);
+    super();
     this.bounds = bounds;
     this.fill = fill;
     this.stroke = stroke;
     this.strokewidth = (strokewidth != null) ? strokewidth : 1;
   }
+
+  bounds: any;
+  fill: any;
+  stroke: any;
+  strokewidth: any;
 
   /**
    * Function: isRoundable

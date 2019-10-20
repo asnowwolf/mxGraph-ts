@@ -28,37 +28,20 @@
  * arrow, rectangle, ellipse, rhombus, image, line, label, cylinder,
  * swimlane, connector, actor and cloud.
  */
+import { mxClient } from '../mxClient';
+import { mxImageShape } from '../shape/mxImageShape';
+import { mxShape } from '../shape/mxShape';
+import { mxStencilRegistry } from '../shape/mxStencilRegistry';
+import { mxConstants } from '../util/mxConstants';
+import { mxDictionary } from '../util/mxDictionary';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxMouseEvent } from '../util/mxMouseEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxCellRenderer {
-  /**
-   * Variable: defaultShapes
-   *
-   * Static array that contains the globally registered shapes which are
-   * known to all instances of this class. For adding new shapes you should
-   * use the static <mxCellRenderer.registerShape> function.
-   */
-  static defaultShapes: Object;
-
-  /**
-   * Function: registerShape
-   *
-   * Registers the given constructor under the specified key in this instance
-   * of the renderer.
-   *
-   * Example:
-   *
-   * (code)
-   * mxCellRenderer.registerShape(mxConstants.SHAPE_RECTANGLE, mxRectangleShape);
-   * (end)
-   *
-   * Parameters:
-   *
-   * key - String representing the shape name.
-   * shape - Constructor of the <mxShape> subclass.
-   */
-  static registerShape(key: string, shape: any): void {
-    mxCellRenderer.defaultShapes[key] = shape;
-  }
-
   /**
    * Variable: defaultEdgeShape
    *
@@ -1133,5 +1116,35 @@ export class mxCellRenderer {
       state.shape.destroy();
       state.shape = null;
     }
+  }
+
+  /**
+   * Variable: defaultShapes
+   *
+   * Static array that contains the globally registered shapes which are
+   * known to all instances of this class. For adding new shapes you should
+   * use the static <mxCellRenderer.registerShape> function.
+   */
+  static defaultShapes: Object;
+
+  /**
+   * Function: registerShape
+   *
+   * Registers the given constructor under the specified key in this instance
+   * of the renderer.
+   *
+   * Example:
+   *
+   * (code)
+   * mxCellRenderer.registerShape(mxConstants.SHAPE_RECTANGLE, mxRectangleShape);
+   * (end)
+   *
+   * Parameters:
+   *
+   * key - String representing the shape name.
+   * shape - Constructor of the <mxShape> subclass.
+   */
+  static registerShape(key: string, shape: any): void {
+    mxCellRenderer.defaultShapes[key] = shape;
   }
 }

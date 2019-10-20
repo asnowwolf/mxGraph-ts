@@ -52,7 +52,20 @@
  * values are <ALIGN_TOP>, <ALIGN_MIDDLE> and <ALIGN_BOTTOM>
  * (default).
  */
+import { mxConstants } from '../util/mxConstants';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+
 export class mxCellOverlay {
+  constructor(image: any, tooltip: any, align: any, verticalAlign: any, offset: any, cursor: any) {
+    this.image = image;
+    this.tooltip = tooltip;
+    this.align = (align != null) ? align : this.align;
+    this.verticalAlign = (verticalAlign != null) ? verticalAlign : this.verticalAlign;
+    this.offset = (offset != null) ? offset : new mxPoint();
+    this.cursor = (cursor != null) ? cursor : 'help';
+  }
+
   image: any;
   tooltip: any;
   align: any;
@@ -67,15 +80,6 @@ export class mxCellOverlay {
    * @example 0.5
    */
   defaultOverlap: number;
-
-  constructor(image: any, tooltip: any, align: any, verticalAlign: any, offset: any, cursor: any) {
-    this.image = image;
-    this.tooltip = tooltip;
-    this.align = (align != null) ? align : this.align;
-    this.verticalAlign = (verticalAlign != null) ? verticalAlign : this.verticalAlign;
-    this.offset = (offset != null) ? offset : new mxPoint();
-    this.cursor = (cursor != null) ? cursor : 'help';
-  }
 
   /**
    * Function: getBounds

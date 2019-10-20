@@ -50,7 +50,25 @@
  * source - <mxGraph> to create the outline for.
  * container - DOM node that will contain the outline.
  */
+import { mxClient } from '../mxClient';
+import { mxImageShape } from '../shape/mxImageShape';
+import { mxRectangleShape } from '../shape/mxRectangleShape';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxMouseEvent } from '../util/mxMouseEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from './mxGraph';
+
 export class mxOutline {
+  constructor(source: any, container: HTMLElement) {
+    this.source = source;
+    if (container != null) {
+      this.init(container);
+    }
+  }
+
   source: any;
   /**
    * Function: outline
@@ -160,13 +178,6 @@ export class mxOutline {
   dx0: any;
   dy0: any;
   index: number;
-
-  constructor(source: any, container: HTMLElement) {
-    this.source = source;
-    if (container != null) {
-      this.init(container);
-    }
-  }
 
   /**
    * Function: createGraph

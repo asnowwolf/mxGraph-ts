@@ -27,7 +27,35 @@
  *
  * graph - Reference to the enclosing graph.
  */
+import { mxCell } from '../model/mxCell';
+import {
+  mxChildChange,
+  mxGeometryChange,
+  mxRootChange,
+  mxStyleChange,
+  mxTerminalChange,
+  mxVisibleChange,
+} from '../model/mxGraphModel';
+import { mxDictionary } from '../util/mxDictionary';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxLayoutManager {
+  constructor(graph: mxGraph) {
+    this.undoHandler = mxUtils.bind(this, function (sender, evt) {
+      if (this.isEnabled()) {
+        this.beforeUndo(evt.getProperty('edit'));
+      }
+    });
+    this.moveHandler = mxUtils.bind(this, function (sender, evt) {
+      if (this.isEnabled()) {
+        this.cellsMoved(evt.getProperty('cells'), evt.getProperty('event'));
+      }
+    });
+    this.setGraph(graph);
+  }
+
   undoHandler: Function;
   moveHandler: Function;
   /**
@@ -35,7 +63,7 @@ export class mxLayoutManager {
    *
    * Reference to the enclosing <mxGraph>.
    */
-  graph: any;
+  graph: mxGraph;
   /**
    * Variable: bubbling
    *
@@ -57,20 +85,6 @@ export class mxLayoutManager {
    * Holds the function that handles the endUpdate event.
    */
   updateHandler: Function;
-
-  constructor(graph: any) {
-    this.undoHandler = mxUtils.bind(this, function (sender, evt) {
-      if (this.isEnabled()) {
-        this.beforeUndo(evt.getProperty('edit'));
-      }
-    });
-    this.moveHandler = mxUtils.bind(this, function (sender, evt) {
-      if (this.isEnabled()) {
-        this.cellsMoved(evt.getProperty('cells'), evt.getProperty('event'));
-      }
-    });
-    this.setGraph(graph);
-  }
 
   /**
    * Function: isEnabled
@@ -130,7 +144,7 @@ export class mxLayoutManager {
    *
    * Sets the graph that the layouts operate on.
    */
-  setGraph(graph: any): void {
+  setGraph(graph: mxGraph): void {
     if (this.graph != null) {
       const model = this.graph.getModel();
       model.removeListener(this.undoHandler);

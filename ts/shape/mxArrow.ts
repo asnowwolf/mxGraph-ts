@@ -26,17 +26,12 @@
  * endSize - Optional integer that defines the size of the arrowhead. Default
  * is <mxConstants.ARROW_SIZE>. This is stored in <endSize>.
  */
-export class mxArrow {
-  points: any;
-  fill: any;
-  stroke: any;
-  strokewidth: any;
-  arrowWidth: any;
-  spacing: any;
-  endSize: any;
+import { mxConstants } from '../util/mxConstants';
+import { mxShape } from './mxShape';
 
+export class mxArrow extends mxShape {
   constructor(points: any, fill: any, stroke: any, strokewidth: any, arrowWidth: any, spacing: any, endSize: any) {
-    mxShape.call(this);
+    super();
     this.points = points;
     this.fill = fill;
     this.stroke = stroke;
@@ -45,6 +40,14 @@ export class mxArrow {
     this.spacing = (spacing != null) ? spacing : mxConstants.ARROW_SPACING;
     this.endSize = (endSize != null) ? endSize : mxConstants.ARROW_SIZE;
   }
+
+  points: any;
+  fill: any;
+  stroke: any;
+  strokewidth: any;
+  arrowWidth: any;
+  spacing: any;
+  endSize: any;
 
   /**
    * Function: augmentBoundingBox

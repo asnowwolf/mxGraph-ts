@@ -9,26 +9,17 @@
  * Constructs a new rectangle for the optional parameters. If no parameters
  * are given then the respective default values are used.
  */
-export class mxRectangle {
-  /**
-   * Function: fromRectangle
-   *
-   * Returns a new <mxRectangle> which is a copy of the given rectangle.
-   */
-  static fromRectangle(rect: any): any {
-    return new mxRectangle(rect.x, rect.y, rect.width, rect.height);
+export class mxRectangle extends mxPoint {
+  constructor(x: number, y: number, width: number, height: number) {
+    super(x, y);
+    this.width = (width != null) ? width : 0;
+    this.height = (height != null) ? height : 0;
   }
 
   width: number;
   height: number;
   x: number;
   y: number;
-
-  constructor(x: number, y: number, width: number, height: number) {
-    mxPoint.call(this, x, y);
-    this.width = (width != null) ? width : 0;
-    this.height = (height != null) ? height : 0;
-  }
 
   /**
    * Function: setRect
@@ -140,5 +131,14 @@ export class mxRectangle {
    */
   equals(obj: any): any {
     return obj != null && obj.x == this.x && obj.y == this.y && obj.width == this.width && obj.height == this.height;
+  }
+
+  /**
+   * Function: fromRectangle
+   *
+   * Returns a new <mxRectangle> which is a copy of the given rectangle.
+   */
+  static fromRectangle(rect: any): any {
+    return new mxRectangle(rect.x, rect.y, rect.width, rect.height);
   }
 }

@@ -1,3 +1,8 @@
+import { mxClient } from '../mxClient';
+import { mxEvent } from './mxEvent';
+import { mxUtils } from './mxUtils';
+import { mxWindow } from './mxWindow';
+
 export let mxLog = {
   consoleName: 'Console', TRACE: false, DEBUG: true, WARN: true, buffer: '', init() {
     if (mxLog.window == null && document.body != null) {

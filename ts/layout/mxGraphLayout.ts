@@ -19,63 +19,19 @@
  *
  * graph - Enclosing
  */
+import { mxCell } from '../model/mxCell';
+import { mxGeometry } from '../model/mxGeometry';
+import { mxConstants } from '../util/mxConstants';
+import { mxDictionary } from '../util/mxDictionary';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+
 export class mxGraphLayout {
-  /**
-   * Function: traverse
-   *
-   * Traverses the (directed) graph invoking the given function for each
-   * visited vertex and edge. The function is invoked with the current vertex
-   * and the incoming edge as a parameter. This implementation makes sure
-   * each vertex is only visited once. The function may return false if the
-   * traversal should stop at the given vertex.
-   *
-   * Example:
-   *
-   * (code)
-   * mxLog.show();
-   * var cell = graph.getSelectionCell();
-   * graph.traverse(cell, false, function(vertex, edge)
-   * {
-   *   mxLog.debug(graph.getLabel(vertex));
-   * });
-   * (end)
-   *
-   * Parameters:
-   *
-   * vertex - <mxCell> that represents the vertex where the traversal starts.
-   * directed - Optional boolean indicating if edges should only be traversed
-   * from source to target. Default is true.
-   * func - Visitor function that takes the current vertex and the incoming
-   * edge as arguments. The traversal stops if the function returns false.
-   * edge - Optional <mxCell> that represents the incoming edge. This is
-   * null for the first step of the traversal.
-   * visited - Optional <mxDictionary> of cell paths for the visited cells.
-   */
-  static traverse(vertex: any, directed: any, func: any, edge: any, visited: any): void {
-    if (func != null && vertex != null) {
-      directed = (directed != null) ? directed : true;
-      visited = visited || new mxDictionary();
-      if (!visited.get(vertex)) {
-        visited.put(vertex, true);
-        const result = func(vertex, edge);
-        if (result == null || result) {
-          const edgeCount = this.graph.model.getEdgeCount(vertex);
-          if (edgeCount > 0) {
-            for (let i = 0; i < edgeCount; i++) {
-              const e = this.graph.model.getEdgeAt(vertex, i);
-              const isSource = this.graph.model.getTerminal(e, true) == vertex;
-              if (!directed || isSource) {
-                const next = this.graph.view.getVisibleTerminal(e, !isSource);
-                this.traverse(next, directed, func, e, visited);
-              }
-            }
-          }
-        }
-      }
-    }
+  constructor(graph: mxGraph) {
+    this.graph = graph;
   }
 
-  graph: any;
+  graph: mxGraph;
   /**
    * Variable: useBoundingBox
    *
@@ -90,10 +46,6 @@ export class mxGraphLayout {
    * The parent cell of the layout, if any
    */
   parent: any;
-
-  constructor(graph: any) {
-    this.graph = graph;
-  }
 
   /**
    * Function: moveCell
@@ -391,6 +343,61 @@ export class mxGraphLayout {
   arrangeGroups(cells: mxCell[], border: any, topBorder: any, rightBorder: any, bottomBorder: any, leftBorder: any): any {
     return this.graph.updateGroupBounds(cells, border, true, topBorder, rightBorder, bottomBorder, leftBorder);
   }
+
+  /**
+   * Function: traverse
+   *
+   * Traverses the (directed) graph invoking the given function for each
+   * visited vertex and edge. The function is invoked with the current vertex
+   * and the incoming edge as a parameter. This implementation makes sure
+   * each vertex is only visited once. The function may return false if the
+   * traversal should stop at the given vertex.
+   *
+   * Example:
+   *
+   * (code)
+   * mxLog.show();
+   * var cell = graph.getSelectionCell();
+   * graph.traverse(cell, false, function(vertex, edge)
+   * {
+   *   mxLog.debug(graph.getLabel(vertex));
+   * });
+   * (end)
+   *
+   * Parameters:
+   *
+   * vertex - <mxCell> that represents the vertex where the traversal starts.
+   * directed - Optional boolean indicating if edges should only be traversed
+   * from source to target. Default is true.
+   * func - Visitor function that takes the current vertex and the incoming
+   * edge as arguments. The traversal stops if the function returns false.
+   * edge - Optional <mxCell> that represents the incoming edge. This is
+   * null for the first step of the traversal.
+   * visited - Optional <mxDictionary> of cell paths for the visited cells.
+   */
+  static traverse(vertex: any, directed: any, func: any, edge: any, visited: any): void {
+    if (func != null && vertex != null) {
+      directed = (directed != null) ? directed : true;
+      visited = visited || new mxDictionary();
+      if (!visited.get(vertex)) {
+        visited.put(vertex, true);
+        const result = func(vertex, edge);
+        if (result == null || result) {
+          const edgeCount = this.graph.model.getEdgeCount(vertex);
+          if (edgeCount > 0) {
+            for (let i = 0; i < edgeCount; i++) {
+              const e = this.graph.model.getEdgeAt(vertex, i);
+              const isSource = this.graph.model.getTerminal(e, true) == vertex;
+              if (!directed || isSource) {
+                const next = this.graph.view.getVisibleTerminal(e, !isSource);
+                this.traverse(next, directed, func, e, visited);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -405,6 +412,11 @@ export class mxGraphLayout {
  * Constructs a new weighted cell sorted for the given cell and weight.
  */
 export class WeightedCellSorter {
+  constructor(cell: mxCell, weightedValue: any) {
+    this.cell = cell;
+    this.weightedValue = weightedValue;
+  }
+
   cell: mxCell;
   weightedValue: any;
   /**
@@ -425,11 +437,6 @@ export class WeightedCellSorter {
    * The index this cell is in the model rank.
    */
   rankIndex: any;
-
-  constructor(cell: mxCell, weightedValue: any) {
-    this.cell = cell;
-    this.weightedValue = weightedValue;
-  }
 
   /**
    * Function: compare

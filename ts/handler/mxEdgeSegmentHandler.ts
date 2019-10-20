@@ -2,12 +2,19 @@
  * Copyright (c) 2006-2015, JGraph Ltd
  * Copyright (c) 2006-2015, Gaudenz Alder
  */
-export class mxEdgeSegmentHandler {
-  points: any;
+import { mxConstants } from '../util/mxConstants';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxEdgeHandler } from './mxEdgeHandler';
+import { mxElbowEdgeHandler } from './mxElbowEdgeHandler';
 
+export class mxEdgeSegmentHandler extends mxEdgeHandler {
   constructor(state: any) {
-    mxEdgeHandler.call(this, state);
+    super(state);
   }
+
+  points: any;
 
   /**
    * Function: getCurrentPoints

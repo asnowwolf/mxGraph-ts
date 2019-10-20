@@ -124,8 +124,28 @@
  *
  * (code)
  */
+import { mxClient } from '../mxClient';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxTemporaryCellStates } from './mxTemporaryCellStates';
+
 export class mxPrintPreview {
-  graph: any;
+  constructor(graph: mxGraph, scale: any, pageFormat: any, border: any, x0: any, y0: any, borderColor: string, title: string, pageSelector: any) {
+    this.graph = graph;
+    this.scale = (scale != null) ? scale : 1 / graph.pageScale;
+    this.border = (border != null) ? border : 0;
+    this.pageFormat = mxRectangle.fromRectangle((pageFormat != null) ? pageFormat : graph.pageFormat);
+    this.title = (title != null) ? title : 'Printer-friendly version';
+    this.x0 = (x0 != null) ? x0 : 0;
+    this.y0 = (y0 != null) ? y0 : 0;
+    this.borderColor = borderColor;
+    this.pageSelector = (pageSelector != null) ? pageSelector : true;
+  }
+
+  graph: mxGraph;
   scale: any;
   border: any;
   pageFormat: any;
@@ -209,18 +229,6 @@ export class mxPrintPreview {
    */
   clipping: boolean;
 
-  constructor(graph: any, scale: any, pageFormat: any, border: any, x0: any, y0: any, borderColor: string, title: string, pageSelector: any) {
-    this.graph = graph;
-    this.scale = (scale != null) ? scale : 1 / graph.pageScale;
-    this.border = (border != null) ? border : 0;
-    this.pageFormat = mxRectangle.fromRectangle((pageFormat != null) ? pageFormat : graph.pageFormat);
-    this.title = (title != null) ? title : 'Printer-friendly version';
-    this.x0 = (x0 != null) ? x0 : 0;
-    this.y0 = (y0 != null) ? y0 : 0;
-    this.borderColor = borderColor;
-    this.pageSelector = (pageSelector != null) ? pageSelector : true;
-  }
-
   /**
    * Function: getWindow
    *
@@ -260,7 +268,7 @@ export class mxPrintPreview {
    * targetWindow - Optional window that should be used for rendering. If
    * this is specified then no HEAD tag, CSS and BODY tag will be written.
    */
-  appendGraph(graph: any, scale: any, x0: any, y0: any, forcePageBreaks: any, keepOpen: any): void {
+  appendGraph(graph: mxGraph, scale: any, x0: any, y0: any, forcePageBreaks: any, keepOpen: any): void {
     this.graph = graph;
     this.scale = (scale != null) ? scale : 1 / graph.pageScale;
     this.x0 = x0;

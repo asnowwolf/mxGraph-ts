@@ -42,18 +42,10 @@
  * validNeighborsAllowed - Optional boolean indicating if the array of
  * opposite types should be valid or invalid.
  */
-export class mxMultiplicity {
-  source: any;
-  type: any;
-  attr: any;
-  value: any;
-  min: any;
-  max: any;
-  validNeighbors: any;
-  countError: any;
-  typeError: any;
-  validNeighborsAllowed: any;
+import { mxResources } from '../util/mxResources';
+import { mxUtils } from '../util/mxUtils';
 
+export class mxMultiplicity {
   constructor(source: any, type: any, attr: any, value: any, min: any, max: any, validNeighbors: any, countError: any, typeError: any, validNeighborsAllowed: any) {
     this.source = source;
     this.type = type;
@@ -66,6 +58,17 @@ export class mxMultiplicity {
     this.typeError = mxResources.get(typeError) || typeError;
     this.validNeighborsAllowed = (validNeighborsAllowed != null) ? validNeighborsAllowed : true;
   }
+
+  source: any;
+  type: any;
+  attr: any;
+  value: any;
+  min: any;
+  max: any;
+  validNeighbors: any;
+  countError: any;
+  typeError: any;
+  validNeighborsAllowed: any;
 
   /**
    * Function: check
@@ -82,7 +85,7 @@ export class mxMultiplicity {
    * sourceOut - Number of outgoing edges from the source terminal.
    * targetIn - Number of incoming edges for the target terminal.
    */
-  check(graph: any, edge: any, source: any, target: string, sourceOut: any, targetIn: any): any {
+  check(graph: mxGraph, edge: any, source: any, target: string, sourceOut: any, targetIn: any): any {
     let error = '';
     if ((this.source && this.checkTerminal(graph, source, edge)) || (!this.source && this.checkTerminal(graph, target, edge))) {
       if (this.countError != null && ((this.source && (this.max == 0 || (sourceOut >= this.max))) || (!this.source && (this.max == 0 || (targetIn >= this.max))))) {
@@ -104,7 +107,7 @@ export class mxMultiplicity {
    * Checks if there are any valid neighbours in <validNeighbors>. This is only
    * called if <validNeighbors> is a non-empty array.
    */
-  checkNeighbors(graph: any, edge: any, source: any, target: string): any {
+  checkNeighbors(graph: mxGraph, edge: any, source: any, target: string): any {
     const sourceValue = graph.model.getValue(source);
     const targetValue = graph.model.getValue(target);
     let isValid = !this.validNeighborsAllowed;
@@ -128,7 +131,7 @@ export class mxMultiplicity {
    * given cell is the source or target of the given edge, depending on
    * <source>. This implementation uses <checkType> on the terminal's value.
    */
-  checkTerminal(graph: any, terminal: any, edge: any): any {
+  checkTerminal(graph: mxGraph, terminal: any, edge: any): any {
     const value = graph.model.getValue(terminal);
     return this.checkType(graph, value, this.type, this.attr, this.value);
   }
@@ -138,7 +141,7 @@ export class mxMultiplicity {
    *
    * Checks the type of the given value.
    */
-  checkType(graph: any, value: any, type: any, attr: any, attrValue: any): any {
+  checkType(graph: mxGraph, value: any, type: any, attr: any, attrValue: any): any {
     if (value != null) {
       if (!isNaN(value.nodeType)) {
         return mxUtils.isNode(value, type, attr, attrValue);

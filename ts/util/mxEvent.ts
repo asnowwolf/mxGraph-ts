@@ -1,3 +1,6 @@
+import { mxClient } from '../mxClient';
+import { mxMouseEvent } from './mxMouseEvent';
+
 export let mxEvent = {
   addListener: function () {
     const updateListenerList = function (element, eventName, funct) {
@@ -249,9 +252,7 @@ export let mxEvent = {
   getClientY(e) {
     return mxEvent.getMainEvent(e).clientY;
   },
-  consume(evt, preventDefault, stopPropagation) {
-    preventDefault = (preventDefault != null) ? preventDefault : true;
-    stopPropagation = (stopPropagation != null) ? stopPropagation : true;
+  consume(evt, preventDefault = true, stopPropagation = true) {
     if (preventDefault) {
       if (evt.preventDefault) {
         if (stopPropagation) {

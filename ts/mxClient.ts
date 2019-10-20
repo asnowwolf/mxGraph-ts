@@ -1,3 +1,5 @@
+import { mxResources } from './util/mxResources';
+
 export let mxClient = {
   VERSION: '@MXGRAPH-VERSION@',
   IS_IE: navigator.userAgent.indexOf('MSIE') >= 0,

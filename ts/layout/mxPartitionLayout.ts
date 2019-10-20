@@ -20,7 +20,18 @@
  * Constructs a new stack layout layout for the specified graph,
  * spacing, orientation and offset.
  */
-export class mxPartitionLayout {
+import { mxCell } from '../model/mxCell';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxGraphLayout } from './mxGraphLayout';
+
+export class mxPartitionLayout extends mxGraphLayout {
+  constructor(graph: mxGraph, horizontal: any, spacing: any, border: any) {
+    super(graph);
+    this.horizontal = (horizontal != null) ? horizontal : true;
+    this.spacing = spacing || 0;
+    this.border = border || 0;
+  }
+
   horizontal: any;
   spacing: any;
   border: any;
@@ -31,13 +42,6 @@ export class mxPartitionLayout {
    * @example true
    */
   resizeVertices: boolean;
-
-  constructor(graph: any, horizontal: any, spacing: any, border: any) {
-    mxGraphLayout.call(this, graph);
-    this.horizontal = (horizontal != null) ? horizontal : true;
-    this.spacing = spacing || 0;
-    this.border = border || 0;
-  }
 
   /**
    * Function: isHorizontal

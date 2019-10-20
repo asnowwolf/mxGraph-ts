@@ -35,7 +35,20 @@
  * container - DOM node that contains the toolbar.
  * editor - Reference to the enclosing <mxEditor>.
  */
+import { mxGeometry } from '../model/mxGeometry';
+import { mxClient } from '../mxClient';
+import { mxEvent } from '../util/mxEvent';
+import { mxToolbar } from '../util/mxToolbar';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxDefaultToolbar {
+  constructor(container: HTMLElement, editor: any) {
+    this.editor = editor;
+    if (container != null && editor != null) {
+      this.init(container);
+    }
+  }
+
   editor: any;
   /**
    * Variable: toolbar
@@ -65,13 +78,6 @@ export class mxDefaultToolbar {
    * connectable elements. Default is false.
    */
   connectOnDrop: boolean;
-
-  constructor(container: HTMLElement, editor: any) {
-    this.editor = editor;
-    if (container != null && editor != null) {
-      this.init(container);
-    }
-  }
 
   /**
    * Variable: init

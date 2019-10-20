@@ -15,8 +15,50 @@
  * Constructs an event handler that selects rectangular regions in the graph
  * using rubberband selection.
  */
+import { mxClient } from '../mxClient';
+import { mxEvent } from '../util/mxEvent';
+import { mxMouseEvent } from '../util/mxMouseEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxRubberband {
-  graph: any;
+  constructor(graph: mxGraph) {
+    if (graph != null) {
+      this.graph = graph;
+      this.graph.addMouseListener(this);
+      this.forceRubberbandHandler = mxUtils.bind(this, function (sender, evt) {
+        const evtName = evt.getProperty('eventName');
+        const me = evt.getProperty('event');
+        if (evtName == mxEvent.MOUSE_DOWN && this.isForceRubberbandEvent(me)) {
+          const offset = mxUtils.getOffset(this.graph.container);
+          const origin = mxUtils.getScrollOrigin(this.graph.container);
+          origin.x -= offset.x;
+          origin.y -= offset.y;
+          this.start(me.getX() + origin.x, me.getY() + origin.y);
+          me.consume(false);
+        }
+      });
+      this.graph.addListener(mxEvent.FIRE_MOUSE_EVENT, this.forceRubberbandHandler);
+      this.panHandler = mxUtils.bind(this, function () {
+        this.repaint();
+      });
+      this.graph.addListener(mxEvent.PAN, this.panHandler);
+      this.gestureHandler = mxUtils.bind(this, function (sender, eo) {
+        if (this.first != null) {
+          this.reset();
+        }
+      });
+      this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
+      if (mxClient.IS_IE) {
+        mxEvent.addListener(window, 'unload', mxUtils.bind(this, function () {
+          this.destroy();
+        }));
+      }
+    }
+  }
+
+  graph: mxGraph;
   forceRubberbandHandler: Function;
   panHandler: Function;
   gestureHandler: Function;
@@ -76,41 +118,6 @@ export class mxRubberband {
    * @example true
    */
   destroyed: boolean;
-
-  constructor(graph: any) {
-    if (graph != null) {
-      this.graph = graph;
-      this.graph.addMouseListener(this);
-      this.forceRubberbandHandler = mxUtils.bind(this, function (sender, evt) {
-        const evtName = evt.getProperty('eventName');
-        const me = evt.getProperty('event');
-        if (evtName == mxEvent.MOUSE_DOWN && this.isForceRubberbandEvent(me)) {
-          const offset = mxUtils.getOffset(this.graph.container);
-          const origin = mxUtils.getScrollOrigin(this.graph.container);
-          origin.x -= offset.x;
-          origin.y -= offset.y;
-          this.start(me.getX() + origin.x, me.getY() + origin.y);
-          me.consume(false);
-        }
-      });
-      this.graph.addListener(mxEvent.FIRE_MOUSE_EVENT, this.forceRubberbandHandler);
-      this.panHandler = mxUtils.bind(this, function () {
-        this.repaint();
-      });
-      this.graph.addListener(mxEvent.PAN, this.panHandler);
-      this.gestureHandler = mxUtils.bind(this, function (sender, eo) {
-        if (this.first != null) {
-          this.reset();
-        }
-      });
-      this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
-      if (mxClient.IS_IE) {
-        mxEvent.addListener(window, 'unload', mxUtils.bind(this, function () {
-          this.destroy();
-        }));
-      }
-    }
-  }
 
   /**
    * Function: isEnabled

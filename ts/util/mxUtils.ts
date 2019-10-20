@@ -1,3 +1,20 @@
+import { mxCodec } from '../io/mxCodec';
+import { mxCellPath } from '../model/mxCellPath';
+import { mxClient } from '../mxClient';
+import { mxTemporaryCellStates } from '../view/mxTemporaryCellStates';
+import { mxConstants } from './mxConstants';
+import { mxDictionary } from './mxDictionary';
+import { mxDragSource } from './mxDragSource';
+import { mxEffects } from './mxEffects';
+import { mxEvent } from './mxEvent';
+import { mxLog } from './mxLog';
+import { mxObjectIdentity } from './mxObjectIdentity';
+import { mxPoint } from './mxPoint';
+import { mxRectangle } from './mxRectangle';
+import { mxResources } from './mxResources';
+import { mxWindow } from './mxWindow';
+import { mxXmlRequest } from './mxXmlRequest';
+
 export let mxUtils = {
   errorResource: (mxClient.language != 'none') ? 'error' : '',
   closeResource: (mxClient.language != 'none') ? 'close' : '',

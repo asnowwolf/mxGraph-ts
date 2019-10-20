@@ -59,41 +59,40 @@
  * element is used as the event target, that is, the object where the key
  * event listener is installed.
  */
+import { mxClient } from '../mxClient';
+import { mxEvent } from '../util/mxEvent';
+import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from '../view/mxGraph';
+
 export class mxKeyHandler {
-  graph: any;
-  target: string;
+  constructor(public graph: mxGraph, public target: HTMLElement | null = document.documentElement) {
+    this.normalKeys = [];
+    this.shiftKeys = [];
+    this.controlKeys = [];
+    this.controlShiftKeys = [];
+    this.keydownHandler = (evt) => {
+      this.keyDown(evt);
+    };
+    mxEvent.addListener(this.target, 'keydown', this.keydownHandler);
+    if (mxClient.IS_IE) {
+      mxEvent.addListener(window, 'unload', () => {
+        this.destroy();
+      });
+    }
+  }
+
   normalKeys: any[];
   shiftKeys: any[];
   controlKeys: any[];
   controlShiftKeys: any[];
-  keydownHandler: Function;
+  keydownHandler: ((event: KeyboardEvent) => void) | null;
   /**
    * Variable: enabled
    *
    * Specifies if events are handled. Default is true.
    * @example true
    */
-  enabled: boolean;
-
-  constructor(graph: any, target: string) {
-    if (graph != null) {
-      this.graph = graph;
-      this.target = target || document.documentElement;
-      this.normalKeys = [];
-      this.shiftKeys = [];
-      this.controlKeys = [];
-      this.controlShiftKeys = [];
-      this.keydownHandler = mxUtils.bind(this, function (evt) {
-        this.keyDown(evt);
-      });
-      mxEvent.addListener(this.target, 'keydown', this.keydownHandler);
-      if (mxClient.IS_IE) {
-        mxEvent.addListener(window, 'unload', mxUtils.bind(this, function () {
-          this.destroy();
-        }));
-      }
-    }
-  }
+  enabled = true;
 
   /**
    * Function: isEnabled
@@ -201,7 +200,7 @@ export class mxKeyHandler {
    *
    * evt - Key event whose associated function should be returned.
    */
-  getFunction(evt: Event): any {
+  getFunction(evt: KeyboardEvent): any {
     if (evt != null && !mxEvent.isAltDown(evt)) {
       if (this.isControlDown(evt)) {
         if (mxEvent.isShiftDown(evt)) {
@@ -252,7 +251,7 @@ export class mxKeyHandler {
    *
    * evt - Key event that represents the keystroke.
    */
-  keyDown(evt: Event): void {
+  keyDown(evt: KeyboardEvent): void {
     if (this.isEnabledForEvent(evt)) {
       if (evt.keyCode == 27) {
         this.escape(evt);

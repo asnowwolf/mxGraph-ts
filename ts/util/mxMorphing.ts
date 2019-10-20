@@ -34,8 +34,20 @@
  * ease - Optional easing constant for the animation. Default is 1.5.
  * delay - Optional delay between the animation steps. Passed to <mxAnimation>.
  */
-export class mxMorphing {
-  graph: any;
+import { mxCell } from '../model/mxCell';
+import { mxCellStatePreview } from '../view/mxCellStatePreview';
+import { mxAnimation } from './mxAnimation';
+import { mxPoint } from './mxPoint';
+
+export class mxMorphing extends mxAnimation {
+  constructor(graph: mxGraph, steps: any, ease: any, delay: any) {
+    super(delay);
+    this.graph = graph;
+    this.steps = (steps != null) ? steps : 6;
+    this.ease = (ease != null) ? ease : 1.5;
+  }
+
+  graph: mxGraph;
   steps: any;
   ease: any;
   /**
@@ -52,13 +64,6 @@ export class mxMorphing {
    * in the current transaction.
    */
   cells: mxCell[];
-
-  constructor(graph: any, steps: any, ease: any, delay: any) {
-    mxAnimation.call(this, delay);
-    this.graph = graph;
-    this.steps = (steps != null) ? steps : 6;
-    this.ease = (ease != null) ? ease : 1.5;
-  }
 
   /**
    * Function: updateAnimation

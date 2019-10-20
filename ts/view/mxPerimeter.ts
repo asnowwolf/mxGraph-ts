@@ -1,3 +1,7 @@
+import { mxConstants } from '../util/mxConstants';
+import { mxPoint } from '../util/mxPoint';
+import { mxUtils } from '../util/mxUtils';
+
 export let mxPerimeter = {
   RectanglePerimeter(bounds, vertex, next, orthogonal) {
     const cx = bounds.getCenterX();

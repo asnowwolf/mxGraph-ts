@@ -33,15 +33,10 @@
  * container - Optional Container that contains the div. Default is the
  * window.
  */
-export class mxDivResizer {
-  div: HTMLElement;
-  resizeWidth: any;
-  resizeHeight: any;
-  /**
-   * @example true
-   */
-  handlingResize: boolean;
+import { mxEvent } from './mxEvent';
+import { mxUtils } from './mxUtils';
 
+export class mxDivResizer {
   constructor(div: HTMLElement, container: HTMLElement) {
     if (div.nodeName.toLowerCase() == 'div') {
       if (container == null) {
@@ -63,6 +58,14 @@ export class mxDivResizer {
       this.resize();
     }
   }
+
+  div: HTMLElement;
+  resizeWidth: any;
+  resizeHeight: any;
+  /**
+   * @example true
+   */
+  handlingResize: boolean;
 
   /**
    * Function: resize

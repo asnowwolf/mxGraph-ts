@@ -17,7 +17,22 @@
  * Constructs a new compact tree layout for the specified graph
  * and orientation.
  */
-export class mxCompactTreeLayout {
+import { mxCell } from '../model/mxCell';
+import { mxCellPath } from '../model/mxCellPath';
+import { mxDictionary } from '../util/mxDictionary';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from '../view/mxGraph';
+import { mxGraphLayout, WeightedCellSorter } from './mxGraphLayout';
+
+export class mxCompactTreeLayout extends mxGraphLayout {
+  constructor(graph: mxGraph, horizontal: any, invert: any) {
+    super(graph);
+    this.horizontal = (horizontal != null) ? horizontal : true;
+    this.invert = (invert != null) ? invert : false;
+  }
+
   horizontal: any;
   invert: any;
   /**
@@ -184,12 +199,6 @@ export class mxCompactTreeLayout {
   parentX: any;
   parentY: any;
 
-  constructor(graph: any, horizontal: any, invert: any) {
-    mxGraphLayout.call(this, graph);
-    this.horizontal = (horizontal != null) ? horizontal : true;
-    this.invert = (invert != null) ? invert : false;
-  }
-
   /**
    * Function: isVertexIgnored
    *
@@ -250,7 +259,7 @@ export class mxCompactTreeLayout {
     }
     if (this.root != null) {
       if (this.resizeParent) {
-        this.parentsChanged = new Object();
+        this.parentsChanged = {};
       } else {
         this.parentsChanged = null;
       }
@@ -265,7 +274,7 @@ export class mxCompactTreeLayout {
       }
       model.beginUpdate();
       try {
-        this.visited = new Object();
+        this.visited = {};
         this.node = this.dfs(this.root, parent);
         if (this.alignRanks) {
           this.maxRankHeight = [];
@@ -647,7 +656,7 @@ export class mxCompactTreeLayout {
    * Function: createNode
    */
   createNode(cell: mxCell): any {
-    const node = new Object();
+    const node = {};
     node.cell = cell;
     node.x = 0;
     node.y = 0;
@@ -665,7 +674,7 @@ export class mxCompactTreeLayout {
     }
     node.offsetX = 0;
     node.offsetY = 0;
-    node.contour = new Object();
+    node.contour = {};
     return node;
   }
 
@@ -700,7 +709,7 @@ export class mxCompactTreeLayout {
    * Function: createLine
    */
   createLine(dx: number, dy: number, next: any): any {
-    const line = new Object();
+    const line = {};
     line.dx = dx;
     line.dy = dy;
     line.next = next;

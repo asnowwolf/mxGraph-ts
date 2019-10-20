@@ -12,38 +12,17 @@
  *
  * Constructs a cell highlight.
  */
-export class mxCellHighlight {
-  graph: any;
-  highlightColor: string;
-  strokeWidth: any;
-  dashed: any;
-  opacity: any;
-  repaintHandler: Function;
-  state: any;
-  resetHandler: Function;
-  /**
-   * Variable: keepOnTop
-   *
-   * Specifies if the highlights should appear on top of everything
-   * else in the overlay pane. Default is false.
-   */
-  keepOnTop: boolean;
-  /**
-   * Variable: spacing
-   *
-   * Specifies the spacing between the highlight for vertices and the vertex.
-   * Default is 2.
-   * @example 2
-   */
-  spacing: number;
-  shape: any;
+import { mxClient } from '../mxClient';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from '../view/mxGraph';
 
-  constructor(graph: any, highlightColor: string, strokeWidth: any, dashed: any) {
+export class mxCellHighlight {
+  constructor(graph: mxGraph, highlightColor: string = mxConstants.DEFAULT_VALID_COLOR, strokeWidth: number = mxConstants.HIGHLIGHT_STROKEWIDTH, dashed: boolean = false) {
     if (graph != null) {
       this.graph = graph;
-      this.highlightColor = (highlightColor != null) ? highlightColor : mxConstants.DEFAULT_VALID_COLOR;
-      this.strokeWidth = (strokeWidth != null) ? strokeWidth : mxConstants.HIGHLIGHT_STROKEWIDTH;
-      this.dashed = (dashed != null) ? dashed : false;
       this.opacity = mxConstants.HIGHLIGHT_OPACITY;
       this.repaintHandler = mxUtils.bind(this, function () {
         if (this.state != null) {
@@ -67,6 +46,31 @@ export class mxCellHighlight {
       this.graph.getView().addListener(mxEvent.UP, this.resetHandler);
     }
   }
+
+  graph: mxGraph;
+  highlightColor: string;
+  strokeWidth: any;
+  dashed: any;
+  opacity: any;
+  repaintHandler: Function;
+  state: any;
+  resetHandler: Function;
+  /**
+   * Variable: keepOnTop
+   *
+   * Specifies if the highlights should appear on top of everything
+   * else in the overlay pane. Default is false.
+   */
+  keepOnTop: boolean;
+  /**
+   * Variable: spacing
+   *
+   * Specifies the spacing between the highlight for vertices and the vertex.
+   * Default is 2.
+   * @example 2
+   */
+  spacing: number;
+  shape: any;
 
   /**
    * Function: setHighlightColor

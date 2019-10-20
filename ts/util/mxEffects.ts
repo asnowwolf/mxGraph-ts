@@ -1,3 +1,6 @@
+import { mxChildChange, mxGeometryChange, mxStyleChange, mxTerminalChange, mxValueChange } from '../model/mxGraphModel';
+import { mxUtils } from './mxUtils';
+
 export let mxEffects = {
   animateChanges(graph, changes, done) {
     const maxStep = 10;

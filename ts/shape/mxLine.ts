@@ -18,17 +18,19 @@
  * strokewidth - Optional integer that defines the stroke width. Default is
  * 1. This is stored in <strokewidth>.
  */
-export class mxLine {
-  bounds: any;
-  stroke: any;
-  strokewidth: any;
+import { mxShape } from './mxShape';
 
+export class mxLine extends mxShape {
   constructor(bounds: any, stroke: any, strokewidth: any) {
-    mxShape.call(this);
+    super();
     this.bounds = bounds;
     this.stroke = stroke;
     this.strokewidth = (strokewidth != null) ? strokewidth : 1;
   }
+
+  bounds: any;
+  stroke: any;
+  strokewidth: any;
 
   /**
    * Function: paintVertexShape

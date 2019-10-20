@@ -7,8 +7,25 @@
  *
  * Constructs an event handler that creates a <mxPopupMenu>.
  */
+import { mxEvent } from '../util/mxEvent';
+import { mxPopupMenu } from '../util/mxPopupMenu';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxPopupMenuHandler {
-  graph: any;
+  constructor(graph: mxGraph, factoryMethod: any) {
+    if (graph != null) {
+      this.graph = graph;
+      this.factoryMethod = factoryMethod;
+      this.graph.addMouseListener(this);
+      this.gestureHandler = mxUtils.bind(this, function (sender, eo) {
+        this.inTolerance = false;
+      });
+      this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
+      this.init();
+    }
+  }
+
+  graph: mxGraph;
   factoryMethod: any;
   gestureHandler: Function;
   inTolerance: boolean;
@@ -53,19 +70,6 @@ export class mxPopupMenuHandler {
    */
   screenY: any;
   popupTrigger: any;
-
-  constructor(graph: any, factoryMethod: any) {
-    if (graph != null) {
-      this.graph = graph;
-      this.factoryMethod = factoryMethod;
-      this.graph.addMouseListener(this);
-      this.gestureHandler = mxUtils.bind(this, function (sender, eo) {
-        this.inTolerance = false;
-      });
-      this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
-      this.init();
-    }
-  }
 
   /**
    * Function: init

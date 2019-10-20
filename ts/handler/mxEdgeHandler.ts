@@ -23,7 +23,37 @@
  *
  * state - <mxCellState> of the cell to be handled.
  */
+import { mxCell } from '../model/mxCell';
+import { mxClient } from '../mxClient';
+import { mxImageShape } from '../shape/mxImageShape';
+import { mxRectangleShape } from '../shape/mxRectangleShape';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxConnectionConstraint } from '../view/mxConnectionConstraint';
+import { mxEdgeStyle } from '../view/mxEdgeStyle';
+import { mxCellMarker } from './mxCellMarker';
+import { mxConstraintHandler } from './mxConstraintHandler';
+import { mxGraphHandler } from './mxGraphHandler';
+
 export class mxEdgeHandler {
+  constructor(state: any) {
+    if (state != null) {
+      this.state = state;
+      this.init();
+      this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
+        const dirty = this.index != null;
+        this.reset();
+        if (dirty) {
+          this.graph.cellRenderer.redraw(this.state, false, state.view.isRendering());
+        }
+      });
+      this.state.view.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
+    }
+  }
+
   state: any;
   escapeHandler: Function;
   /**
@@ -31,7 +61,7 @@ export class mxEdgeHandler {
    *
    * Reference to the enclosing <mxGraph>.
    */
-  graph: any;
+  graph: mxGraph;
   /**
    * Variable: marker
    *
@@ -202,21 +232,6 @@ export class mxEdgeHandler {
    * @example true
    */
   active: boolean;
-
-  constructor(state: any) {
-    if (state != null) {
-      this.state = state;
-      this.init();
-      this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
-        const dirty = this.index != null;
-        this.reset();
-        if (dirty) {
-          this.graph.cellRenderer.redraw(this.state, false, state.view.isRendering());
-        }
-      });
-      this.state.view.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
-    }
-  }
 
   /**
    * Function: init

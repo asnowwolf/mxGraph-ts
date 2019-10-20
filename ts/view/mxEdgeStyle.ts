@@ -1,3 +1,9 @@
+import { mxConstants } from '../util/mxConstants';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxCellState } from './mxCellState';
+
 export let mxEdgeStyle = {
   EntityRelation(state, source, target, points, result) {
     const view = state.view;

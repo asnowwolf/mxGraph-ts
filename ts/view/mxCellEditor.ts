@@ -104,8 +104,33 @@
  *
  * graph - Reference to the enclosing <mxGraph>.
  */
+import { mxCell } from '../model/mxCell';
+import { mxClient } from '../mxClient';
+import { mxText } from '../shape/mxText';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxCellEditor {
-  graph: any;
+  constructor(graph: mxGraph) {
+    this.graph = graph;
+    this.zoomHandler = mxUtils.bind(this, function () {
+      if (this.graph.isEditing()) {
+        this.resize();
+      }
+    });
+    this.graph.view.addListener(mxEvent.SCALE, this.zoomHandler);
+    this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.zoomHandler);
+    this.changeHandler = mxUtils.bind(this, function (sender) {
+      if (this.editingCell != null && this.graph.getView().getState(this.editingCell) == null) {
+        this.stopEditing(true);
+      }
+    });
+    this.graph.getModel().addListener(mxEvent.CHANGE, this.changeHandler);
+  }
+
+  graph: mxGraph;
   zoomHandler: Function;
   changeHandler: Function;
   /**
@@ -218,23 +243,6 @@ export class mxCellEditor {
   resizeThread: any;
   bounds: any;
   textDirection: any;
-
-  constructor(graph: any) {
-    this.graph = graph;
-    this.zoomHandler = mxUtils.bind(this, function () {
-      if (this.graph.isEditing()) {
-        this.resize();
-      }
-    });
-    this.graph.view.addListener(mxEvent.SCALE, this.zoomHandler);
-    this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.zoomHandler);
-    this.changeHandler = mxUtils.bind(this, function (sender) {
-      if (this.editingCell != null && this.graph.getView().getState(this.editingCell) == null) {
-        this.stopEditing(true);
-      }
-    });
-    this.graph.getModel().addListener(mxEvent.CHANGE, this.changeHandler);
-  }
 
   /**
    * Function: init

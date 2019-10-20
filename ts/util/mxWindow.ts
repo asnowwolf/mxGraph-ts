@@ -181,8 +181,35 @@
  * style - Optional base classname for the window elements. Default is
  * mxWindow.
  */
+import { mxClient } from '../mxClient';
+import { mxConstants } from './mxConstants';
+import { mxEvent } from './mxEvent';
+import { mxEventObject } from './mxEventObject';
+import { mxRectangle } from './mxRectangle';
+import { mxUtils } from './mxUtils';
+
 export class mxWindow {
-  static activeWindow: any;
+  constructor(title: string, content: any, x: number, y: number, width: number, height: number, minimizable: boolean, movable: boolean, replaceNode: any, style: any) {
+    if (content != null) {
+      minimizable = (minimizable != null) ? minimizable : true;
+      this.content = content;
+      this.init(x, y, width, height, style);
+      this.installMaximizeHandler();
+      this.installMinimizeHandler();
+      this.installCloseHandler();
+      this.setMinimizable(minimizable);
+      this.setTitle(title);
+      if (movable == null || movable) {
+        this.installMoveHandler();
+      }
+      if (replaceNode != null && replaceNode.parentNode != null) {
+        replaceNode.parentNode.replaceChild(this.div, replaceNode);
+      } else {
+        document.body.appendChild(this.div);
+      }
+    }
+  }
+
   content: any;
   /**
    * Variable: closeImage
@@ -258,27 +285,6 @@ export class mxWindow {
   maximize: any;
   closeImg: any;
   image: any;
-
-  constructor(title: string, content: any, x: number, y: number, width: number, height: number, minimizable: boolean, movable: boolean, replaceNode: any, style: any) {
-    if (content != null) {
-      minimizable = (minimizable != null) ? minimizable : true;
-      this.content = content;
-      this.init(x, y, width, height, style);
-      this.installMaximizeHandler();
-      this.installMinimizeHandler();
-      this.installCloseHandler();
-      this.setMinimizable(minimizable);
-      this.setTitle(title);
-      if (movable == null || movable) {
-        this.installMoveHandler();
-      }
-      if (replaceNode != null && replaceNode.parentNode != null) {
-        replaceNode.parentNode.replaceChild(this.div, replaceNode);
-      } else {
-        document.body.appendChild(this.div);
-      }
-    }
-  }
 
   /**
    * Function: init
@@ -882,4 +888,6 @@ export class mxWindow {
     this.content = null;
     this.contentWrapper = null;
   }
+
+  static activeWindow: any;
 }

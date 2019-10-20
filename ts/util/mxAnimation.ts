@@ -11,7 +11,15 @@
  *
  * graph - Reference to the enclosing <mxGraph>.
  */
+import { mxEvent } from './mxEvent';
+import { mxEventObject } from './mxEventObject';
+import { mxUtils } from './mxUtils';
+
 export class mxAnimation {
+  constructor(delay: any) {
+    this.delay = (delay != null) ? delay : 20;
+  }
+
   delay: any;
   /**
    * Variable: thread
@@ -19,10 +27,6 @@ export class mxAnimation {
    * Reference to the thread while the animation is running.
    */
   thread: any;
-
-  constructor(delay: any) {
-    this.delay = (delay != null) ? delay : 20;
-  }
 
   /**
    * Function: isRunning

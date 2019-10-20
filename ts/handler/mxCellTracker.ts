@@ -68,15 +68,14 @@
  * funct - Optional JavaScript function that is used to override
  * <mxCellMarker.getCell>.
  */
-export class mxCellTracker {
-  getCell: any;
-  /**
-   * @example true
-   */
-  destroyed: boolean;
+import { mxClient } from '../mxClient';
+import { mxEvent } from '../util/mxEvent';
+import { mxUtils } from '../util/mxUtils';
+import { mxCellMarker } from './mxCellMarker';
 
-  constructor(graph: any, color: string, funct: () => any) {
-    mxCellMarker.call(this, graph, color);
+export class mxCellTracker extends mxCellMarker {
+  constructor(graph: mxGraph, color: string, funct: () => any) {
+    super(graph, color);
     this.graph.addMouseListener(this);
     if (funct != null) {
       this.getCell = funct;
@@ -87,6 +86,12 @@ export class mxCellTracker {
       }));
     }
   }
+
+  getCell: any;
+  /**
+   * @example true
+   */
+  destroyed: boolean;
 
   /**
    * Function: mouseDown

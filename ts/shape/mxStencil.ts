@@ -197,22 +197,21 @@
  *
  * desc - XML node that contains the stencil description.
  */
+import { mxConstants } from '../util/mxConstants';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxResources } from '../util/mxResources';
+import { mxUtils } from '../util/mxUtils';
+import { mxConnectionConstraint } from '../view/mxConnectionConstraint';
+import { mxStencilRegistry } from './mxStencilRegistry';
+
 export class mxStencil {
-  /**
-   * Variable: defaultLocalized
-   *
-   * Static global variable that specifies the default value for the localized
-   * attribute of the text element. Default is false.
-   */
-  static defaultLocalized: boolean;
-  /**
-   * Function: allowEval
-   *
-   * Static global switch that specifies if the use of eval is allowed for
-   * evaluating text content and images. Default is false. Set this to true
-   * if stencils can not contain user input.
-   */
-  static allowEval: boolean;
+  constructor(desc: any) {
+    this.desc = desc;
+    this.parseDescription();
+    this.parseConstraints();
+  }
+
   desc: any;
   /**
    * Variable: constraints
@@ -256,12 +255,6 @@ export class mxStencil {
    * Holds the strokewidth direction from the description.
    */
   strokewidth: any;
-
-  constructor(desc: any) {
-    this.desc = desc;
-    this.parseDescription();
-    this.parseConstraints();
-  }
 
   /**
    * Function: parseDescription
@@ -605,4 +598,20 @@ export class mxStencil {
       }
     }
   }
+
+  /**
+   * Variable: defaultLocalized
+   *
+   * Static global variable that specifies the default value for the localized
+   * attribute of the text element. Default is false.
+   */
+  static defaultLocalized: boolean;
+  /**
+   * Function: allowEval
+   *
+   * Static global switch that specifies if the use of eval is allowed for
+   * evaluating text content and images. Default is false. Set this to true
+   * if stencils can not contain user input.
+   */
+  static allowEval: boolean;
 }

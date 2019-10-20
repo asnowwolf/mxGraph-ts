@@ -1,3 +1,8 @@
+import { mxConstants } from './mxConstants';
+import { mxPoint } from './mxPoint';
+import { mxUrlConverter } from './mxUrlConverter';
+import { mxUtils } from './mxUtils';
+
 export let dx;
 export let dy;
 export let scale;

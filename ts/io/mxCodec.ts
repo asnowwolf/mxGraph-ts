@@ -107,7 +107,19 @@
  * If no document is specified then a new document is created
  * using <mxUtils.createXmlDocument>.
  */
+import { mxCell } from '../model/mxCell';
+import { mxCellPath } from '../model/mxCellPath';
+import { mxConstants } from '../util/mxConstants';
+import { mxLog } from '../util/mxLog';
+import { mxUtils } from '../util/mxUtils';
+import { mxCodecRegistry } from './mxCodecRegistry';
+
 export class mxCodec {
+  constructor(document: any) {
+    this.document = document || mxUtils.createXmlDocument();
+    this.objects = [];
+  }
+
   document: any;
   objects: any[];
   /**
@@ -122,11 +134,6 @@ export class mxCodec {
    * Specifies if default values should be encoded. Default is false.
    */
   encodeDefaults: boolean;
-
-  constructor(document: any) {
-    this.document = document || mxUtils.createXmlDocument();
-    this.objects = [];
-  }
 
   /**
    * Function: putObject
@@ -217,7 +224,7 @@ export class mxCodec {
    */
   updateElements(): void {
     if (this.elements == null) {
-      this.elements = new Object();
+      this.elements = {};
       if (this.document.documentElement != null) {
         this.addElement(this.document.documentElement);
       }

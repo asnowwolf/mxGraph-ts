@@ -1,3 +1,12 @@
+import { mxDefaultToolbar } from '../editor/mxDefaultToolbar';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxLog } from '../util/mxLog';
+import { mxResources } from '../util/mxResources';
+import { mxUtils } from '../util/mxUtils';
+import { mxCodecRegistry } from './mxCodecRegistry';
+import { mxObjectCodec } from './mxObjectCodec';
+
 export let mxDefaultToolbarCodec = mxCodecRegistry.register(function () {
   const codec = new mxObjectCodec(new mxDefaultToolbar());
   codec.encode = function (enc, obj) {

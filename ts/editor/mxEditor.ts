@@ -341,12 +341,63 @@
  *
  * config - Optional XML node that contains the configuration.
  */
+import { mxRubberband } from '../handler/mxRubberband';
+import { mxCodec } from '../io/mxCodec';
+import { mxCompactTreeLayout } from '../layout/mxCompactTreeLayout';
+import { mxStackLayout } from '../layout/mxStackLayout';
+import { mxCell } from '../model/mxCell';
+import { mxGeometry } from '../model/mxGeometry';
+import { mxCellAttributeChange, mxRootChange, mxValueChange } from '../model/mxGraphModel';
+import { mxClient } from '../mxClient';
+import { mxClipboard } from '../util/mxClipboard';
+import { mxConstants } from '../util/mxConstants';
+import { mxDivResizer } from '../util/mxDivResizer';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxForm } from '../util/mxForm';
+import { mxLog } from '../util/mxLog';
+import { mxResources } from '../util/mxResources';
+import { mxUndoManager } from '../util/mxUndoManager';
+import { mxUtils } from '../util/mxUtils';
+import { mxWindow } from '../util/mxWindow';
+import { mxGraph } from '../view/mxGraph';
+import { mxLayoutManager } from '../view/mxLayoutManager';
+import { mxOutline } from '../view/mxOutline';
+import { mxPrintPreview } from '../view/mxPrintPreview';
+import { mxSwimlaneManager } from '../view/mxSwimlaneManager';
+import { mxDefaultKeyHandler } from './mxDefaultKeyHandler';
+import { mxDefaultPopupMenu } from './mxDefaultPopupMenu';
+import { mxDefaultToolbar } from './mxDefaultToolbar';
+
 export class mxEditor {
+  constructor(config: any) {
+    this.actions = [];
+    this.addActions();
+    if (document.body != null) {
+      this.cycleAttributeValues = [];
+      this.popupHandler = new mxDefaultPopupMenu();
+      this.undoManager = new mxUndoManager();
+      this.graph = this.createGraph();
+      this.toolbar = this.createToolbar();
+      this.keyHandler = new mxDefaultKeyHandler(this);
+      this.configure(config);
+      this.graph.swimlaneIndicatorColorAttribute = this.cycleAttributeName;
+      if (this.onInit != null) {
+        this.onInit();
+      }
+      if (mxClient.IS_IE) {
+        mxEvent.addListener(window, 'unload', mxUtils.bind(this, function () {
+          this.destroy();
+        }));
+      }
+    }
+  }
+
   actions: any[];
   cycleAttributeValues: any[];
   popupHandler: mxDefaultPopupMenu;
   undoManager: mxUndoManager;
-  graph: any;
+  graph: mxGraph;
   toolbar: any;
   keyHandler: mxDefaultKeyHandler;
   /**
@@ -740,29 +791,6 @@ export class mxEditor {
    * @example true
    */
   destroyed: boolean;
-
-  constructor(config: any) {
-    this.actions = [];
-    this.addActions();
-    if (document.body != null) {
-      this.cycleAttributeValues = [];
-      this.popupHandler = new mxDefaultPopupMenu();
-      this.undoManager = new mxUndoManager();
-      this.graph = this.createGraph();
-      this.toolbar = this.createToolbar();
-      this.keyHandler = new mxDefaultKeyHandler(this);
-      this.configure(config);
-      this.graph.swimlaneIndicatorColorAttribute = this.cycleAttributeName;
-      if (this.onInit != null) {
-        this.onInit();
-      }
-      if (mxClient.IS_IE) {
-        mxEvent.addListener(window, 'unload', mxUtils.bind(this, function () {
-          this.destroy();
-        }));
-      }
-    }
-  }
 
   /**
    * Function: isModified
@@ -1269,7 +1297,7 @@ export class mxEditor {
    *
    * Sets the graph's container using <mxGraph.init>.
    */
-  createSwimlaneManager(graph: any): any {
+  createSwimlaneManager(graph: mxGraph): any {
     const swimlaneMgr = new mxSwimlaneManager(graph, false);
     swimlaneMgr.isHorizontal = mxUtils.bind(this, function () {
       return this.horizontalFlow;
@@ -1286,7 +1314,7 @@ export class mxEditor {
    * Creates a layout manager for the swimlane and diagram layouts, that
    * is, the locally defined inter- and intraswimlane layouts.
    */
-  createLayoutManager(graph: any): any {
+  createLayoutManager(graph: mxGraph): any {
     const layoutMgr = new mxLayoutManager(graph);
     const self = this;
     layoutMgr.getLayout = function (cell) {
@@ -1334,7 +1362,7 @@ export class mxEditor {
    * Overrides <mxGraph.dblClick> to invoke <dblClickAction>
    * on a cell and reset the selection tool in the toolbar.
    */
-  installDblClickHandler(graph: any): void {
+  installDblClickHandler(graph: mxGraph): void {
     graph.addListener(mxEvent.DOUBLE_CLICK, mxUtils.bind(this, function (sender, evt) {
       const cell = evt.getProperty('cell');
       if (cell != null && graph.isEnabled() && this.dblClickAction != null) {
@@ -1349,7 +1377,7 @@ export class mxEditor {
    *
    * Adds the <undoManager> to the graph model and the view.
    */
-  installUndoHandler(graph: any): void {
+  installUndoHandler(graph: mxGraph): void {
     const listener = mxUtils.bind(this, function (sender, evt) {
       const edit = evt.getProperty('edit');
       this.undoManager.undoableEditHappened(edit);
@@ -1369,7 +1397,7 @@ export class mxEditor {
    *
    * Installs listeners for dispatching the <root> event.
    */
-  installDrillHandler(graph: any): void {
+  installDrillHandler(graph: mxGraph): void {
     const listener = mxUtils.bind(this, function (sender) {
       this.fireEvent(new mxEventObject(mxEvent.ROOT));
     });
@@ -1384,7 +1412,7 @@ export class mxEditor {
    * the graph. On each change of the root, this implementation
    * fires a <root> event.
    */
-  installChangeHandler(graph: any): void {
+  installChangeHandler(graph: mxGraph): void {
     const listener = mxUtils.bind(this, function (sender, evt) {
       this.setModified(true);
       if (this.validating == true) {
@@ -1408,7 +1436,7 @@ export class mxEditor {
    * Installs the handler for invoking <insertFunction> if
    * one is defined.
    */
-  installInsertHandler(graph: any): void {
+  installInsertHandler(graph: mxGraph): void {
     const self = this;
     const insertHandler = {
       mouseDown(sender, me) {

@@ -7,8 +7,17 @@
  *
  * Constructs a new guide object.
  */
+import { mxPolyline } from '../shape/mxPolyline';
+import { mxConstants } from './mxConstants';
+import { mxPoint } from './mxPoint';
+
 export class mxGuide {
-  graph: any;
+  constructor(graph: mxGraph, states: any) {
+    this.graph = graph;
+    this.setStates(states);
+  }
+
+  graph: mxGraph;
   /**
    * Variable: states
    *
@@ -47,11 +56,6 @@ export class mxGuide {
    * Specifies if rounded coordinates should be used. Default is false.
    */
   rounded: boolean;
-
-  constructor(graph: any, states: any) {
-    this.graph = graph;
-    this.setStates(states);
-  }
 
   /**
    * Function: setStates

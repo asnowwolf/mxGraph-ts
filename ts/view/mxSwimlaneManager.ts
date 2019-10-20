@@ -14,27 +14,14 @@
  *
  * graph - Reference to the enclosing graph.
  */
-export class mxSwimlaneManager {
-  horizontal: any;
-  addEnabled: any;
-  resizeEnabled: any;
-  addHandler: Function;
-  resizeHandler: Function;
-  /**
-   * Variable: graph
-   *
-   * Reference to the enclosing <mxGraph>.
-   */
-  graph: any;
-  /**
-   * Variable: enabled
-   *
-   * Specifies if event handling is enabled. Default is true.
-   * @example true
-   */
-  enabled: boolean;
+import { mxCell } from '../model/mxCell';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
 
-  constructor(graph: any, horizontal: any, addEnabled: any, resizeEnabled: any) {
+export class mxSwimlaneManager {
+  constructor(graph: mxGraph, horizontal: any, addEnabled: any, resizeEnabled: any) {
     this.horizontal = (horizontal != null) ? horizontal : true;
     this.addEnabled = (addEnabled != null) ? addEnabled : true;
     this.resizeEnabled = (resizeEnabled != null) ? resizeEnabled : true;
@@ -50,6 +37,25 @@ export class mxSwimlaneManager {
     });
     this.setGraph(graph);
   }
+
+  horizontal: any;
+  addEnabled: any;
+  resizeEnabled: any;
+  addHandler: Function;
+  resizeHandler: Function;
+  /**
+   * Variable: graph
+   *
+   * Reference to the enclosing <mxGraph>.
+   */
+  graph: mxGraph;
+  /**
+   * Variable: enabled
+   *
+   * Specifies if event handling is enabled. Default is true.
+   * @example true
+   */
+  enabled: boolean;
 
   /**
    * Function: isEnabled
@@ -143,7 +149,7 @@ export class mxSwimlaneManager {
    *
    * Sets the graph that the manager operates on.
    */
-  setGraph(graph: any): void {
+  setGraph(graph: mxGraph): void {
     if (this.graph != null) {
       this.graph.removeListener(this.addHandler);
       this.graph.removeListener(this.resizeHandler);

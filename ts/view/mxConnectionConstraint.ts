@@ -17,12 +17,6 @@
  * projected onto the perimeter of the terminal. Default is true.
  */
 export class mxConnectionConstraint {
-  point: any;
-  perimeter: any;
-  name: string;
-  dx: number;
-  dy: number;
-
   constructor(point: any, perimeter: any, name: string, dx: number, dy: number) {
     this.point = point;
     this.perimeter = (perimeter != null) ? perimeter : true;
@@ -30,4 +24,10 @@ export class mxConnectionConstraint {
     this.dx = dx ? dx : 0;
     this.dy = dy ? dy : 0;
   }
+
+  point: any;
+  perimeter: any;
+  name: string;
+  dx: number;
+  dy: number;
 }

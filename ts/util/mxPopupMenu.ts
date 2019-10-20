@@ -24,7 +24,20 @@
  *
  * Fires after the menu has been shown in <popup>.
  */
+import { mxCell } from '../model/mxCell';
+import { mxClient } from '../mxClient';
+import { mxEvent } from './mxEvent';
+import { mxEventObject } from './mxEventObject';
+import { mxUtils } from './mxUtils';
+
 export class mxPopupMenu {
+  constructor(factoryMethod: any) {
+    this.factoryMethod = factoryMethod;
+    if (factoryMethod != null) {
+      this.init();
+    }
+  }
+
   factoryMethod: any;
   /**
    * Variable: submenuImage
@@ -84,13 +97,6 @@ export class mxPopupMenu {
   div: HTMLElement;
   eventReceiver: any;
   containsItems: boolean;
-
-  constructor(factoryMethod: any) {
-    this.factoryMethod = factoryMethod;
-    if (factoryMethod != null) {
-      this.init();
-    }
-  }
 
   /**
    * Function: init

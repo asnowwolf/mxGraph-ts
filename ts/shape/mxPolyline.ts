@@ -18,17 +18,21 @@
  * strokewidth - Optional integer that defines the stroke width. Default is
  * 1. This is stored in <strokewidth>.
  */
-export class mxPolyline {
-  points: any;
-  stroke: any;
-  strokewidth: any;
+import { mxConstants } from '../util/mxConstants';
+import { mxUtils } from '../util/mxUtils';
+import { mxShape } from './mxShape';
 
+export class mxPolyline extends mxShape {
   constructor(points: any, stroke: any, strokewidth: any) {
-    mxShape.call(this);
+    super();
     this.points = points;
     this.stroke = stroke;
     this.strokewidth = (strokewidth != null) ? strokewidth : 1;
   }
+
+  points: any;
+  stroke: any;
+  strokewidth: any;
 
   /**
    * Function: getRotation

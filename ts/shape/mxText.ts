@@ -52,7 +52,42 @@
  * This is stored in <clipped>.
  * overflow - Value of the overflow style. Default is 'visible'.
  */
-export class mxText {
+import { mxClient } from '../mxClient';
+import { mxConstants } from '../util/mxConstants';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxVmlCanvas2D } from '../util/mxVmlCanvas2D';
+import { mxShape } from './mxShape';
+
+export class mxText extends mxShape {
+  constructor(value: any, bounds: any, align: any, valign: any, color: string, family: any, size: any, fontStyle: any, spacing: any, spacingTop: any, spacingRight: any, spacingBottom: any, spacingLeft: any, horizontal: any, background: any, border: any, wrap: any, clipped: any, overflow: any, labelPadding: any, textDirection: any) {
+    super();
+    this.value = value;
+    this.bounds = bounds;
+    this.color = (color != null) ? color : 'black';
+    this.align = (align != null) ? align : mxConstants.ALIGN_CENTER;
+    this.valign = (valign != null) ? valign : mxConstants.ALIGN_MIDDLE;
+    this.family = (family != null) ? family : mxConstants.DEFAULT_FONTFAMILY;
+    this.size = (size != null) ? size : mxConstants.DEFAULT_FONTSIZE;
+    this.fontStyle = (fontStyle != null) ? fontStyle : mxConstants.DEFAULT_FONTSTYLE;
+    this.spacing = parseInt(spacing || 2);
+    this.spacingTop = this.spacing + parseInt(spacingTop || 0);
+    this.spacingRight = this.spacing + parseInt(spacingRight || 0);
+    this.spacingBottom = this.spacing + parseInt(spacingBottom || 0);
+    this.spacingLeft = this.spacing + parseInt(spacingLeft || 0);
+    this.horizontal = (horizontal != null) ? horizontal : true;
+    this.background = background;
+    this.border = border;
+    this.wrap = (wrap != null) ? wrap : false;
+    this.clipped = (clipped != null) ? clipped : false;
+    this.overflow = (overflow != null) ? overflow : 'visible';
+    this.labelPadding = (labelPadding != null) ? labelPadding : 0;
+    this.textDirection = textDirection;
+    this.rotation = 0;
+    this.updateMargin();
+  }
+
   value: any;
   bounds: any;
   color: string;
@@ -163,33 +198,6 @@ export class mxText {
   offsetHeight: any;
   unrotatedBoundingBox: any;
   margin: any;
-
-  constructor(value: any, bounds: any, align: any, valign: any, color: string, family: any, size: any, fontStyle: any, spacing: any, spacingTop: any, spacingRight: any, spacingBottom: any, spacingLeft: any, horizontal: any, background: any, border: any, wrap: any, clipped: any, overflow: any, labelPadding: any, textDirection: any) {
-    mxShape.call(this);
-    this.value = value;
-    this.bounds = bounds;
-    this.color = (color != null) ? color : 'black';
-    this.align = (align != null) ? align : mxConstants.ALIGN_CENTER;
-    this.valign = (valign != null) ? valign : mxConstants.ALIGN_MIDDLE;
-    this.family = (family != null) ? family : mxConstants.DEFAULT_FONTFAMILY;
-    this.size = (size != null) ? size : mxConstants.DEFAULT_FONTSIZE;
-    this.fontStyle = (fontStyle != null) ? fontStyle : mxConstants.DEFAULT_FONTSTYLE;
-    this.spacing = parseInt(spacing || 2);
-    this.spacingTop = this.spacing + parseInt(spacingTop || 0);
-    this.spacingRight = this.spacing + parseInt(spacingRight || 0);
-    this.spacingBottom = this.spacing + parseInt(spacingBottom || 0);
-    this.spacingLeft = this.spacing + parseInt(spacingLeft || 0);
-    this.horizontal = (horizontal != null) ? horizontal : true;
-    this.background = background;
-    this.border = border;
-    this.wrap = (wrap != null) ? wrap : false;
-    this.clipped = (clipped != null) ? clipped : false;
-    this.overflow = (overflow != null) ? overflow : 'visible';
-    this.labelPadding = (labelPadding != null) ? labelPadding : 0;
-    this.textDirection = textDirection;
-    this.rotation = 0;
-    this.updateMargin();
-  }
 
   /**
    * Function: isParseVml

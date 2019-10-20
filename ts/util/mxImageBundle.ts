@@ -44,13 +44,13 @@
  * all data URIs should be limited to 32 KB.
  */
 export class mxImageBundle {
-  images: any[];
-  alt: any;
-
   constructor(alt: any) {
     this.images = [];
     this.alt = (alt != null) ? alt : false;
   }
+
+  images: any[];
+  alt: any;
 
   /**
    * Function: putImage

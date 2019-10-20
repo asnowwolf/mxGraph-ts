@@ -66,7 +66,15 @@
  * Constructs a new object to describe the size and location of a vertex or
  * the control points of an edge.
  */
-export class mxGeometry {
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+
+export class mxGeometry extends mxRectangle {
+  constructor(x: number, y: number, width: number, height: number) {
+    super(x, y, width, height);
+  }
+
   /**
    * Variable: TRANSLATE_CONTROL_POINTS
    *
@@ -136,10 +144,6 @@ export class mxGeometry {
   y: number;
   width: number;
   height: number;
-
-  constructor(x: number, y: number, width: number, height: number) {
-    mxRectangle.call(this, x, y, width, height);
-  }
 
   /**
    * Function: swap

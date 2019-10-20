@@ -66,7 +66,15 @@
  * Constructs a new undo manager with the given history size. If no history
  * size is given, then a default size of 100 steps is used.
  */
+import { mxEvent } from './mxEvent';
+import { mxEventObject } from './mxEventObject';
+
 export class mxUndoManager {
+  constructor(size: any) {
+    this.size = (size != null) ? size : 100;
+    this.clear();
+  }
+
   size: any;
   /**
    * Variable: history
@@ -80,11 +88,6 @@ export class mxUndoManager {
    * Index of the element to be added next.
    */
   indexOfNextAdd: number;
-
-  constructor(size: any) {
-    this.size = (size != null) ? size : 100;
-    this.clear();
-  }
 
   /**
    * Function: isEmpty

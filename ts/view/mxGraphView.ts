@@ -48,8 +48,33 @@
  *
  * graph - Reference to the enclosing <mxGraph>.
  */
+import { mxCell } from '../model/mxCell';
+import { mxClient } from '../mxClient';
+import { mxImageShape } from '../shape/mxImageShape';
+import { mxRectangleShape } from '../shape/mxRectangleShape';
+import { mxConstants } from '../util/mxConstants';
+import { mxDictionary } from '../util/mxDictionary';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxLog } from '../util/mxLog';
+import { mxMouseEvent } from '../util/mxMouseEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxResources } from '../util/mxResources';
+import { mxUndoableEdit } from '../util/mxUndoableEdit';
+import { mxUtils } from '../util/mxUtils';
+import { mxCellState } from './mxCellState';
+import { mxStyleRegistry } from './mxStyleRegistry';
+
 export class mxGraphView {
-  graph: any;
+  constructor(graph: mxGraph) {
+    this.graph = graph;
+    this.translate = new mxPoint();
+    this.graphBounds = new mxRectangle();
+    this.states = new mxDictionary();
+  }
+
+  graph: mxGraph;
   translate: mxPoint;
   graphBounds: mxRectangle;
   states: mxDictionary;
@@ -160,13 +185,6 @@ export class mxGraphView {
   drawPane: any;
   overlayPane: any;
   decoratorPane: any;
-
-  constructor(graph: any) {
-    this.graph = graph;
-    this.translate = new mxPoint();
-    this.graphBounds = new mxRectangle();
-    this.states = new mxDictionary();
-  }
 
   /**
    * Function: getGraphBounds
@@ -2189,11 +2207,6 @@ export class mxGraphView {
  * Constructs a change of the current root in the given view.
  */
 export class mxCurrentRootChange {
-  view: any;
-  root: any;
-  previous: any;
-  isUp: boolean;
-
   constructor(view: any, root: any) {
     this.view = view;
     this.root = root;
@@ -2211,6 +2224,11 @@ export class mxCurrentRootChange {
       }
     }
   }
+
+  view: any;
+  root: any;
+  previous: any;
+  isUp: boolean;
 
   /**
    * Function: execute

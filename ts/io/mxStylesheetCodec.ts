@@ -1,3 +1,11 @@
+import { mxConstants } from '../util/mxConstants';
+import { mxLog } from '../util/mxLog';
+import { mxUtils } from '../util/mxUtils';
+import { mxStyleRegistry } from '../view/mxStyleRegistry';
+import { mxStylesheet } from '../view/mxStylesheet';
+import { mxCodecRegistry } from './mxCodecRegistry';
+import { mxObjectCodec } from './mxObjectCodec';
+
 export let mxStylesheetCodec = mxCodecRegistry.register(function () {
   const codec = new mxObjectCodec(new mxStylesheet());
   codec.encode = function (enc, obj) {
@@ -49,7 +57,7 @@ export let mxStylesheetCodec = mxCodecRegistry.register(function () {
             if (extend != null) {
               mxLog.warn('mxStylesheetCodec.decode: stylesheet ' + extend + ' not found to extend');
             }
-            style = new Object();
+            style = {};
           }
           let entry = node.firstChild;
           while (entry != null) {

@@ -1,3 +1,6 @@
+import { mxClient } from '../mxClient';
+import { mxRectangle } from './mxRectangle';
+
 export let mxConstants = {
   DEFAULT_HOTSPOT: 0.3,
   MIN_HOTSPOT_SIZE: 8,

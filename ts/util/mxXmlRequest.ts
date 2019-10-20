@@ -81,7 +81,19 @@
  * username - String specifying the username to be used for the request.
  * password - String specifying the password to be used for the request.
  */
+import { mxClient } from '../mxClient';
+import { mxUtils } from './mxUtils';
+
 export class mxXmlRequest {
+  constructor(url: string, params: any, method: any, async: any, username: any, password: any) {
+    this.url = url;
+    this.params = params;
+    this.method = method || 'POST';
+    this.async = (async != null) ? async : true;
+    this.username = username;
+    this.password = password;
+  }
+
   url: string;
   params: any;
   method: any;
@@ -123,15 +135,6 @@ export class mxXmlRequest {
    * Creates and returns the inner <request> object.
    */
   create: any;
-
-  constructor(url: string, params: any, method: any, async: any, username: any, password: any) {
-    this.url = url;
-    this.params = params;
-    this.method = method || 'POST';
-    this.async = (async != null) ? async : true;
-    this.username = username;
-    this.password = password;
-  }
 
   /**
    * Function: isBinary

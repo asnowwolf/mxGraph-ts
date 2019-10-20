@@ -50,7 +50,46 @@
  * added. The style section sets the default font-size, font-family and
  * stroke-miterlimit globally. Default is false.
  */
-export class mxSvgCanvas2D {
+import { mxClient } from '../mxClient';
+import { mxAbstractCanvas2D } from './mxAbstractCanvas2D';
+import { mxConstants } from './mxConstants';
+import { mxRectangle } from './mxRectangle';
+import { mxUtils } from './mxUtils';
+
+export class mxSvgCanvas2D extends mxAbstractCanvas2D {
+  constructor(root: any, styleEnabled: any) {
+    super();
+    this.root = root;
+    this.gradients = [];
+    this.defs = null;
+    this.styleEnabled = (styleEnabled != null) ? styleEnabled : false;
+    let svg = null;
+    if (root.ownerDocument != document) {
+      let node = root;
+      while (node != null && node.nodeName != 'svg') {
+        node = node.parentNode;
+      }
+      svg = node;
+    }
+    if (svg != null) {
+      const tmp = svg.getElementsByTagName('defs');
+      if (tmp.length > 0) {
+        this.defs = svg.getElementsByTagName('defs')[0];
+      }
+      if (this.defs == null) {
+        this.defs = this.createElement('defs');
+        if (svg.firstChild != null) {
+          svg.insertBefore(this.defs, svg.firstChild);
+        } else {
+          svg.appendChild(this.defs);
+        }
+      }
+      if (this.styleEnabled) {
+        this.defs.appendChild(this.createStyle());
+      }
+    }
+  }
+
   /**
    * Variable: root
    *
@@ -183,39 +222,6 @@ export class mxSvgCanvas2D {
    */
   cacheOffsetSize: boolean;
   originalRoot: any;
-
-  constructor(root: any, styleEnabled: any) {
-    mxAbstractCanvas2D.call(this);
-    this.root = root;
-    this.gradients = [];
-    this.defs = null;
-    this.styleEnabled = (styleEnabled != null) ? styleEnabled : false;
-    let svg = null;
-    if (root.ownerDocument != document) {
-      let node = root;
-      while (node != null && node.nodeName != 'svg') {
-        node = node.parentNode;
-      }
-      svg = node;
-    }
-    if (svg != null) {
-      const tmp = svg.getElementsByTagName('defs');
-      if (tmp.length > 0) {
-        this.defs = svg.getElementsByTagName('defs')[0];
-      }
-      if (this.defs == null) {
-        this.defs = this.createElement('defs');
-        if (svg.firstChild != null) {
-          svg.insertBefore(this.defs, svg.firstChild);
-        } else {
-          svg.appendChild(this.defs);
-        }
-      }
-      if (this.styleEnabled) {
-        this.defs.appendChild(this.createStyle());
-      }
-    }
-  }
 
   /**
    * Function: format

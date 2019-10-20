@@ -22,8 +22,20 @@
  * graph - Reference to the enclosing <mxGraph>.
  * delay - Optional delay in milliseconds.
  */
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxTooltipHandler {
-  graph: any;
+  constructor(graph: mxGraph, delay: any) {
+    if (graph != null) {
+      this.graph = graph;
+      this.delay = delay || 500;
+      this.graph.addMouseListener(this);
+    }
+  }
+
+  graph: mxGraph;
   delay: any;
   /**
    * Variable: zIndex
@@ -66,14 +78,6 @@ export class mxTooltipHandler {
   state: any;
   node: Node;
   stateSource: any;
-
-  constructor(graph: any, delay: any) {
-    if (graph != null) {
-      this.graph = graph;
-      this.delay = delay || 500;
-      this.graph.addMouseListener(this);
-    }
-  }
 
   /**
    * Function: isEnabled

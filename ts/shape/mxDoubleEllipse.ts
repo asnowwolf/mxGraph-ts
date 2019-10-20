@@ -39,7 +39,20 @@
  * strokewidth - Optional integer that defines the stroke width. Default is
  * 1. This is stored in <strokewidth>.
  */
-export class mxDoubleEllipse {
+import { mxConstants } from '../util/mxConstants';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxShape } from './mxShape';
+
+export class mxDoubleEllipse extends mxShape {
+  constructor(bounds: any, fill: any, stroke: any, strokewidth: any) {
+    super();
+    this.bounds = bounds;
+    this.fill = fill;
+    this.stroke = stroke;
+    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
+  }
+
   bounds: any;
   fill: any;
   stroke: any;
@@ -51,14 +64,6 @@ export class mxDoubleEllipse {
    * @example 10
    */
   vmlScale: number;
-
-  constructor(bounds: any, fill: any, stroke: any, strokewidth: any) {
-    mxShape.call(this);
-    this.bounds = bounds;
-    this.fill = fill;
-    this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
-  }
 
   /**
    * Function: paintBackground

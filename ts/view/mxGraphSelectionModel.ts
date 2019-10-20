@@ -37,8 +37,21 @@
  *
  * graph - Reference to the enclosing <mxGraph>.
  */
+import { mxCell } from '../model/mxCell';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxLog } from '../util/mxLog';
+import { mxResources } from '../util/mxResources';
+import { mxUndoableEdit } from '../util/mxUndoableEdit';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxGraphSelectionModel {
-  graph: any;
+  constructor(graph: mxGraph) {
+    this.graph = graph;
+    this.cells = [];
+  }
+
+  graph: mxGraph;
   cells: any[];
   /**
    * Variable: doneResource
@@ -63,11 +76,6 @@ export class mxGraphSelectionModel {
    * Default is false.
    */
   singleSelection: boolean;
-
-  constructor(graph: any) {
-    this.graph = graph;
-    this.cells = [];
-  }
 
   /**
    * Function: isSingleSelection
@@ -317,15 +325,15 @@ export class mxGraphSelectionModel {
  * Constructs a change of the current root in the given view.
  */
 export class mxSelectionChange {
-  selectionModel: any;
-  added: any;
-  removed: any;
-
   constructor(selectionModel: any, added: any, removed: any) {
     this.selectionModel = selectionModel;
     this.added = (added != null) ? added.slice() : null;
     this.removed = (removed != null) ? removed.slice() : null;
   }
+
+  selectionModel: any;
+  added: any;
+  removed: any;
 
   /**
    * Function: execute

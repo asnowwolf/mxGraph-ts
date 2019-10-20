@@ -56,7 +56,22 @@
  *
  * Constructs a new shape.
  */
+import { mxClient } from '../mxClient';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxSvgCanvas2D } from '../util/mxSvgCanvas2D';
+import { mxUtils } from '../util/mxUtils';
+import { mxVmlCanvas2D } from '../util/mxVmlCanvas2D';
+import { mxText } from './mxText';
+
 export class mxShape {
+  constructor(stencil: any) {
+    this.stencil = stencil;
+    this.initStyles();
+  }
+
   stencil: any;
   /**
    * Variable: dialect
@@ -224,11 +239,6 @@ export class mxShape {
   isRounded: boolean;
   glass: any;
   cursor: any;
-
-  constructor(stencil: any) {
-    this.stencil = stencil;
-    this.initStyles();
-  }
 
   /**
    * Function: init

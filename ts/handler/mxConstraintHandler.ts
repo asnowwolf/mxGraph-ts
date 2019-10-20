@@ -16,8 +16,33 @@
  * the source and target <mxCell> as the first and second argument and
  * returns the <mxCell> that represents the new edge.
  */
+import { mxClient } from '../mxClient';
+import { mxImageShape } from '../shape/mxImageShape';
+import { mxRectangleShape } from '../shape/mxRectangleShape';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxImage } from '../util/mxImage';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxConstraintHandler {
-  graph: any;
+  constructor(graph: mxGraph) {
+    this.graph = graph;
+    this.resetHandler = mxUtils.bind(this, function (sender, evt) {
+      if (this.currentFocus != null && this.graph.view.getState(this.currentFocus.cell) == null) {
+        this.reset();
+      } else {
+        this.redraw();
+      }
+    });
+    this.graph.model.addListener(mxEvent.CHANGE, this.resetHandler);
+    this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.resetHandler);
+    this.graph.view.addListener(mxEvent.TRANSLATE, this.resetHandler);
+    this.graph.view.addListener(mxEvent.SCALE, this.resetHandler);
+    this.graph.addListener(mxEvent.ROOT, this.resetHandler);
+  }
+
+  graph: mxGraph;
   resetHandler: Function;
   /**
    * Variable: pointImage
@@ -47,22 +72,6 @@ export class mxConstraintHandler {
   focusPoints: any;
   mouseleaveHandler: Function;
   constraints: any;
-
-  constructor(graph: any) {
-    this.graph = graph;
-    this.resetHandler = mxUtils.bind(this, function (sender, evt) {
-      if (this.currentFocus != null && this.graph.view.getState(this.currentFocus.cell) == null) {
-        this.reset();
-      } else {
-        this.redraw();
-      }
-    });
-    this.graph.model.addListener(mxEvent.CHANGE, this.resetHandler);
-    this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.resetHandler);
-    this.graph.view.addListener(mxEvent.TRANSLATE, this.resetHandler);
-    this.graph.view.addListener(mxEvent.SCALE, this.resetHandler);
-    this.graph.addListener(mxEvent.ROOT, this.resetHandler);
-  }
 
   /**
    * Function: isEnabled

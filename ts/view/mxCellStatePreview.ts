@@ -11,20 +11,24 @@
  *
  * graph - Reference to the enclosing <mxGraph>.
  */
+import { mxDictionary } from '../util/mxDictionary';
+import { mxPoint } from '../util/mxPoint';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxCellStatePreview {
+  constructor(graph: mxGraph) {
+    this.deltas = new mxDictionary();
+    this.graph = graph;
+  }
+
   deltas: mxDictionary;
-  graph: any;
+  graph: mxGraph;
   /**
    * Variable: count
    *
    * Contains the number of entries in the map.
    */
   count: number;
-
-  constructor(graph: any) {
-    this.deltas = new mxDictionary();
-    this.graph = graph;
-  }
 
   /**
    * Function: isEmpty

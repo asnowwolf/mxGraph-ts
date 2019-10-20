@@ -154,8 +154,38 @@
  * optional cell style from the preview as the third argument. It returns
  * the <mxCell> that represents the new edge.
  */
-export class mxConnectionHandler {
-  graph: any;
+import { mxCell } from '../model/mxCell';
+import { mxGeometry } from '../model/mxGeometry';
+import { mxImageShape } from '../shape/mxImageShape';
+import { mxPolyline } from '../shape/mxPolyline';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxEventSource } from '../util/mxEventSource';
+import { mxLog } from '../util/mxLog';
+import { mxMouseEvent } from '../util/mxMouseEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from '../view/mxGraph';
+import { mxCellMarker } from './mxCellMarker';
+import { mxConstraintHandler } from './mxConstraintHandler';
+
+export class mxConnectionHandler extends mxEventSource {
+  constructor(graph: mxGraph, factoryMethod: any) {
+    super();
+    if (graph != null) {
+      this.graph = graph;
+      this.factoryMethod = factoryMethod;
+      this.init();
+      this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
+        this.reset();
+      });
+      this.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
+    }
+  }
+
+  graph: mxGraph;
   factoryMethod: any;
   escapeHandler: Function;
   /**
@@ -337,19 +367,6 @@ export class mxConnectionHandler {
   currentState: any;
   currentPoint: any;
   originalPoint: any;
-
-  constructor(graph: any, factoryMethod: any) {
-    mxEventSource.call(this);
-    if (graph != null) {
-      this.graph = graph;
-      this.factoryMethod = factoryMethod;
-      this.init();
-      this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
-        this.reset();
-      });
-      this.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
-    }
-  }
 
   /**
    * Function: isEnabled

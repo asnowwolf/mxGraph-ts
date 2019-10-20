@@ -20,7 +20,13 @@
  *
  * Constructs a new event source.
  */
+import { mxEventObject } from './mxEventObject';
+
 export class mxEventSource {
+  constructor(eventSource: any = null) {
+    this.setEventSource(eventSource);
+  }
+
   /**
    * Variable: eventListeners
    *
@@ -42,10 +48,6 @@ export class mxEventSource {
    * Optional source for events. Default is null.
    */
   eventSource: any;
-
-  constructor(eventSource: any) {
-    this.setEventSource(eventSource);
-  }
 
   /**
    * Function: isEventsEnabled

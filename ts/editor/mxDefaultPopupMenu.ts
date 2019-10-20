@@ -26,7 +26,15 @@
  *
  * config - XML node that contains the configuration data.
  */
+import { mxCell } from '../model/mxCell';
+import { mxResources } from '../util/mxResources';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxDefaultPopupMenu {
+  constructor(config: any) {
+    this.config = config;
+  }
+
   config: any;
   /**
    * Variable: imageBasePath
@@ -34,10 +42,6 @@ export class mxDefaultPopupMenu {
    * Base path for all icon attributes in the config. Default is null.
    */
   imageBasePath: any;
-
-  constructor(config: any) {
-    this.config = config;
-  }
 
   /**
    * Function: createMenu

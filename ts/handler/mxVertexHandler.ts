@@ -13,7 +13,36 @@
  *
  * state - <mxCellState> of the cell to be resized.
  */
+import { mxCell } from '../model/mxCell';
+import { mxClient } from '../mxClient';
+import { mxEllipse } from '../shape/mxEllipse';
+import { mxImageShape } from '../shape/mxImageShape';
+import { mxRectangleShape } from '../shape/mxRectangleShape';
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxUtils } from '../util/mxUtils';
+import { mxGraphHandler } from './mxGraphHandler';
+
 export class mxVertexHandler {
+  constructor(state: any) {
+    if (state != null) {
+      this.state = state;
+      this.init();
+      this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
+        if (this.livePreview && this.index != null) {
+          this.state.view.graph.cellRenderer.redraw(this.state, true);
+          this.state.view.invalidate(this.state.cell);
+          this.state.invalid = false;
+          this.state.view.validate();
+        }
+        this.reset();
+      });
+      this.state.view.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
+    }
+  }
+
   state: any;
   escapeHandler: Function;
   /**
@@ -21,7 +50,7 @@ export class mxVertexHandler {
    *
    * Reference to the enclosing <mxGraph>.
    */
-  graph: any;
+  graph: mxGraph;
   /**
    * Variable: singleSizer
    *
@@ -148,23 +177,6 @@ export class mxVertexHandler {
   currentAlpha: any;
   unscaledBounds: any;
   parentHighlight: any;
-
-  constructor(state: any) {
-    if (state != null) {
-      this.state = state;
-      this.init();
-      this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
-        if (this.livePreview && this.index != null) {
-          this.state.view.graph.cellRenderer.redraw(this.state, true);
-          this.state.view.invalidate(this.state.cell);
-          this.state.invalid = false;
-          this.state.view.validate();
-        }
-        this.reset();
-      });
-      this.state.view.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
-    }
-  }
 
   /**
    * Function: init

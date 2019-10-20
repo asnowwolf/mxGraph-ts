@@ -39,22 +39,26 @@
  *
  * editor - Reference to the enclosing <mxEditor>.
  */
+import { mxKeyHandler } from '../handler/mxKeyHandler';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxUtils } from '../util/mxUtils';
+import { mxEditor } from './mxEditor';
+
 export class mxDefaultKeyHandler {
+  constructor(editor: mxEditor) {
+    this.editor = editor;
+    this.handler = new mxKeyHandler(editor.graph);
+    const old = this.handler.escape;
+    this.handler.escape = function (evt) {
+      old.apply(this, arguments);
+      editor.hideProperties();
+      editor.fireEvent(new mxEventObject(mxEvent.ESCAPE, 'event', evt));
+    };
+  }
+
   editor: any;
   handler: mxKeyHandler;
-
-  constructor(editor: any) {
-    if (editor != null) {
-      this.editor = editor;
-      this.handler = new mxKeyHandler(editor.graph);
-      const old = this.handler.escape;
-      this.handler.escape = function (evt) {
-        old.apply(this, arguments);
-        editor.hideProperties();
-        editor.fireEvent(new mxEventObject(mxEvent.ESCAPE, 'event', evt));
-      };
-    }
-  }
 
   /**
    * Function: bindAction
@@ -90,6 +94,5 @@ export class mxDefaultKeyHandler {
    */
   destroy(): void {
     this.handler.destroy();
-    this.handler = null;
   }
 }

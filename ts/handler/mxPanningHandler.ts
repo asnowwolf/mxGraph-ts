@@ -27,8 +27,64 @@
  * Fires when the panning handler changes its <active> state to false. The
  * <code>event</code> property contains the corresponding <mxMouseEvent>.
  */
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxPanningHandler {
-  graph: any;
+  constructor(graph: mxGraph) {
+    if (graph != null) {
+      this.graph = graph;
+      this.graph.addMouseListener(this);
+      this.forcePanningHandler = mxUtils.bind(this, function (sender, evt) {
+        const evtName = evt.getProperty('eventName');
+        const me = evt.getProperty('event');
+        if (evtName == mxEvent.MOUSE_DOWN && this.isForcePanningEvent(me)) {
+          this.start(me);
+          this.active = true;
+          this.fireEvent(new mxEventObject(mxEvent.PAN_START, 'event', me));
+          me.consume();
+        }
+      });
+      this.graph.addListener(mxEvent.FIRE_MOUSE_EVENT, this.forcePanningHandler);
+      this.gestureHandler = mxUtils.bind(this, function (sender, eo) {
+        if (this.isPinchEnabled()) {
+          const evt = eo.getProperty('event');
+          if (!mxEvent.isConsumed(evt) && evt.type == 'gesturestart') {
+            this.initialScale = this.graph.view.scale;
+            if (!this.active && this.mouseDownEvent != null) {
+              this.start(this.mouseDownEvent);
+              this.mouseDownEvent = null;
+            }
+          } else if (evt.type == 'gestureend' && this.initialScale != null) {
+            this.initialScale = null;
+          }
+          if (this.initialScale != null) {
+            let value = Math.round(this.initialScale * evt.scale * 100) / 100;
+            if (this.minScale != null) {
+              value = Math.max(this.minScale, value);
+            }
+            if (this.maxScale != null) {
+              value = Math.min(this.maxScale, value);
+            }
+            if (this.graph.view.scale != value) {
+              this.graph.zoomTo(value);
+              mxEvent.consume(evt);
+            }
+          }
+        }
+      });
+      this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
+      this.mouseUpListener = mxUtils.bind(this, function () {
+        if (this.active) {
+          this.reset();
+        }
+      });
+      mxEvent.addListener(document, 'mouseup', this.mouseUpListener);
+    }
+  }
+
+  graph: mxGraph;
   forcePanningHandler: Function;
   /**
    * @example true
@@ -131,58 +187,6 @@ export class mxPanningHandler {
    * @example true
    */
   panningTrigger: boolean;
-
-  constructor(graph: any) {
-    if (graph != null) {
-      this.graph = graph;
-      this.graph.addMouseListener(this);
-      this.forcePanningHandler = mxUtils.bind(this, function (sender, evt) {
-        const evtName = evt.getProperty('eventName');
-        const me = evt.getProperty('event');
-        if (evtName == mxEvent.MOUSE_DOWN && this.isForcePanningEvent(me)) {
-          this.start(me);
-          this.active = true;
-          this.fireEvent(new mxEventObject(mxEvent.PAN_START, 'event', me));
-          me.consume();
-        }
-      });
-      this.graph.addListener(mxEvent.FIRE_MOUSE_EVENT, this.forcePanningHandler);
-      this.gestureHandler = mxUtils.bind(this, function (sender, eo) {
-        if (this.isPinchEnabled()) {
-          const evt = eo.getProperty('event');
-          if (!mxEvent.isConsumed(evt) && evt.type == 'gesturestart') {
-            this.initialScale = this.graph.view.scale;
-            if (!this.active && this.mouseDownEvent != null) {
-              this.start(this.mouseDownEvent);
-              this.mouseDownEvent = null;
-            }
-          } else if (evt.type == 'gestureend' && this.initialScale != null) {
-            this.initialScale = null;
-          }
-          if (this.initialScale != null) {
-            let value = Math.round(this.initialScale * evt.scale * 100) / 100;
-            if (this.minScale != null) {
-              value = Math.max(this.minScale, value);
-            }
-            if (this.maxScale != null) {
-              value = Math.min(this.maxScale, value);
-            }
-            if (this.graph.view.scale != value) {
-              this.graph.zoomTo(value);
-              mxEvent.consume(evt);
-            }
-          }
-        }
-      });
-      this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
-      this.mouseUpListener = mxUtils.bind(this, function () {
-        if (this.active) {
-          this.reset();
-        }
-      });
-      mxEvent.addListener(document, 'mouseup', this.mouseUpListener);
-    }
-  }
 
   /**
    * Function: isActive

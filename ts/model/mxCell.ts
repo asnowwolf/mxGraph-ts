@@ -60,7 +60,19 @@
  * geometry - Optional <mxGeometry> that specifies the geometry.
  * style - Optional formatted string that defines the style.
  */
+import { mxConstants } from '../util/mxConstants';
+import { mxUtils } from '../util/mxUtils';
+
 export class mxCell {
+  constructor(value: any, geometry: any, style: any) {
+    this.value = value;
+    this.setGeometry(geometry);
+    this.setStyle(style);
+    if (this.onInit != null) {
+      this.onInit();
+    }
+  }
+
   value: any;
   /**
    * Variable: id
@@ -153,15 +165,6 @@ export class mxCell {
    * the language.
    */
   mxTransient: string[];
-
-  constructor(value: any, geometry: any, style: any) {
-    this.value = value;
-    this.setGeometry(geometry);
-    this.setStyle(style);
-    if (this.onInit != null) {
-      this.onInit();
-    }
-  }
 
   /**
    * Function: getId

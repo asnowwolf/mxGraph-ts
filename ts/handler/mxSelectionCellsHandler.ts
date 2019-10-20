@@ -20,27 +20,17 @@
  *
  * graph - Reference to the enclosing <mxGraph>.
  */
-export class mxSelectionCellsHandler {
-  graph: any;
-  handlers: mxDictionary;
-  refreshHandler: Function;
-  /**
-   * Variable: enabled
-   *
-   * Specifies if events are handled. Default is true.
-   * @example true
-   */
-  enabled: boolean;
-  /**
-   * Variable: maxHandlers
-   *
-   * Defines the maximum number of handlers to paint individually. Default is 100.
-   * @example 100
-   */
-  maxHandlers: number;
+import { mxCell } from '../model/mxCell';
+import { mxDictionary } from '../util/mxDictionary';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxEventSource } from '../util/mxEventSource';
+import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from '../view/mxGraph';
 
-  constructor(graph: any) {
-    mxEventSource.call(this);
+export class mxSelectionCellsHandler extends mxEventSource {
+  constructor(graph: mxGraph) {
+    super();
     this.graph = graph;
     this.handlers = new mxDictionary();
     this.graph.addMouseListener(this);
@@ -57,6 +47,24 @@ export class mxSelectionCellsHandler {
     this.graph.getView().addListener(mxEvent.DOWN, this.refreshHandler);
     this.graph.getView().addListener(mxEvent.UP, this.refreshHandler);
   }
+
+  graph: mxGraph;
+  handlers: mxDictionary;
+  refreshHandler: Function;
+  /**
+   * Variable: enabled
+   *
+   * Specifies if events are handled. Default is true.
+   * @example true
+   */
+  enabled: boolean;
+  /**
+   * Variable: maxHandlers
+   *
+   * Defines the maximum number of handlers to paint individually. Default is 100.
+   * @example 100
+   */
+  maxHandlers: number;
 
   /**
    * Function: isEnabled

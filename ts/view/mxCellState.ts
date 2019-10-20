@@ -23,7 +23,19 @@
  * cell - <mxCell> that this state represents.
  * style - Array of key, value pairs that constitute the style.
  */
+import { mxCell } from '../model/mxCell';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+
 export class mxCellState {
+  constructor(view: any, cell: mxCell, style: any) {
+    this.view = view;
+    this.cell = cell;
+    this.style = (style != null) ? style : {};
+    this.origin = new mxPoint();
+    this.absoluteOffset = new mxPoint();
+  }
+
   view: any;
   cell: mxCell;
   style: any;
@@ -106,14 +118,6 @@ export class mxCellState {
   y: number;
   width: number;
   height: number;
-
-  constructor(view: any, cell: mxCell, style: any) {
-    this.view = view;
-    this.cell = cell;
-    this.style = (style != null) ? style : {};
-    this.origin = new mxPoint();
-    this.absoluteOffset = new mxPoint();
-  }
 
   /**
    * Function: getPerimeterBounds

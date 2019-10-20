@@ -16,7 +16,14 @@
  *
  * Constructs a new fast organic layout for the specified graph.
  */
-export class mxFastOrganicLayout {
+import { mxObjectIdentity } from '../util/mxObjectIdentity';
+import { mxGraphLayout } from './mxGraphLayout';
+
+export class mxFastOrganicLayout extends mxGraphLayout {
+  constructor(graph: mxGraph) {
+    super(graph);
+  }
+
   /**
    * Variable: useInputOrigin
    *
@@ -166,10 +173,6 @@ export class mxFastOrganicLayout {
    * @example true
    */
   allowedToRun: boolean;
-
-  constructor(graph: any) {
-    mxGraphLayout.call(this, graph);
-  }
 
   /**
    * Function: isVertexIgnored

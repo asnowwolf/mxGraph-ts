@@ -17,7 +17,18 @@
  *
  * container - DOM node that contains the toolbar.
  */
+import { mxClient } from '../mxClient';
+import { mxEvent } from './mxEvent';
+import { mxEventObject } from './mxEventObject';
+import { mxPoint } from './mxPoint';
+import { mxPopupMenu } from './mxPopupMenu';
+import { mxUtils } from './mxUtils';
+
 export class mxToolbar {
+  constructor(container: HTMLElement) {
+    this.container = container;
+  }
+
   container: HTMLElement;
   /**
    * Variable: enabled
@@ -53,10 +64,6 @@ export class mxToolbar {
   defaultMode: any;
   selectedMode: any;
   defaultFunction: any;
-
-  constructor(container: HTMLElement) {
-    this.container = container;
-  }
 
   /**
    * Function: addItem

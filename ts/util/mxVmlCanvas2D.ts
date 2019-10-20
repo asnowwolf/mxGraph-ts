@@ -28,6 +28,11 @@
  * bounding box of rotated shapes, not the actual bounds of the shape. See
  * also <text> for plain text label restrictions in shapes for VML.
  */
+import { mxClient } from '../mxClient';
+import { mxAbstractCanvas2D } from './mxAbstractCanvas2D';
+import { mxConstants } from './mxConstants';
+import { mxUtils } from './mxUtils';
+
 export class mxVmlCanvas2D {
   /**
    * Variable: root

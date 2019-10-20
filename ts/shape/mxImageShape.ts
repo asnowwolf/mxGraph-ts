@@ -19,7 +19,23 @@
  * strokewidth - Optional integer that defines the stroke width. Default is
  * 0. This is stored in <strokewidth>.
  */
-export class mxImageShape {
+import { mxClient } from '../mxClient';
+import { mxConstants } from '../util/mxConstants';
+import { mxUtils } from '../util/mxUtils';
+import { mxRectangleShape } from './mxRectangleShape';
+import { mxShape } from './mxShape';
+
+export class mxImageShape extends mxShape {
+  constructor(bounds: any, image: any, fill: any, stroke: any, strokewidth: any) {
+    super();
+    this.bounds = bounds;
+    this.image = image;
+    this.fill = fill;
+    this.stroke = stroke;
+    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
+    this.shadow = false;
+  }
+
   bounds: any;
   image: any;
   fill: any;
@@ -36,16 +52,6 @@ export class mxImageShape {
   gradient: any;
   flipH: any;
   flipV: any;
-
-  constructor(bounds: any, image: any, fill: any, stroke: any, strokewidth: any) {
-    mxShape.call(this);
-    this.bounds = bounds;
-    this.image = image;
-    this.fill = fill;
-    this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
-    this.shadow = false;
-  }
 
   /**
    * Function: getSvgScreenOffset

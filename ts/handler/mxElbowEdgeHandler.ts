@@ -14,7 +14,20 @@
  *
  * state - <mxCellState> of the cell to be modified.
  */
-export class mxElbowEdgeHandler {
+import { mxConstants } from '../util/mxConstants';
+import { mxEvent } from '../util/mxEvent';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxResources } from '../util/mxResources';
+import { mxUtils } from '../util/mxUtils';
+import { mxEdgeStyle } from '../view/mxEdgeStyle';
+import { mxEdgeHandler } from './mxEdgeHandler';
+
+export class mxElbowEdgeHandler extends mxEdgeHandler {
+  constructor(state: any) {
+    super(state);
+  }
+
   /**
    * Specifies if a double click on the middle handle should call
    * <mxGraph.flipEdge>. Default is true.
@@ -30,10 +43,6 @@ export class mxElbowEdgeHandler {
    * 'doubleClickOrientation'.
    */
   doubleClickOrientationResource: any;
-
-  constructor(state: any) {
-    mxEdgeHandler.call(this, state);
-  }
 
   /**
    * Function: createBends

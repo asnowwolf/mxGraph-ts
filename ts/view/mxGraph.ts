@@ -629,7 +629,84 @@
  * performance. Default is mxConstants.DIALECT_MIXEDHTML (for IE).
  * stylesheet - Optional <mxStylesheet> to be used in the graph.
  */
+import { mxConnectionHandler } from '../handler/mxConnectionHandler';
+import { mxEdgeHandler } from '../handler/mxEdgeHandler';
+import { mxEdgeSegmentHandler } from '../handler/mxEdgeSegmentHandler';
+import { mxElbowEdgeHandler } from '../handler/mxElbowEdgeHandler';
+import { mxGraphHandler } from '../handler/mxGraphHandler';
+import { mxPanningHandler } from '../handler/mxPanningHandler';
+import { mxPopupMenuHandler } from '../handler/mxPopupMenuHandler';
+import { mxSelectionCellsHandler } from '../handler/mxSelectionCellsHandler';
+import { mxTooltipHandler } from '../handler/mxTooltipHandler';
+import { mxVertexHandler } from '../handler/mxVertexHandler';
+import { mxCell } from '../model/mxCell';
+import { mxGeometry } from '../model/mxGeometry';
+import {
+  mxChildChange,
+  mxGeometryChange,
+  mxGraphModel,
+  mxRootChange,
+  mxStyleChange,
+  mxTerminalChange,
+  mxValueChange,
+} from '../model/mxGraphModel';
+import { mxClient } from '../mxClient';
+import { mxLabel } from '../shape/mxLabel';
+import { mxPolyline } from '../shape/mxPolyline';
+import { mxRectangleShape } from '../shape/mxRectangleShape';
+import { mxConstants } from '../util/mxConstants';
+import { mxDictionary } from '../util/mxDictionary';
+import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
+import { mxImage } from '../util/mxImage';
+import { mxMouseEvent } from '../util/mxMouseEvent';
+import { mxPanningManager } from '../util/mxPanningManager';
+import { mxPoint } from '../util/mxPoint';
+import { mxRectangle } from '../util/mxRectangle';
+import { mxResources } from '../util/mxResources';
+import { mxUtils } from '../util/mxUtils';
+import { mxCellEditor } from './mxCellEditor';
+import { mxCellOverlay } from './mxCellOverlay';
+import { mxCellRenderer } from './mxCellRenderer';
+import { mxConnectionConstraint } from './mxConnectionConstraint';
+import { mxEdgeStyle } from './mxEdgeStyle';
+import { mxGraphSelectionModel } from './mxGraphSelectionModel';
+import { mxGraphView } from './mxGraphView';
+import { mxStylesheet } from './mxStylesheet';
+
 export class mxGraph {
+  constructor(container: HTMLElement, model: any, renderHint: any, stylesheet: any) {
+    this.mouseListeners = null;
+    this.renderHint = renderHint;
+    if (mxClient.IS_SVG) {
+      this.dialect = mxConstants.DIALECT_SVG;
+    } else if (renderHint == mxConstants.RENDERING_HINT_EXACT && mxClient.IS_VML) {
+      this.dialect = mxConstants.DIALECT_VML;
+    } else if (renderHint == mxConstants.RENDERING_HINT_FASTEST) {
+      this.dialect = mxConstants.DIALECT_STRICTHTML;
+    } else if (renderHint == mxConstants.RENDERING_HINT_FASTER) {
+      this.dialect = mxConstants.DIALECT_PREFERHTML;
+    } else {
+      this.dialect = mxConstants.DIALECT_MIXEDHTML;
+    }
+    this.model = (model != null) ? model : new mxGraphModel();
+    this.multiplicities = [];
+    this.imageBundles = [];
+    this.cellRenderer = this.createCellRenderer();
+    this.setSelectionModel(this.createSelectionModel());
+    this.setStylesheet((stylesheet != null) ? stylesheet : this.createStylesheet());
+    this.view = this.createGraphView();
+    this.graphModelChangeListener = mxUtils.bind(this, function (sender, evt) {
+      this.graphModelChanged(evt.getProperty('edit').changes);
+    });
+    this.model.addListener(mxEvent.CHANGE, this.graphModelChangeListener);
+    this.createHandlers();
+    if (container != null) {
+      this.init(container);
+    }
+    this.view.revalidate();
+  }
+
   mouseListeners: any;
   renderHint: any;
   dialect: any;
@@ -1488,38 +1565,6 @@ export class mxGraph {
    * @example true
    */
   destroyed: boolean;
-
-  constructor(container: HTMLElement, model: any, renderHint: any, stylesheet: any) {
-    this.mouseListeners = null;
-    this.renderHint = renderHint;
-    if (mxClient.IS_SVG) {
-      this.dialect = mxConstants.DIALECT_SVG;
-    } else if (renderHint == mxConstants.RENDERING_HINT_EXACT && mxClient.IS_VML) {
-      this.dialect = mxConstants.DIALECT_VML;
-    } else if (renderHint == mxConstants.RENDERING_HINT_FASTEST) {
-      this.dialect = mxConstants.DIALECT_STRICTHTML;
-    } else if (renderHint == mxConstants.RENDERING_HINT_FASTER) {
-      this.dialect = mxConstants.DIALECT_PREFERHTML;
-    } else {
-      this.dialect = mxConstants.DIALECT_MIXEDHTML;
-    }
-    this.model = (model != null) ? model : new mxGraphModel();
-    this.multiplicities = [];
-    this.imageBundles = [];
-    this.cellRenderer = this.createCellRenderer();
-    this.setSelectionModel(this.createSelectionModel());
-    this.setStylesheet((stylesheet != null) ? stylesheet : this.createStylesheet());
-    this.view = this.createGraphView();
-    this.graphModelChangeListener = mxUtils.bind(this, function (sender, evt) {
-      this.graphModelChanged(evt.getProperty('edit').changes);
-    });
-    this.model.addListener(mxEvent.CHANGE, this.graphModelChangeListener);
-    this.createHandlers();
-    if (container != null) {
-      this.init(container);
-    }
-    this.view.revalidate();
-  }
 
   /**
    * Function: init
@@ -2714,7 +2759,7 @@ export class mxGraph {
       style = this.postProcessCellStyle(this.stylesheet.getCellStyle(stylename, style));
     }
     if (style == null) {
-      style = new Object();
+      style = {};
     }
     return style;
   }
@@ -6466,14 +6511,14 @@ export class mxGraph {
    */
   validateGraph(cell: mxCell, context: any): any {
     cell = (cell != null) ? cell : this.model.getRoot();
-    context = (context != null) ? context : new Object();
+    context = (context != null) ? context : {};
     let isValid = true;
     const childCount = this.model.getChildCount(cell);
     for (let i = 0; i < childCount; i++) {
       const tmp = this.model.getChildAt(cell, i);
       let ctx = context;
       if (this.isValidRoot(tmp)) {
-        ctx = new Object();
+        ctx = {};
       }
       const warn = this.validateGraph(tmp, ctx);
       if (warn != null) {
@@ -8143,7 +8188,7 @@ export class mxGraph {
    *
    * cell - <mxCell> that should be checked.
    */
-  isEditing(cell: mxCell): boolean {
+  isEditing(cell: mxCell | null = null): boolean {
     if (this.cellEditor != null) {
       const editingCell = this.cellEditor.getEditingCell();
       return (cell == null) ? editingCell != null : cell == editingCell;

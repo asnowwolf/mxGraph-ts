@@ -19,19 +19,21 @@
  * strokewidth - Optional integer that defines the stroke width. Default is
  * 1. This is stored in <strokewidth>.
  */
-export class mxCloud {
-  bounds: any;
-  fill: any;
-  stroke: any;
-  strokewidth: any;
+import { mxActor } from './mxActor';
 
+export class mxCloud extends mxActor {
   constructor(bounds: any, fill: any, stroke: any, strokewidth: any) {
-    mxActor.call(this);
+    super();
     this.bounds = bounds;
     this.fill = fill;
     this.stroke = stroke;
     this.strokewidth = (strokewidth != null) ? strokewidth : 1;
   }
+
+  bounds: any;
+  fill: any;
+  stroke: any;
+  strokewidth: any;
 
   /**
    * Function: redrawPath

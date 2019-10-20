@@ -16,7 +16,14 @@
  *
  * Constructs a new radial tree layout for the specified graph
  */
-export class mxRadialTreeLayout {
+import { mxCompactTreeLayout } from './mxCompactTreeLayout';
+import { mxGraphLayout } from './mxGraphLayout';
+
+export class mxRadialTreeLayout extends mxCompactTreeLayout {
+  constructor(graph: mxGraph) {
+    super(graph, false);
+  }
+
   /**
    * Variable: angleOffset
    *
@@ -104,10 +111,6 @@ export class mxRadialTreeLayout {
   edgeRouting: boolean;
   centerX: any;
   centerY: any;
-
-  constructor(graph: any) {
-    mxCompactTreeLayout.call(this, graph, false);
-  }
 
   /**
    * Function: isVertexIgnored

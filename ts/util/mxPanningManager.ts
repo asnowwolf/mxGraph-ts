@@ -3,48 +3,12 @@
  *
  * Implements a handler for panning.
  */
-export class mxPanningManager {
-  thread: any;
-  active: boolean;
-  tdx: number;
-  tdy: number;
-  t0x: number;
-  t0y: number;
-  dx: number;
-  dy: number;
-  scrollbars: boolean;
-  scrollLeft: number;
-  scrollTop: number;
-  mouseListener: object;
-  mouseUpListener: Function;
-  /**
-   * Variable: damper
-   *
-   * Damper value for the panning. Default is 1/6.
-   */
-  damper: any;
-  /**
-   * Variable: delay
-   *
-   * Delay in milliseconds for the panning. Default is 10.
-   * @example 10
-   */
-  delay: number;
-  /**
-   * Variable: handleMouseOut
-   *
-   * Specifies if mouse events outside of the component should be handled. Default is true.
-   * @example true
-   */
-  handleMouseOut: boolean;
-  /**
-   * Variable: border
-   *
-   * Border to handle automatic panning inside the component. Default is 0 (disabled).
-   */
-  border: number;
+import { mxEvent } from './mxEvent';
+import { mxEventObject } from './mxEventObject';
+import { mxUtils } from './mxUtils';
 
-  constructor(graph: any) {
+export class mxPanningManager {
+  constructor(graph: mxGraph) {
     this.thread = null;
     this.active = false;
     this.tdx = 0;
@@ -189,6 +153,46 @@ export class mxPanningManager {
       mxEvent.removeListener(document, 'mouseup', this.mouseUpListener);
     };
   }
+
+  thread: any;
+  active: boolean;
+  tdx: number;
+  tdy: number;
+  t0x: number;
+  t0y: number;
+  dx: number;
+  dy: number;
+  scrollbars: boolean;
+  scrollLeft: number;
+  scrollTop: number;
+  mouseListener: object;
+  mouseUpListener: Function;
+  /**
+   * Variable: damper
+   *
+   * Damper value for the panning. Default is 1/6.
+   */
+  damper: any;
+  /**
+   * Variable: delay
+   *
+   * Delay in milliseconds for the panning. Default is 10.
+   * @example 10
+   */
+  delay: number;
+  /**
+   * Variable: handleMouseOut
+   *
+   * Specifies if mouse events outside of the component should be handled. Default is true.
+   * @example true
+   */
+  handleMouseOut: boolean;
+  /**
+   * Variable: border
+   *
+   * Border to handle automatic panning inside the component. Default is 0 (disabled).
+   */
+  border: number;
 
   isActive(): boolean {
     return active;

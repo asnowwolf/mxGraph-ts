@@ -1,3 +1,5 @@
+import { mxUtils } from './mxUtils';
+
 export let mxObjectIdentity = {
   FIELD_NAME: 'mxObjectId', counter: 0, get(obj) {
     if (obj != null) {

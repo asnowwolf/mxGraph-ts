@@ -26,7 +26,23 @@
  * endSize - Optional integer that defines the size of the arrowhead. Default
  * is <mxConstants.ARROW_SIZE>. This is stored in <endSize>.
  */
-export class mxArrowConnector {
+import { mxConstants } from '../util/mxConstants';
+import { mxUtils } from '../util/mxUtils';
+import { mxShape } from './mxShape';
+
+export class mxArrowConnector extends mxShape {
+  constructor(points: any, fill: any, stroke: any, strokewidth: any, arrowWidth: any, spacing: any, endSize: any) {
+    super();
+    this.points = points;
+    this.fill = fill;
+    this.stroke = stroke;
+    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
+    this.arrowWidth = (arrowWidth != null) ? arrowWidth : mxConstants.ARROW_WIDTH;
+    this.arrowSpacing = (spacing != null) ? spacing : mxConstants.ARROW_SPACING;
+    this.startSize = mxConstants.ARROW_SIZE / 5;
+    this.endSize = mxConstants.ARROW_SIZE / 5;
+  }
+
   points: any;
   fill: any;
   stroke: any;
@@ -43,18 +59,6 @@ export class mxArrowConnector {
    * @example true
    */
   useSvgBoundingBox: boolean;
-
-  constructor(points: any, fill: any, stroke: any, strokewidth: any, arrowWidth: any, spacing: any, endSize: any) {
-    mxShape.call(this);
-    this.points = points;
-    this.fill = fill;
-    this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
-    this.arrowWidth = (arrowWidth != null) ? arrowWidth : mxConstants.ARROW_WIDTH;
-    this.arrowSpacing = (spacing != null) ? spacing : mxConstants.ARROW_SPACING;
-    this.startSize = mxConstants.ARROW_SIZE / 5;
-    this.endSize = mxConstants.ARROW_SIZE / 5;
-  }
 
   /**
    * Variable: resetStyles
