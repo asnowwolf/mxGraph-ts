@@ -4,6 +4,7 @@
   "description": "Migrate mxGraph to ts",
   "main": "index.js",
   "scripts": {
+    "js-to-ts": "cp -r js auto-ts && find auto-ts -name '*.js' -exec sh -c 'mv \"$0\" \"${0%.js}.ts\"' {} \\;",
     "generate": "jsdoc2ts ts ./ts ./js/*.js ./js/**/*.js --types config/types.json",
     "fix": "cd ts && tslint --fix --project . -c tslint.json > lint.log"
   },

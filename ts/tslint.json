@@ -81,5 +81,8 @@
       "check-separator",
       "check-type"
     ]
-  }
+  },
+  "rulesDirectory": [
+    ""
+  ]
 }
