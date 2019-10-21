@@ -27,7 +27,7 @@ export class mxRubberband {
     if (!!graph) {
       this.graph = graph;
       this.graph.addMouseListener(this);
-      this.forceRubberbandHandler = mxUtils.bind(this, function (sender, evt) {
+      this.forceRubberbandHandler = (sender, evt) => {
         const evtName = evt.getProperty('eventName');
         const me = evt.getProperty('event');
         if (evtName == mxEvent.MOUSE_DOWN && this.isForceRubberbandEvent(me)) {
@@ -38,22 +38,22 @@ export class mxRubberband {
           this.start(me.getX() + origin.x, me.getY() + origin.y);
           me.consume(false);
         }
-      });
+      };
       this.graph.addListener(mxEvent.FIRE_MOUSE_EVENT, this.forceRubberbandHandler);
-      this.panHandler = mxUtils.bind(this, function () {
+      this.panHandler = () => {
         this.repaint();
-      });
+      };
       this.graph.addListener(mxEvent.PAN, this.panHandler);
-      this.gestureHandler = mxUtils.bind(this, function (sender, eo) {
+      this.gestureHandler = (sender, eo) => {
         if (!!this.first) {
           this.reset();
         }
-      });
+      };
       this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
       if (mxClient.IS_IE) {
-        mxEvent.addListener(window, 'unload', mxUtils.bind(this, function () {
+        mxEvent.addListener(window, 'unload', () => {
           this.destroy();
-        }));
+        });
       }
     }
   }
@@ -184,12 +184,12 @@ export class mxRubberband {
       return me;
     }
 
-    this.dragHandler = mxUtils.bind(this, function (evt) {
+    this.dragHandler = (evt) => {
       this.mouseMove(this.graph, createMouseEvent(evt));
-    });
-    this.dropHandler = mxUtils.bind(this, function (evt) {
+    };
+    this.dropHandler = (evt) => {
       this.mouseUp(this.graph, createMouseEvent(evt));
-    });
+    };
     if (mxClient.IS_FF) {
       mxEvent.addGestureListeners(document, null, this.dragHandler, this.dropHandler);
     }

@@ -24,15 +24,14 @@
  * graph - Reference to the enclosing graph.
  */
 import { mxEvent } from './mxEvent';
-import { mxUtils } from './mxUtils';
 
 export class mxAutoSaveManager {
   constructor(graph: mxGraph) {
-    this.changeHandler = mxUtils.bind(this, function (sender, evt) {
+    this.changeHandler = (sender, evt) => {
       if (this.isEnabled()) {
         this.graphModelChanged(evt.getProperty('edit').changes);
       }
-    });
+    };
     this.setGraph(graph);
   }
 

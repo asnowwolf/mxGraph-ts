@@ -29,13 +29,13 @@ import { mxGraph } from '../view/mxGraph';
 export class mxConstraintHandler {
   constructor(graph: mxGraph) {
     this.graph = graph;
-    this.resetHandler = mxUtils.bind(this, function (sender, evt) {
+    this.resetHandler = (sender, evt) => {
       if (!!this.currentFocus && !this.graph.view.getState(this.currentFocus.cell)) {
         this.reset();
       } else {
         this.redraw();
       }
-    });
+    };
     this.graph.model.addListener(mxEvent.CHANGE, this.resetHandler);
     this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.resetHandler);
     this.graph.view.addListener(mxEvent.TRANSLATE, this.resetHandler);
@@ -228,9 +228,9 @@ export class mxConstraintHandler {
   update(me: any, source: any, existingEdge: any, point: any): any {
     if (this.isEnabled() && !this.isEventIgnored(me)) {
       if (!this.mouseleaveHandler && !!this.graph.container) {
-        this.mouseleaveHandler = mxUtils.bind(this, function () {
+        this.mouseleaveHandler = () => {
           this.reset();
-        });
+        };
         mxEvent.addListener(this.graph.container, 'mouseleave', this.resetHandler);
       }
       const tol = this.getTolerance(me);
@@ -268,9 +268,9 @@ export class mxConstraintHandler {
               hl.pointerEvents = false;
               hl.init(this.graph.getView().getOverlayPane());
               this.focusHighlight = hl;
-              const getState = mxUtils.bind(this, function () {
+              const getState = () => {
                 return (!!this.currentFocus) ? this.currentFocus : state;
-              });
+              };
               mxEvent.redirectMouseEvents(hl.node, this.graph, getState);
             }
             this.focusHighlight.bounds = tmp;
@@ -351,9 +351,9 @@ export class mxConstraintHandler {
         if (!!icon.node.previousSibling) {
           icon.node.parentNode.insertBefore(icon.node, icon.node.parentNode.firstChild);
         }
-        const getState = mxUtils.bind(this, function () {
+        const getState = () => {
           return (!!this.currentFocus) ? this.currentFocus : state;
-        });
+        };
         icon.redraw();
         mxEvent.redirectMouseEvents(icon.node, this.graph, getState);
         this.currentFocusArea.add(icon.bounds);

@@ -34,16 +34,16 @@ export class mxGraphHandler {
   constructor(graph: mxGraph) {
     this.graph = graph;
     this.graph.addMouseListener(this);
-    this.panHandler = mxUtils.bind(this, function () {
+    this.panHandler = () => {
       this.updatePreviewShape();
       this.updateHint();
-    });
+    };
     this.graph.addListener(mxEvent.PAN, this.panHandler);
-    this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
+    this.escapeHandler = (sender, evt) => {
       this.reset();
-    });
+    };
     this.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
-    this.refreshHandler = mxUtils.bind(this, function (sender, evt) {
+    this.refreshHandler = (sender, evt) => {
       if (!!this.first) {
         try {
           this.bounds = this.graph.getView().getBounds(this.cells);
@@ -53,7 +53,7 @@ export class mxGraphHandler {
           this.reset();
         }
       }
-    });
+    };
     this.graph.getModel().addListener(mxEvent.CHANGE, this.refreshHandler);
   }
 
@@ -398,9 +398,9 @@ export class mxGraphHandler {
   getGuideStates(): any {
     const parent = this.graph.getDefaultParent();
     const model = this.graph.getModel();
-    const filter = mxUtils.bind(this, function (cell) {
+    const filter = (cell) => {
       return this.graph.view.getState(cell) && model.isVertex(cell) && model.getGeometry(cell) && !model.getGeometry(cell).relative;
-    });
+    };
     return this.graph.view.getCellStates(model.filterDescendants(filter, parent));
   }
 

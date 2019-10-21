@@ -24,9 +24,9 @@ export class mxDragSource {
   constructor(element: any, dropHandler: Function) {
     this.element = element;
     this.dropHandler = dropHandler;
-    mxEvent.addGestureListeners(element, mxUtils.bind(this, function (evt) {
+    mxEvent.addGestureListeners(element, (evt) => {
       this.mouseDown(evt);
-    }));
+    });
     mxEvent.addListener(element, 'dragstart', function (evt) {
       mxEvent.consume(evt);
     });

@@ -130,6 +130,7 @@ import { mxEvent } from '../util/mxEvent';
 import { mxPoint } from '../util/mxPoint';
 import { mxRectangle } from '../util/mxRectangle';
 import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from './mxGraph';
 import { mxTemporaryCellStates } from './mxTemporaryCellStates';
 
 export class mxPrintPreview {
@@ -349,7 +350,7 @@ export class mxPrintPreview {
       const hpages = Math.max(1, Math.ceil((bounds.width + this.x0) / availableWidth));
       const vpages = Math.max(1, Math.ceil((bounds.height + this.y0) / availableHeight));
       this.pageCount = hpages * vpages;
-      const writePageSelector = mxUtils.bind(this, function () {
+      const writePageSelector = () => {
         if (this.pageSelector && (vpages > 1 || hpages > 1)) {
           const table = this.createPageSelector(vpages, hpages);
           doc.body.appendChild(table);
@@ -366,8 +367,8 @@ export class mxPrintPreview {
             });
           }
         }
-      });
-      const addPage = mxUtils.bind(this, function (div, addBreak) {
+      };
+      const addPage = (div, addBreak) => {
         if (!!this.borderColor) {
           div.style.borderColor = this.borderColor;
           div.style.borderStyle = 'solid';
@@ -393,7 +394,7 @@ export class mxPrintPreview {
         if (forcePageBreaks || addBreak) {
           this.addPageBreak(doc);
         }
-      });
+      };
       const cov = this.getCoverPages(this.pageFormat.width, this.pageFormat.height);
       if (!!cov) {
         for (let i = 0; i < cov.length; i++) {
@@ -410,12 +411,12 @@ export class mxPrintPreview {
           const dx = j * availableWidth / this.scale - this.x0 / this.scale + (bounds.x - tr.x * currentScale) / currentScale;
           const pageNum = i * hpages + j + 1;
           const clip = new mxRectangle(dx, dy, availableWidth, availableHeight);
-          div = this.renderPage(this.pageFormat.width, this.pageFormat.height, 0, 0, mxUtils.bind(this, function (div) {
+          div = this.renderPage(this.pageFormat.width, this.pageFormat.height, 0, 0, (div) => {
             this.addGraphFragment(-dx, -dy, this.scale, pageNum, div, clip);
             if (this.printBackgroundImage) {
               this.insertBackgroundImage(div, -dx, -dy);
             }
-          }), pageNum);
+          }, pageNum);
           div.setAttribute('id', 'mxPage-' + pageNum);
           addPage(div, !!apx || i < vpages - 1 || j < hpages - 1);
         }
@@ -703,9 +704,9 @@ export class mxPrintPreview {
     let temp = undefined;
     try {
       const cells = [this.getRoot()];
-      temp = new mxTemporaryCellStates(view, scale, cells, null, mxUtils.bind(this, function (state) {
+      temp = new mxTemporaryCellStates(view, scale, cells, null, (state) => {
         return this.getLinkForCellState(state);
-      }));
+      });
     } finally {
       if (mxClient.IS_IE) {
         view.overlayPane.innerHTML = '';

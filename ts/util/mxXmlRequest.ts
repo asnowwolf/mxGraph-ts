@@ -228,12 +228,12 @@ export class mxXmlRequest {
     this.request = this.create();
     if (!!this.request) {
       if (!!onload) {
-        this.request.onreadystatechange = mxUtils.bind(this, function () {
+        this.request.onreadystatechange = () => {
           if (this.isReady()) {
             onload(this);
             this.request.onreadystatechaange = undefined;
           }
-        });
+        };
       }
       this.request.open(this.method, this.url, this.async, this.username, this.password);
       this.setRequestHeaders(this.request, this.params);

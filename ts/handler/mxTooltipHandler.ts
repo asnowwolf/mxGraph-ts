@@ -128,9 +128,9 @@ export class mxTooltipHandler {
       this.div.className = 'mxTooltip';
       this.div.style.visibility = 'hidden';
       document.body.appendChild(this.div);
-      mxEvent.addGestureListeners(this.div, mxUtils.bind(this, function (evt) {
+      mxEvent.addGestureListeners(this.div, (evt) => {
         this.hideTooltip();
-      }));
+      });
     }
   }
 
@@ -209,7 +209,7 @@ export class mxTooltipHandler {
         const x = me.getX();
         const y = me.getY();
         const stateSource = me.isSource(state.shape) || me.isSource(state.text);
-        this.thread = window.setTimeout(mxUtils.bind(this, function () {
+        this.thread = window.setTimeout(() => {
           if (!this.graph.isEditing() && !this.graph.popupMenuHandler.isMenuShowing() && !this.graph.isMouseDown) {
             const tip = this.graph.getTooltip(state, node, x, y);
             this.show(tip, x, y);
@@ -217,7 +217,7 @@ export class mxTooltipHandler {
             this.node = node;
             this.stateSource = stateSource;
           }
-        }), this.delay);
+        }, this.delay);
       }
     }
   }

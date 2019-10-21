@@ -285,6 +285,11 @@ export class mxWindow {
   maximize: any;
   closeImg: any;
   image: any;
+  IS_POINTER;
+  this;
+  title;
+  style;
+  touchAction = 'none';
 
   /**
    * Function: init
@@ -344,9 +349,9 @@ export class mxWindow {
     tbody.appendChild(tr);
     this.table.appendChild(tbody);
     this.div.appendChild(this.table);
-    const activator = mxUtils.bind(this, function (evt) {
+    const activator = (evt) => {
       this.activate();
-    });
+    };
     mxEvent.addGestureListeners(this.title, activator);
     mxEvent.addGestureListeners(this.table, activator);
     this.hide();
@@ -465,7 +470,7 @@ export class mxWindow {
         let startY = undefined;
         let width = undefined;
         let height = undefined;
-        const start = mxUtils.bind(this, function (evt) {
+        const start = (evt) => {
           this.activate();
           startX = mxEvent.getClientX(evt);
           startY = mxEvent.getClientY(evt);
@@ -474,8 +479,8 @@ export class mxWindow {
           mxEvent.addGestureListeners(document, null, dragHandler, dropHandler);
           this.fireEvent(new mxEventObject(mxEvent.RESIZE_START, 'event', evt));
           mxEvent.consume(evt);
-        });
-        const dragHandler = mxUtils.bind(this, function (evt) {
+        };
+        const dragHandler = (evt) => {
           if (!!startX && !!startY) {
             const dx = mxEvent.getClientX(evt) - startX;
             const dy = mxEvent.getClientY(evt) - startY;
@@ -483,8 +488,8 @@ export class mxWindow {
             this.fireEvent(new mxEventObject(mxEvent.RESIZE, 'event', evt));
             mxEvent.consume(evt);
           }
-        });
-        const dropHandler = mxUtils.bind(this, function (evt) {
+        };
+        const dropHandler = (evt) => {
           if (!!startX && !!startY) {
             startX = undefined;
             startY = undefined;
@@ -492,7 +497,7 @@ export class mxWindow {
             this.fireEvent(new mxEventObject(mxEvent.RESIZE_END, 'event', evt));
             mxEvent.consume(evt);
           }
-        });
+        };
         mxEvent.addGestureListeners(this.resize, start, dragHandler, dropHandler);
         this.div.appendChild(this.resize);
       } else {
@@ -542,6 +547,8 @@ export class mxWindow {
     return new mxRectangle(0, 0, 0, this.title.offsetHeight);
   }
 
+.
+
   /**
    * Function: installMinimizeHandler
    *
@@ -558,7 +565,7 @@ export class mxWindow {
     let minimized = false;
     let maxDisplay = undefined;
     let height = undefined;
-    const funct = mxUtils.bind(this, function (evt) {
+    const funct = (evt) => {
       this.activate();
       if (!minimized) {
         minimized = true;
@@ -601,9 +608,11 @@ export class mxWindow {
         this.fireEvent(new mxEventObject(mxEvent.NORMALIZE, 'event', evt));
       }
       mxEvent.consume(evt);
-    });
+    };
     mxEvent.addGestureListeners(this.minimize, funct);
   }
+
+) {
 
   /**
    * Function: setMaximizable
@@ -613,6 +622,8 @@ export class mxWindow {
   setMaximizable(maximizable: boolean): void {
     this.maximize.style.display = (maximizable) ? '' : 'none';
   }
+
+.
 
   /**
    * Function: installMaximizeHandler
@@ -634,7 +645,7 @@ export class mxWindow {
     let height = undefined;
     let width = undefined;
     let minDisplay = undefined;
-    const funct = mxUtils.bind(this, function (evt) {
+    const funct = (evt) => {
       this.activate();
       if (this.maximize.style.display != 'none') {
         if (!maximized) {
@@ -692,10 +703,12 @@ export class mxWindow {
         }
         mxEvent.consume(evt);
       }
-    });
+    };
     mxEvent.addGestureListeners(this.maximize, funct);
     mxEvent.addListener(this.title, 'dblclick', funct);
   }
+
+.
 
   /**
    * Function: installMoveHandler
@@ -704,7 +717,7 @@ export class mxWindow {
    */
   installMoveHandler(): void {
     this.title.style.cursor = 'move';
-    mxEvent.addGestureListeners(this.title, mxUtils.bind(this, function (evt) {
+    mxEvent.addGestureListeners(this.title, (evt) => {
       const startX = mxEvent.getClientX(evt);
       const startY = mxEvent.getClientY(evt);
       const x = this.getX();
@@ -715,179 +728,221 @@ export class mxWindow {
         this.setLocation(x + dx, y + dy);
         this.fireEvent(new mxEventObject(mxEvent.MOVE, 'event', evt));
         mxEvent.consume(evt);
-      });
-      const dropHandler = mxUtils.bind(this, function (evt) {
+      };
+      const dropHandler = (evt) => {
         mxEvent.removeGestureListeners(document, null, dragHandler, dropHandler);
         this.fireEvent(new mxEventObject(mxEvent.MOVE_END, 'event', evt));
         mxEvent.consume(evt);
-      });
+      };
       mxEvent.addGestureListeners(document, null, dragHandler, dropHandler);
       this.fireEvent(new mxEventObject(mxEvent.MOVE_START, 'event', evt));
       mxEvent.consume(evt);
-    }));
-    if (mxClient.IS_POINTER) {
-      this.title.style.touchAction = 'none';
-    }
-  }
+    });
+  );
 
-  /**
-   * Function: setLocation
-   *
-   * Sets the upper, left corner of the window.
-   */
-  setLocation(x: number, y: number): void {
-    this.div.style.left = x + 'px';
-    this.div.style.top = y + 'px';
-  }
+.
 
-  /**
-   * Function: getX
-   *
-   * Returns the current position on the x-axis.
-   */
-  getX(): any {
-    return parseInt(this.div.style.left);
-  }
+  if(mxClient
+}
+}
 
-  /**
-   * Function: getY
-   *
-   * Returns the current position on the y-axis.
-   */
-  getY(): any {
-    return parseInt(this.div.style.top);
-  }
+/**
+ * Function: setLocation
+ *
+ * Sets the upper, left corner of the window.
+ */
+setLocation(x;
+:
+number, y;
+:
+number;
+):
+void {
+  this.div.style.left = x + 'px';
+this.div.style.top = y + 'px';
+}
 
-  /**
-   * Function: installCloseHandler
-   *
-   * Adds the <closeImage> as a new image node in <closeImg> and installs the
-   * <close> event.
-   */
-  installCloseHandler(): void {
-    this.closeImg = document.createElement('img');
-    this.closeImg.setAttribute('src', this.closeImage);
-    this.closeImg.setAttribute('title', 'Close');
-    this.closeImg.style.marginLeft = '2px';
-    this.closeImg.style.cursor = 'pointer';
-    this.closeImg.style.display = 'none';
-    this.buttons.appendChild(this.closeImg);
-    mxEvent.addGestureListeners(this.closeImg, mxUtils.bind(this, function (evt) {
-      this.fireEvent(new mxEventObject(mxEvent.CLOSE, 'event', evt));
-      if (this.destroyOnClose) {
-        this.destroy();
-      } else {
-        this.setVisible(false);
-      }
-      mxEvent.consume(evt);
-    }));
-  }
+/**
+ * Function: getX
+ *
+ * Returns the current position on the x-axis.
+ */
+getX();
+:
+any;
+{
+  return parseInt(this.div.style.left);
+}
 
-  /**
-   * Function: setImage
-   *
-   * Sets the image associated with the window.
-   *
-   * Parameters:
-   *
-   * image - URL of the image to be used.
-   */
-  setImage(image: any): void {
-    this.image = document.createElement('img');
-    this.image.setAttribute('src', image);
-    this.image.setAttribute('align', 'left');
-    this.image.style.marginRight = '4px';
-    this.image.style.marginLeft = '0px';
-    this.image.style.marginTop = '-2px';
-    this.title.insertBefore(this.image, this.title.firstChild);
-  }
+/**
+ * Function: getY
+ *
+ * Returns the current position on the y-axis.
+ */
+getY();
+:
+any;
+{
+  return parseInt(this.div.style.top);
+}
 
-  /**
-   * Function: setClosable
-   *
-   * Sets the image associated with the window.
-   *
-   * Parameters:
-   *
-   * closable - Boolean specifying if the window should be closable.
-   */
-  setClosable(closable: boolean): void {
-    this.closeImg.style.display = (closable) ? '' : 'none';
+/**
+ * Function: installCloseHandler
+ *
+ * Adds the <closeImage> as a new image node in <closeImg> and installs the
+ * <close> event.
+ */
+installCloseHandler();
+:
+void {
+  this.closeImg = document.createElement('img');
+this.closeImg.setAttribute('src', this.closeImage);
+this.closeImg.setAttribute('title', 'Close');
+this.closeImg.style.marginLeft = '2px';
+this.closeImg.style.cursor = 'pointer';
+this.closeImg.style.display = 'none';
+this.buttons.appendChild(this.closeImg);
+mxEvent.addGestureListeners(this.closeImg, (evt) => {
+  this.fireEvent(new mxEventObject(mxEvent.CLOSE, 'event', evt));
+  if (this.destroyOnClose) {
+    this.destroy();
+  } else {
+    this.setVisible(false);
   }
+  mxEvent.consume(evt);
+});
+}
 
-  /**
-   * Function: isVisible
-   *
-   * Returns true if the window is visible.
-   */
-  isVisible(): boolean {
-    if (!!this.div) {
-      return this.div.style.display != 'none';
-    }
-    return false;
+/**
+ * Function: setImage
+ *
+ * Sets the image associated with the window.
+ *
+ * Parameters:
+ *
+ * image - URL of the image to be used.
+ */
+setImage(image;
+:
+any;
+):
+void {
+  this.image = document.createElement('img');
+this.image.setAttribute('src', image);
+this.image.setAttribute('align', 'left');
+this.image.style.marginRight = '4px';
+this.image.style.marginLeft = '0px';
+this.image.style.marginTop = '-2px';
+this.title.insertBefore(this.image, this.title.firstChild);
+}
+
+/**
+ * Function: setClosable
+ *
+ * Sets the image associated with the window.
+ *
+ * Parameters:
+ *
+ * closable - Boolean specifying if the window should be closable.
+ */
+setClosable(closable;
+:
+boolean;
+):
+void {
+  this.closeImg.style.display = (closable) ? '' : 'none';
+}
+
+/**
+ * Function: isVisible
+ *
+ * Returns true if the window is visible.
+ */
+isVisible();
+:
+boolean;
+{
+  if (!!this.div) {
+    return this.div.style.display != 'none';
   }
+  return false;
+}
 
-  /**
-   * Function: setVisible
-   *
-   * Shows or hides the window depending on the given flag.
-   *
-   * Parameters:
-   *
-   * visible - Boolean indicating if the window should be made visible.
-   */
-  setVisible(visible: any): void {
-    if (!!this.div && this.isVisible() != visible) {
-      if (visible) {
-        this.show();
-      } else {
-        this.hide();
-      }
-    }
+/**
+ * Function: setVisible
+ *
+ * Shows or hides the window depending on the given flag.
+ *
+ * Parameters:
+ *
+ * visible - Boolean indicating if the window should be made visible.
+ */
+setVisible(visible;
+:
+any;
+):
+void {
+  if(!!;
+this.div && this.isVisible() != visible;
+)
+{
+  if (visible) {
+    this.show();
+  } else {
+    this.hide();
   }
+}
+}
 
-  /**
-   * Function: show
-   *
-   * Shows the window.
-   */
-  show(): void {
-    this.div.style.display = '';
-    this.activate();
-    const style = mxUtils.getCurrentStyle(this.contentWrapper);
-    if (!mxClient.IS_QUIRKS && (style.overflow == 'auto' || !!this.resize) && this.contentWrapper.style.display != 'none') {
-      this.contentWrapper.style.height = (this.div.offsetHeight - this.title.offsetHeight - this.contentHeightCorrection) + 'px';
-    }
-    this.fireEvent(new mxEventObject(mxEvent.SHOW));
-  }
+/**
+ * Function: show
+ *
+ * Shows the window.
+ */
+show();
+:
+void {
+  this.div.style.display = '';
+this.activate();
+const style = mxUtils.getCurrentStyle(this.contentWrapper);
+if (!mxClient.IS_QUIRKS && (style.overflow == 'auto' || !!this.resize) && this.contentWrapper.style.display != 'none') {
+  this.contentWrapper.style.height = (this.div.offsetHeight - this.title.offsetHeight - this.contentHeightCorrection) + 'px';
+}
+this.fireEvent(new mxEventObject(mxEvent.SHOW));
+}
 
-  /**
-   * Function: hide
-   *
-   * Hides the window.
-   */
-  hide(): void {
-    this.div.style.display = 'none';
-    this.fireEvent(new mxEventObject(mxEvent.HIDE));
-  }
+/**
+ * Function: hide
+ *
+ * Hides the window.
+ */
+hide();
+:
+void {
+  this.div.style.display = 'none';
+this.fireEvent(new mxEventObject(mxEvent.HIDE));
+}
 
-  /**
-   * Function: destroy
-   *
-   * Destroys the window and removes all associated resources. Fires a
-   * <destroy> event prior to destroying the window.
-   */
-  destroy(): void {
-    this.fireEvent(new mxEventObject(mxEvent.DESTROY));
-    if (!!this.div) {
-      mxEvent.release(this.div);
-      this.div.parentNode.removeChild(this.div);
-      this.div = undefined;
-    }
-    this.title = undefined;
-    this.content = undefined;
-    this.contentWrapper = undefined;
-  }
+/**
+ * Function: destroy
+ *
+ * Destroys the window and removes all associated resources. Fires a
+ * <destroy> event prior to destroying the window.
+ */
+destroy();
+:
+void {
+  this.fireEvent(new mxEventObject(mxEvent.DESTROY));
+if (!!this.div) {
+  mxEvent.release(this.div);
+  this.div.parentNode.removeChild(this.div);
+  this.div = undefined;
+}
+this.title = undefined;
+this.content = undefined;
+this.contentWrapper = undefined;
+}
 
-  static activeWindow: any;
+static
+any;
 }

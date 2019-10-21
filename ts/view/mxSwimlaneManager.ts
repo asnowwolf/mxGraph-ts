@@ -25,16 +25,16 @@ export class mxSwimlaneManager {
     this.horizontal = (!!horizontal) ? horizontal : true;
     this.addEnabled = (!!addEnabled) ? addEnabled : true;
     this.resizeEnabled = (!!resizeEnabled) ? resizeEnabled : true;
-    this.addHandler = mxUtils.bind(this, function (sender, evt) {
+    this.addHandler = (sender, evt) => {
       if (this.isEnabled() && this.isAddEnabled()) {
         this.cellsAdded(evt.getProperty('cells'));
       }
-    });
-    this.resizeHandler = mxUtils.bind(this, function (sender, evt) {
+    };
+    this.resizeHandler = (sender, evt) => {
       if (this.isEnabled() && this.isResizeEnabled()) {
         this.cellsResized(evt.getProperty('cells'));
       }
-    });
+    };
     this.setGraph(graph);
   }
 

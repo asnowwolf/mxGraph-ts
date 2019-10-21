@@ -16,7 +16,6 @@ import { mxClient } from '../mxClient';
 import { mxConstants } from '../util/mxConstants';
 import { mxEvent } from '../util/mxEvent';
 import { mxRectangle } from '../util/mxRectangle';
-import { mxUtils } from '../util/mxUtils';
 import { mxGraph } from '../view/mxGraph';
 
 export class mxCellHighlight {
@@ -24,7 +23,7 @@ export class mxCellHighlight {
     if (!!graph) {
       this.graph = graph;
       this.opacity = mxConstants.HIGHLIGHT_OPACITY;
-      this.repaintHandler = mxUtils.bind(this, function () {
+      this.repaintHandler = () => {
         if (!!this.state) {
           const tmp = this.graph.view.getState(this.state.cell);
           if (!tmp) {
@@ -34,14 +33,14 @@ export class mxCellHighlight {
             this.repaint();
           }
         }
-      });
+      };
       this.graph.getView().addListener(mxEvent.SCALE, this.repaintHandler);
       this.graph.getView().addListener(mxEvent.TRANSLATE, this.repaintHandler);
       this.graph.getView().addListener(mxEvent.SCALE_AND_TRANSLATE, this.repaintHandler);
       this.graph.getModel().addListener(mxEvent.CHANGE, this.repaintHandler);
-      this.resetHandler = mxUtils.bind(this, function () {
+      this.resetHandler = () => {
         this.hide();
-      });
+      };
       this.graph.getView().addListener(mxEvent.DOWN, this.resetHandler);
       this.graph.getView().addListener(mxEvent.UP, this.resetHandler);
     }

@@ -36,7 +36,7 @@ export class mxPanningHandler {
     if (!!graph) {
       this.graph = graph;
       this.graph.addMouseListener(this);
-      this.forcePanningHandler = mxUtils.bind(this, function (sender, evt) {
+      this.forcePanningHandler = (sender, evt) => {
         const evtName = evt.getProperty('eventName');
         const me = evt.getProperty('event');
         if (evtName == mxEvent.MOUSE_DOWN && this.isForcePanningEvent(me)) {
@@ -45,9 +45,9 @@ export class mxPanningHandler {
           this.fireEvent(new mxEventObject(mxEvent.PAN_START, 'event', me));
           me.consume();
         }
-      });
+      };
       this.graph.addListener(mxEvent.FIRE_MOUSE_EVENT, this.forcePanningHandler);
-      this.gestureHandler = mxUtils.bind(this, function (sender, eo) {
+      this.gestureHandler = (sender, eo) => {
         if (this.isPinchEnabled()) {
           const evt = eo.getProperty('event');
           if (!mxEvent.isConsumed(evt) && evt.type == 'gesturestart') {
@@ -73,13 +73,13 @@ export class mxPanningHandler {
             }
           }
         }
-      });
+      };
       this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
-      this.mouseUpListener = mxUtils.bind(this, function () {
+      this.mouseUpListener = () => {
         if (this.active) {
           this.reset();
         }
-      });
+      };
       mxEvent.addListener(document, 'mouseup', this.mouseUpListener);
     }
   }

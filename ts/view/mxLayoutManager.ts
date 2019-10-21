@@ -43,16 +43,16 @@ import { mxUtils } from '../util/mxUtils';
 
 export class mxLayoutManager {
   constructor(graph: mxGraph) {
-    this.undoHandler = mxUtils.bind(this, function (sender, evt) {
+    this.undoHandler = (sender, evt) => {
       if (this.isEnabled()) {
         this.beforeUndo(evt.getProperty('edit'));
       }
-    });
-    this.moveHandler = mxUtils.bind(this, function (sender, evt) {
+    };
+    this.moveHandler = (sender, evt) => {
       if (this.isEnabled()) {
         this.cellsMoved(evt.getProperty('cells'), evt.getProperty('event'));
       }
-    });
+    };
     this.setGraph(graph);
   }
 

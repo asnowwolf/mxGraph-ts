@@ -310,28 +310,28 @@ export class mxCellRenderer {
         }
         return result;
       };
-      mxEvent.addGestureListeners(state.text.node, mxUtils.bind(this, function (evt) {
+      mxEvent.addGestureListeners(state.text.node, (evt) => {
         if (this.isLabelEvent(state, evt)) {
           graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt, state));
           forceGetCell = graph.dialect != mxConstants.DIALECT_SVG && mxEvent.getSource(evt).nodeName == 'IMG';
         }
-      }), mxUtils.bind(this, function (evt) {
+      }, mxUtils.bind(this, function (evt) {
         if (this.isLabelEvent(state, evt)) {
           graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt, getState(evt)));
         }
-      }), mxUtils.bind(this, function (evt) {
+      }), (evt) => {
         if (this.isLabelEvent(state, evt)) {
           graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt, getState(evt)));
           forceGetCell = false;
         }
-      }));
+      });
       if (graph.nativeDblClickEnabled) {
-        mxEvent.addListener(state.text.node, 'dblclick', mxUtils.bind(this, function (evt) {
+        mxEvent.addListener(state.text.node, 'dblclick', (evt) => {
           if (this.isLabelEvent(state, evt)) {
             graph.dblClick(evt, state.cell);
             mxEvent.consume(evt);
           }
-        }));
+        });
       }
     }
   }
@@ -471,13 +471,13 @@ export class mxCellRenderer {
    */
   createControlClickHandler(state: any): Function {
     const graph = state.view.graph;
-    return mxUtils.bind(this, function (evt) {
+    return (evt) => {
       if (this.forceControlClickHandler || graph.isEnabled()) {
         const collapse = !graph.isCellCollapsed(state.cell);
         graph.foldCells(collapse, false, [state.cell], null, evt);
         mxEvent.consume(evt);
       }
-    });
+    };
   }
 
   /**
@@ -587,26 +587,26 @@ export class mxCellRenderer {
       }
       return result;
     };
-    mxEvent.addGestureListeners(state.shape.node, mxUtils.bind(this, function (evt) {
+    mxEvent.addGestureListeners(state.shape.node, (evt) => {
       if (this.isShapeEvent(state, evt)) {
         graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt, state));
       }
-    }), mxUtils.bind(this, function (evt) {
+    }, mxUtils.bind(this, function (evt) {
       if (this.isShapeEvent(state, evt)) {
         graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt, getState(evt)));
       }
-    }), mxUtils.bind(this, function (evt) {
+    }), (evt) => {
       if (this.isShapeEvent(state, evt)) {
         graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt, getState(evt)));
       }
-    }));
+    });
     if (graph.nativeDblClickEnabled) {
-      mxEvent.addListener(state.shape.node, 'dblclick', mxUtils.bind(this, function (evt) {
+      mxEvent.addListener(state.shape.node, 'dblclick', (evt) => {
         if (this.isShapeEvent(state, evt)) {
           graph.dblClick(evt, state.cell);
           mxEvent.consume(evt);
         }
-      }));
+      });
     }
   }
 

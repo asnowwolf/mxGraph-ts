@@ -25,7 +25,6 @@ import { mxDictionary } from '../util/mxDictionary';
 import { mxEvent } from '../util/mxEvent';
 import { mxEventObject } from '../util/mxEventObject';
 import { mxEventSource } from '../util/mxEventSource';
-import { mxUtils } from '../util/mxUtils';
 import { mxGraph } from '../view/mxGraph';
 
 export class mxSelectionCellsHandler extends mxEventSource {
@@ -34,11 +33,11 @@ export class mxSelectionCellsHandler extends mxEventSource {
     this.graph = graph;
     this.handlers = new mxDictionary();
     this.graph.addMouseListener(this);
-    this.refreshHandler = mxUtils.bind(this, function (sender, evt) {
+    this.refreshHandler = (sender, evt) => {
       if (this.isEnabled()) {
         this.refresh();
       }
-    });
+    };
     this.graph.getSelectionModel().addListener(mxEvent.CHANGE, this.refreshHandler);
     this.graph.getModel().addListener(mxEvent.CHANGE, this.refreshHandler);
     this.graph.getView().addListener(mxEvent.SCALE, this.refreshHandler);
@@ -137,10 +136,10 @@ export class mxSelectionCellsHandler extends mxEventSource {
         }
       }
     }
-    oldHandlers.visit(mxUtils.bind(this, function (key, handler) {
+    oldHandlers.visit((key, handler) => {
       this.fireEvent(new mxEventObject(mxEvent.REMOVE, 'state', handler.state));
       handler.destroy();
-    }));
+    });
   }
 
   /**

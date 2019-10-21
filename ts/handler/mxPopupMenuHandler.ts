@@ -17,9 +17,9 @@ export class mxPopupMenuHandler {
       this.graph = graph;
       this.factoryMethod = factoryMethod;
       this.graph.addMouseListener(this);
-      this.gestureHandler = mxUtils.bind(this, function (sender, eo) {
+      this.gestureHandler = (sender, eo) => {
         this.inTolerance = false;
-      });
+      };
       this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
       this.init();
     }
@@ -78,9 +78,9 @@ export class mxPopupMenuHandler {
    */
   init(): void {
     mxPopupMenu.prototype.init.apply(this);
-    mxEvent.addGestureListeners(this.div, mxUtils.bind(this, function (evt) {
+    mxEvent.addGestureListeners(this.div, (evt) => {
       this.graph.tooltipHandler.hide();
-    }));
+    });
   }
 
   /**

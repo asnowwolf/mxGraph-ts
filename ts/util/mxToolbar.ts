@@ -102,14 +102,14 @@ export class mxToolbar {
         mxEvent.addListener(img, 'touchend', funct);
       }
     }
-    const mouseHandler = mxUtils.bind(this, function (evt) {
+    const mouseHandler = (evt) => {
       if (!!pressedIcon) {
         img.setAttribute('src', icon);
       } else {
         img.style.backgroundColor = '';
       }
-    });
-    mxEvent.addGestureListeners(img, mxUtils.bind(this, function (evt) {
+    };
+    mxEvent.addGestureListeners(img, (evt) => {
       if (!!pressedIcon) {
         img.setAttribute('src', pressedIcon);
       } else {
@@ -139,7 +139,7 @@ export class mxToolbar {
           }
         }
       }
-    }), null, mouseHandler);
+    }, null, mouseHandler);
     mxEvent.addListener(img, 'mouseout', mouseHandler);
     return img;
   }
@@ -233,7 +233,7 @@ export class mxToolbar {
     if (!!title) {
       img.setAttribute('title', title);
     }
-    mxEvent.addListener(img, 'click', mxUtils.bind(this, function (evt) {
+    mxEvent.addListener(img, 'click', (evt) => {
       let tmp = this.selectedMode.altIcon;
       if (!!tmp) {
         this.selectedMode.altIcon = this.selectedMode.getAttribute('src');
@@ -254,7 +254,7 @@ export class mxToolbar {
       }
       this.fireEvent(new mxEventObject(mxEvent.SELECT));
       funct();
-    }));
+    });
     this.container.appendChild(img);
     if (!this.defaultMode) {
       this.defaultMode = img;
@@ -285,14 +285,14 @@ export class mxToolbar {
       img.setAttribute('title', title);
     }
     if (this.enabled && toggle) {
-      mxEvent.addListener(img, 'click', mxUtils.bind(this, function (evt) {
+      mxEvent.addListener(img, 'click', (evt) => {
         this.selectMode(img, funct);
         this.noReset = false;
-      }));
-      mxEvent.addListener(img, 'dblclick', mxUtils.bind(this, function (evt) {
+      });
+      mxEvent.addListener(img, 'dblclick', (evt) => {
         this.selectMode(img, funct);
         this.noReset = true;
-      }));
+      });
       if (!this.defaultMode) {
         this.defaultMode = img;
         this.defaultFunction = funct;

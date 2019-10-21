@@ -48,13 +48,13 @@ export class mxDivResizer {
         this.resizeWidth = style.width == 'auto';
         this.resizeHeight = style.height == 'auto';
       }
-      mxEvent.addListener(container, 'resize', mxUtils.bind(this, function (evt) {
+      mxEvent.addListener(container, 'resize', (evt) => {
         if (!this.handlingResize) {
           this.handlingResize = true;
           this.resize();
           this.handlingResize = false;
         }
-      }));
+      });
       this.resize();
     }
   }

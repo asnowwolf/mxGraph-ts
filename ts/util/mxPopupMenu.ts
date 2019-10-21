@@ -212,7 +212,7 @@ export class mxPopupMenu {
     parent.tbody.appendChild(tr);
     if (active != false && enabled != false) {
       let currentSelection = undefined;
-      mxEvent.addGestureListeners(tr, mxUtils.bind(this, function (evt) {
+      mxEvent.addGestureListeners(tr, (evt) => {
         this.eventReceiver = tr;
         if (parent.activeRow != tr && parent.activeRow != parent) {
           if (!!parent.activeRow && !!parent.activeRow.div.parentNode) {
@@ -227,7 +227,7 @@ export class mxPopupMenu {
           currentSelection = document.selection.createRange();
         }
         mxEvent.consume(evt);
-      }), mxUtils.bind(this, function (evt) {
+      }, mxUtils.bind(this, function (evt) {
         if (parent.activeRow != tr && parent.activeRow != parent) {
           if (!!parent.activeRow && !!parent.activeRow.div.parentNode) {
             this.hideSubmenu(parent);
@@ -238,7 +238,7 @@ export class mxPopupMenu {
           }
         }
         tr.className = 'mxPopupMenuItemHover';
-      }), mxUtils.bind(this, function (evt) {
+      }), (evt) => {
         if (this.eventReceiver == tr) {
           if (parent.activeRow != tr) {
             this.hideMenu();
@@ -256,10 +256,10 @@ export class mxPopupMenu {
         }
         this.eventReceiver = undefined;
         mxEvent.consume(evt);
-      }));
-      mxEvent.addListener(tr, 'mouseout', mxUtils.bind(this, function (evt) {
+      });
+      mxEvent.addListener(tr, 'mouseout', (evt) => {
         tr.className = 'mxPopupMenuItem';
-      }));
+      });
     }
     return tr;
   }

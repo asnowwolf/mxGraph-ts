@@ -178,9 +178,9 @@ export class mxConnectionHandler extends mxEventSource {
       this.graph = graph;
       this.factoryMethod = factoryMethod;
       this.init();
-      this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
+      this.escapeHandler = (sender, evt) => {
         this.reset();
-      });
+      };
       this.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
     }
   }
@@ -459,7 +459,7 @@ export class mxConnectionHandler extends mxEventSource {
     this.graph.addMouseListener(this);
     this.marker = this.createMarker();
     this.constraintHandler = new mxConstraintHandler(this.graph);
-    this.changeHandler = mxUtils.bind(this, function (sender) {
+    this.changeHandler = (sender) => {
       if (!!this.iconState) {
         this.iconState = this.graph.getView().getState(this.iconState.cell);
       }
@@ -469,14 +469,14 @@ export class mxConnectionHandler extends mxEventSource {
       } else if (!!this.previous && !this.graph.view.getState(this.previous.cell)) {
         this.reset();
       }
-    });
+    };
     this.graph.getModel().addListener(mxEvent.CHANGE, this.changeHandler);
     this.graph.getView().addListener(mxEvent.SCALE, this.changeHandler);
     this.graph.getView().addListener(mxEvent.TRANSLATE, this.changeHandler);
     this.graph.getView().addListener(mxEvent.SCALE_AND_TRANSLATE, this.changeHandler);
-    this.drillHandler = mxUtils.bind(this, function (sender) {
+    this.drillHandler = (sender) => {
       this.reset();
-    });
+    };
     this.graph.addListener(mxEvent.START_EDITING, this.drillHandler);
     this.graph.getView().addListener(mxEvent.DOWN, this.drillHandler);
     this.graph.getView().addListener(mxEvent.UP, this.drillHandler);
@@ -500,7 +500,7 @@ export class mxConnectionHandler extends mxEventSource {
   createMarker(): any {
     const marker = new mxCellMarker(this.graph);
     marker.hotspotEnabled = true;
-    marker.getCell = mxUtils.bind(this, function (me) {
+    marker.getCell = (me) => {
       let cell = mxCellMarker.prototype.getCell.apply(marker, arguments);
       this.error = undefined;
       if (!cell && !!this.currentPoint) {
@@ -533,23 +533,23 @@ export class mxConnectionHandler extends mxEventSource {
         this.error = '';
       }
       return cell;
-    });
-    marker.isValidState = mxUtils.bind(this, function (state) {
+    };
+    marker.isValidState = (state) => {
       if (this.isConnecting()) {
         return !this.error;
       } else {
         return mxCellMarker.prototype.isValidState.apply(marker, arguments);
       }
-    });
-    marker.getMarkerColor = mxUtils.bind(this, function (evt, state, isValid) {
+    };
+    marker.getMarkerColor = (evt, state, isValid) => {
       return (!this.connectImage || this.isConnecting()) ? mxCellMarker.prototype.getMarkerColor.apply(marker, arguments) : null;
-    });
-    marker.intersects = mxUtils.bind(this, function (state, evt) {
+    };
+    marker.intersects = (state, evt) => {
       if (!!this.connectImage || this.isConnecting()) {
         return true;
       }
       return mxCellMarker.prototype.intersects.apply(marker, arguments);
-    });
+    };
     return marker;
   }
 
@@ -686,15 +686,15 @@ export class mxConnectionHandler extends mxEventSource {
         }
       }
       icon.node.style.cursor = mxConstants.CURSOR_CONNECT;
-      const getState = mxUtils.bind(this, function () {
+      const getState = () => {
         return (!!this.currentState) ? this.currentState : state;
-      });
-      const mouseDown = mxUtils.bind(this, function (evt) {
+      };
+      const mouseDown = (evt) => {
         if (!mxEvent.isConsumed(evt)) {
           this.icon = icon;
           this.graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt, getState()));
         }
-      });
+      };
       mxEvent.redirectMouseEvents(icon.node, this.graph, getState, mouseDown);
       icons.push(icon);
       this.redrawIcons(icons, this.iconState);

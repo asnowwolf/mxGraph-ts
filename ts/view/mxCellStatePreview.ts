@@ -13,7 +13,6 @@
  */
 import { mxDictionary } from '../util/mxDictionary';
 import { mxPoint } from '../util/mxPoint';
-import { mxUtils } from '../util/mxUtils';
 
 export class mxCellStatePreview {
   constructor(graph: mxGraph) {
@@ -67,12 +66,12 @@ export class mxCellStatePreview {
    * Function: show
    */
   show(visitor: any): void {
-    this.deltas.visit(mxUtils.bind(this, function (key, delta) {
+    this.deltas.visit((key, delta) => {
       this.translateState(delta.state, delta.point.x, delta.point.y);
-    }));
-    this.deltas.visit(mxUtils.bind(this, function (key, delta) {
+    });
+    this.deltas.visit((key, delta) => {
       this.revalidateState(delta.state, delta.point.x, delta.point.y, visitor);
-    }));
+    });
   }
 
   /**

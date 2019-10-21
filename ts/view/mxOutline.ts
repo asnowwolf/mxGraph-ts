@@ -178,6 +178,21 @@ export class mxOutline {
   dx0: any;
   dy0: any;
   index: number;
+  mxEvent;
+  selectionBorder;
+  node;
+.
+  handler;
+.
+  this;
+.
+  sizer = this.createSizer();
+,
+  forceVmlHandles;
+);
+  this;
+.
+  sizer;
 
   /**
    * Function: createGraph
@@ -191,6 +206,7 @@ export class mxOutline {
     return graph;
   }
 
+.
   /**
    * Function: init
    *
@@ -199,11 +215,11 @@ export class mxOutline {
   init(container: HTMLElement): void {
     this.outline = this.createGraph(container);
     const outlineGraphModelChanged = this.outline.graphModelChanged;
-    this.outline.graphModelChanged = mxUtils.bind(this, function (changes) {
+    this.outline.graphModelChanged = (changes) => {
       if (!this.suspended && !!this.outline) {
         outlineGraphModelChanged.apply(this.outline, arguments);
       }
-    });
+    };
     if (mxClient.IS_SVG) {
       const node = this.outline.getView().getCanvas().parentNode;
       node.setAttribute('shape-rendering', 'optimizeSpeed');
@@ -211,11 +227,11 @@ export class mxOutline {
     }
     this.outline.labelsVisible = this.labelsVisible;
     this.outline.setEnabled(false);
-    this.updateHandler = mxUtils.bind(this, function (sender, evt) {
+    this.updateHandler = (sender, evt) => {
       if (!this.suspended && !this.active) {
         this.update();
       }
-    });
+    };
     this.source.getModel().addListener(mxEvent.CHANGE, this.updateHandler);
     this.outline.addMouseListener(this);
     const view = this.source.getView();
@@ -225,16 +241,16 @@ export class mxOutline {
     view.addListener(mxEvent.DOWN, this.updateHandler);
     view.addListener(mxEvent.UP, this.updateHandler);
     mxEvent.addListener(this.source.container, 'scroll', this.updateHandler);
-    this.panHandler = mxUtils.bind(this, function (sender) {
+    this.panHandler = (sender) => {
       if (this.updateOnPan) {
         this.updateHandler.apply(this, arguments);
       }
-    });
+    };
     this.source.addListener(mxEvent.PAN, this.panHandler);
-    this.refreshHandler = mxUtils.bind(this, function (sender) {
+    this.refreshHandler = (sender) => {
       this.outline.setStylesheet(this.source.getStylesheet());
       this.outline.refresh();
-    });
+    };
     this.source.addListener(mxEvent.REFRESH, this.refreshHandler);
     this.bounds = new mxRectangle(0, 0, 0, 0);
     this.selectionBorder = new mxRectangleShape(this.bounds, null, mxConstants.OUTLINE_COLOR, mxConstants.OUTLINE_STROKEWIDTH);
@@ -245,22 +261,31 @@ export class mxOutline {
       };
     }
     this.selectionBorder.init(this.outline.getView().getOverlayPane());
-    const handler = mxUtils.bind(this, function (evt) {
+    const handler = (evt) => {
       const t = mxEvent.getSource(evt);
       const redirect = mxUtils.bind(this, function (evt) {
         this.outline.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt));
-      });
-      const redirect2 = mxUtils.bind(this, function (evt) {
+      };
+      const redirect2 = (evt) => {
         mxEvent.removeGestureListeners(t, null, redirect, redirect2);
         this.outline.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt));
-      });
+      };
       mxEvent.addGestureListeners(t, null, redirect, redirect2);
       this.outline.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt));
-    });
-    mxEvent.addGestureListeners(this.selectionBorder.node, handler);
-    this.sizer = this.createSizer();
-    if (this.forceVmlHandles) {
-      this.sizer.isHtmlAllowed = function () {
+    };
+  )
+  ;
+
+) {
+
+  addGestureListeners(this
+
+.
+
+  if(this
+
+.
+  isHtmlAllowed = function () {
         return false;
       };
     }
@@ -281,7 +306,10 @@ export class mxOutline {
    * Returns true if events are handled. This implementation
    * returns <enabled>.
    */
-  isEnabled(): boolean {
+  isEnabled();
+:
+boolean;
+{
     return this.enabled;
   }
 
@@ -295,7 +323,11 @@ export class mxOutline {
    *
    * value - Boolean that specifies the new enabled state.
    */
-  setEnabled(value: any): void {
+  setEnabled(value;
+:
+any;
+):
+void {
     this.enabled = value;
   }
 
@@ -309,7 +341,11 @@ export class mxOutline {
    *
    * value - Boolean that specifies the new enabled state.
    */
-  setZoomEnabled(value: any): void {
+  setZoomEnabled(value;
+:
+any;
+):
+void {
     this.sizer.node.style.visibility = (value) ? 'visible' : 'hidden';
   }
 
@@ -318,7 +354,9 @@ export class mxOutline {
    *
    * Invokes <update> and revalidate the outline. This method is deprecated.
    */
-  refresh(): void {
+  refresh();
+:
+void {
     this.update(true);
   }
 
@@ -327,7 +365,10 @@ export class mxOutline {
    *
    * Creates the shape used as the sizer.
    */
-  createSizer(): any {
+  createSizer();
+:
+any;
+{
     if (!!this.sizerImage) {
       const sizer = new mxImageShape(new mxRectangle(0, 0, this.sizerImage.width, this.sizerImage.height), this.sizerImage.src);
       sizer.dialect = this.outline.dialect;
@@ -344,7 +385,10 @@ export class mxOutline {
    *
    * Returns the size of the source container.
    */
-  getSourceContainerSize(): any {
+  getSourceContainerSize();
+:
+any;
+{
     return new mxRectangle(0, 0, this.source.container.scrollWidth, this.source.container.scrollHeight);
   }
 
@@ -353,7 +397,12 @@ export class mxOutline {
    *
    * Returns the offset for drawing the outline graph.
    */
-  getOutlineOffset(scale: any): any {
+  getOutlineOffset(scale;
+:
+any;
+):
+any;
+{
     return null;
   }
 
@@ -362,7 +411,10 @@ export class mxOutline {
    *
    * Returns the offset for drawing the outline graph.
    */
-  getSourceGraphBounds(): any {
+  getSourceGraphBounds();
+:
+any;
+{
     return this.source.getGraphBounds();
   }
 
@@ -371,8 +423,15 @@ export class mxOutline {
    *
    * Updates the outline.
    */
-  update(revalidate: any): void {
-    if (!!this.source && !!this.source.container && !!this.outline && !!this.outline.container) {
+  update(revalidate;
+:
+any;
+):
+void {
+  if(!!;
+this.source && !!this.source.container && !!this.outline && !!this.outline.container;
+)
+{
       const sourceScale = this.source.view.scale;
       const scaledGraphBounds = this.getSourceGraphBounds();
       const unscaledGraphBounds = new mxRectangle(scaledGraphBounds.x / sourceScale + this.source.panDx, scaledGraphBounds.y / sourceScale + this.source.panDy, scaledGraphBounds.width / sourceScale, scaledGraphBounds.height / sourceScale);
@@ -447,8 +506,16 @@ export class mxOutline {
    *
    * Handles the event by starting a translation or zoom.
    */
-  mouseDown(sender: any, me: any): void {
-    if (this.enabled && this.showViewport) {
+  mouseDown(sender;
+:
+any, me;
+:
+any;
+):
+void {
+  if(this.enabled && this.showViewport;
+)
+{
       const tol = (!mxEvent.isMouseEvent(me.getEvent())) ? this.source.tolerance : 0;
       const hit = (this.source.allowHandleBoundsCheck && (mxClient.IS_IE || tol > 0)) ? new mxRectangle(me.getGraphX() - tol, me.getGraphY() - tol, 2 * tol, 2 * tol) : null;
       this.zoom = me.isSource(this.sizer) || (!!hit && mxUtils.intersects(shape.bounds, hit));
@@ -472,8 +539,16 @@ export class mxOutline {
    * Handles the event by previewing the viewrect in <graph> and updating the
    * rectangle that represents the viewrect in the outline.
    */
-  mouseMove(sender: any, me: any): void {
-    if (this.active) {
+  mouseMove(sender;
+:
+any, me;
+:
+any;
+):
+void {
+  if(this.active;
+)
+{
       this.selectionBorder.node.style.display = (this.showViewport) ? '' : 'none';
       this.sizer.node.style.display = this.selectionBorder.node.style.display;
       const delta = this.getTranslateForEvent(me);
@@ -529,7 +604,12 @@ export class mxOutline {
    * };
    * (end)
    */
-  getTranslateForEvent(me: any): any {
+  getTranslateForEvent(me;
+:
+any;
+):
+any;
+{
     return new mxPoint(me.getX() - this.startX, me.getY() - this.startY);
   }
 
@@ -538,8 +618,16 @@ export class mxOutline {
    *
    * Handles the event by applying the translation or zoom to <graph>.
    */
-  mouseUp(sender: any, me: any): void {
-    if (this.active) {
+  mouseUp(sender;
+:
+any, me;
+:
+any;
+):
+void {
+  if(this.active;
+)
+{
       const delta = this.getTranslateForEvent(me);
       let dx = delta.x;
       let dy = delta.y;
@@ -570,8 +658,13 @@ export class mxOutline {
    *
    * Destroy this outline and removes all listeners from <source>.
    */
-  destroy(): void {
-    if (!!this.source) {
+  destroy();
+:
+void {
+  if(!!;
+this.source;
+)
+{
       this.source.removeListener(this.panHandler);
       this.source.removeListener(this.refreshHandler);
       this.source.getModel().removeListener(this.updateHandler);

@@ -30,7 +30,7 @@ export class mxVertexHandler {
     if (!!state) {
       this.state = state;
       this.init();
-      this.escapeHandler = mxUtils.bind(this, function (sender, evt) {
+      this.escapeHandler = (sender, evt) => {
         if (this.livePreview && !!this.index) {
           this.state.view.graph.cellRenderer.redraw(this.state, true);
           this.state.view.invalidate(this.state.cell);
@@ -38,7 +38,7 @@ export class mxVertexHandler {
           this.state.view.validate();
         }
         this.reset();
-      });
+      };
       this.state.view.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
     }
   }

@@ -23,20 +23,20 @@ export class mxPanningManager {
     this.mouseListener = {
       mouseDown(sender, me) {
       }, mouseMove(sender, me) {
-      }, mouseUp: mxUtils.bind(this, function (sender, me) {
+      }, mouseUp: (sender, me) => {
         if (this.active) {
           this.stop();
         }
-      }),
+      },
     };
     graph.addMouseListener(this.mouseListener);
-    this.mouseUpListener = mxUtils.bind(this, function () {
+    this.mouseUpListener = () => {
       if (this.active) {
         this.stop();
       }
-    });
+    };
     mxEvent.addListener(document, 'mouseup', this.mouseUpListener);
-    const createThread = mxUtils.bind(this, function () {
+    const createThread = () => {
       this.scrollbars = mxUtils.hasScrollbars(graph.container);
       this.scrollLeft = graph.container.scrollLeft;
       this.scrollTop = graph.container.scrollTop;
@@ -53,23 +53,41 @@ export class mxPanningManager {
         } else {
           graph.panGraph(this.getDx(), this.getDy());
         }
-      }), this.delay);
-    });
-    this.isActive = function () {
+      }, this.delay);
+    };
+  )
+  ;
+
+  this;
+.
+  this;
+  this;
+.
+  this;
+  this;
+.
+  this;
+  this;
+.
+  isActive = function () {
       return active;
     };
-    this.getDx = function () {
+
+  getDx = function () {
       return Math.round(this.tdx);
-    };
-    this.getDy = function () {
+  };
+.
+  getDy = function () {
       return Math.round(this.tdy);
     };
-    this.start = function () {
+
+  start = function () {
       this.t0x = graph.view.translate.x;
       this.t0y = graph.view.translate.y;
       this.active = true;
-    };
-    this.panTo = function (x, y, w, h) {
+  };
+.
+  panTo = function (x, y, w, h) {
       if (!this.active) {
         this.start();
       }
@@ -125,7 +143,8 @@ export class mxPanningManager {
         this.thread = undefined;
       }
     };
-    this.stop = function () {
+
+  stop = function () {
       if (this.active) {
         this.active = false;
         if (!!this.thread) {
@@ -147,73 +166,98 @@ export class mxPanningManager {
           graph.fireEvent(new mxEventObject(mxEvent.PAN));
         }
       }
-    };
-    this.destroy = function () {
+  };
+.
+  destroy = function () {
       graph.removeMouseListener(this.mouseListener);
       mxEvent.removeListener(document, 'mouseup', this.mouseUpListener);
     };
   }
 
-  thread: any;
-  active: boolean;
-  tdx: number;
-  tdy: number;
-  t0x: number;
-  t0y: number;
-  dx: number;
-  dy: number;
-  scrollbars: boolean;
-  scrollLeft: number;
-  scrollTop: number;
-  mouseListener: object;
-  mouseUpListener: Function;
+any;
+boolean;
+number;
+number;
+number;
+number;
+number;
+number;
+boolean;
+number;
+number;
+object;
+Function;
   /**
    * Variable: damper
    *
    * Damper value for the panning. Default is 1/6.
    */
-  damper: any;
+  any;
   /**
    * Variable: delay
    *
    * Delay in milliseconds for the panning. Default is 10.
    * @example 10
    */
-  delay: number;
+  number;
   /**
    * Variable: handleMouseOut
    *
    * Specifies if mouse events outside of the component should be handled. Default is true.
    * @example true
    */
-  handleMouseOut: boolean;
+  boolean;
   /**
    * Variable: border
    *
    * Border to handle automatic panning inside the component. Default is 0 (disabled).
    */
-  border: number;
+  number;
 
-  isActive(): boolean {
+isActive();
+:
+boolean;
+{
     return active;
   }
 
-  getDx(): any {
+getDx();
+:
+any;
+{
     return Math.round(this.tdx);
   }
 
-  getDy(): any {
+getDy();
+:
+any;
+{
     return Math.round(this.tdy);
   }
 
-  start(): void {
+start();
+:
+void {
     this.t0x = graph.view.translate.x;
     this.t0y = graph.view.translate.y;
     this.active = true;
   }
 
-  panTo(x: number, y: number, w: number, h: number): void {
-    if (!this.active) {
+panTo(x;
+:
+number, y;
+:
+number, w;
+:
+number, h;
+:
+number;
+):
+void {
+  if(!;
+this.active;
+)
+{
       this.start();
     }
     this.scrollLeft = graph.container.scrollLeft;
@@ -269,8 +313,12 @@ export class mxPanningManager {
     }
   }
 
-  stop(): void {
-    if (this.active) {
+stop();
+:
+void {
+  if(this.active;
+)
+{
       this.active = false;
       if (!!this.thread) {
         window.clearInterval(this.thread);
@@ -293,7 +341,9 @@ export class mxPanningManager {
     }
   }
 
-  destroy(): void {
+destroy();
+:
+void {
     graph.removeMouseListener(this.mouseListener);
     mxEvent.removeListener(document, 'mouseup', this.mouseUpListener);
   }

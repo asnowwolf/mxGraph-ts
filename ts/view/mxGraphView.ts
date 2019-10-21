@@ -588,13 +588,13 @@ export class mxGraphView {
         this.backgroundImage.init(this.backgroundPane);
         this.backgroundImage.redraw();
         if (document.documentMode == 8 && !mxClient.IS_EM) {
-          mxEvent.addGestureListeners(this.backgroundImage.node, mxUtils.bind(this, function (evt) {
+          mxEvent.addGestureListeners(this.backgroundImage.node, (evt) => {
             this.graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt));
-          }), mxUtils.bind(this, function (evt) {
+          }, mxUtils.bind(this, function (evt) {
             this.graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt));
-          }), mxUtils.bind(this, function (evt) {
+          }), (evt) => {
             this.graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt));
-          }));
+          });
         }
       }
       this.redrawBackgroundImage(this.backgroundImage, bg);
@@ -620,22 +620,22 @@ export class mxGraphView {
         this.backgroundPageShape.init(this.backgroundPane);
         this.backgroundPageShape.redraw();
         if (this.graph.nativeDblClickEnabled) {
-          mxEvent.addListener(this.backgroundPageShape.node, 'dblclick', mxUtils.bind(this, function (evt) {
+          mxEvent.addListener(this.backgroundPageShape.node, 'dblclick', (evt) => {
             this.graph.dblClick(evt);
-          }));
+          });
         }
-        mxEvent.addGestureListeners(this.backgroundPageShape.node, mxUtils.bind(this, function (evt) {
+        mxEvent.addGestureListeners(this.backgroundPageShape.node, (evt) => {
           this.graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt));
-        }), mxUtils.bind(this, function (evt) {
+        }, mxUtils.bind(this, function (evt) {
           if (!!this.graph.tooltipHandler && this.graph.tooltipHandler.isHideOnHover()) {
             this.graph.tooltipHandler.hide();
           }
           if (this.graph.isMouseDown && !mxEvent.isConsumed(evt)) {
             this.graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt));
           }
-        }), mxUtils.bind(this, function (evt) {
+        }), (evt) => {
           this.graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt));
-        }));
+        });
       } else {
         this.backgroundPageShape.scale = this.scale;
         this.backgroundPageShape.bounds = bounds;
@@ -1945,37 +1945,37 @@ export class mxGraphView {
     const container = graph.container;
     if (!!container) {
       if (mxClient.IS_TOUCH) {
-        mxEvent.addListener(container, 'gesturestart', mxUtils.bind(this, function (evt) {
+        mxEvent.addListener(container, 'gesturestart', (evt) => {
           graph.fireGestureEvent(evt);
           mxEvent.consume(evt);
-        }));
-        mxEvent.addListener(container, 'gesturechange', mxUtils.bind(this, function (evt) {
+        });
+        mxEvent.addListener(container, 'gesturechange', (evt) => {
           graph.fireGestureEvent(evt);
           mxEvent.consume(evt);
-        }));
-        mxEvent.addListener(container, 'gestureend', mxUtils.bind(this, function (evt) {
+        });
+        mxEvent.addListener(container, 'gestureend', (evt) => {
           graph.fireGestureEvent(evt);
           mxEvent.consume(evt);
-        }));
+        });
       }
-      mxEvent.addGestureListeners(container, mxUtils.bind(this, function (evt) {
+      mxEvent.addGestureListeners(container, (evt) => {
         if (this.isContainerEvent(evt) && ((!mxClient.IS_IE && !mxClient.IS_IE11 && !mxClient.IS_GC && !mxClient.IS_OP && !mxClient.IS_SF) || !this.isScrollEvent(evt))) {
           graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt));
         }
-      }), mxUtils.bind(this, function (evt) {
+      }, mxUtils.bind(this, function (evt) {
         if (this.isContainerEvent(evt)) {
           graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt));
         }
-      }), mxUtils.bind(this, function (evt) {
+      }), (evt) => {
         if (this.isContainerEvent(evt)) {
           graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt));
         }
-      }));
-      mxEvent.addListener(container, 'dblclick', mxUtils.bind(this, function (evt) {
+      });
+      mxEvent.addListener(container, 'dblclick', (evt) => {
         if (this.isContainerEvent(evt)) {
           graph.dblClick(evt);
         }
-      }));
+      });
       const getState = function (evt) {
         let state = undefined;
         if (mxClient.IS_TOUCH) {
@@ -1993,19 +1993,19 @@ export class mxGraphView {
         }, mouseUp() {
         },
       });
-      this.moveHandler = mxUtils.bind(this, function (evt) {
+      this.moveHandler = (evt) => {
         if (!!graph.tooltipHandler && graph.tooltipHandler.isHideOnHover()) {
           graph.tooltipHandler.hide();
         }
         if (this.captureDocumentGesture && graph.isMouseDown && !!graph.container && !this.isContainerEvent(evt) && graph.container.style.display != 'none' && graph.container.style.visibility != 'hidden' && !mxEvent.isConsumed(evt)) {
           graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt, getState(evt)));
         }
-      });
-      this.endHandler = mxUtils.bind(this, function (evt) {
+      };
+      this.endHandler = (evt) => {
         if (this.captureDocumentGesture && graph.isMouseDown && !!graph.container && !this.isContainerEvent(evt) && graph.container.style.display != 'none' && graph.container.style.visibility != 'hidden') {
           graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt));
         }
-      });
+      };
       mxEvent.addGestureListeners(document, null, this.moveHandler, this.endHandler);
     }
   }
@@ -2031,12 +2031,12 @@ export class mxGraphView {
       container.appendChild(this.canvas);
       this.updateContainerStyle(container);
       if (mxClient.IS_QUIRKS) {
-        const onResize = mxUtils.bind(this, function (evt) {
+        const onResize = (evt) => {
           const bounds = this.getGraphBounds();
           const width = bounds.x + bounds.width + this.graph.border;
           const height = bounds.y + bounds.height + this.graph.border;
           this.updateHtmlCanvasSize(width, height);
-        });
+        };
         mxEvent.addListener(window, 'resize', onResize);
       }
     }

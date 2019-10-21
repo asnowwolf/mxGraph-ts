@@ -696,9 +696,9 @@ export class mxGraph {
     this.setSelectionModel(this.createSelectionModel());
     this.setStylesheet((!!stylesheet) ? stylesheet : this.createStylesheet());
     this.view = this.createGraphView();
-    this.graphModelChangeListener = mxUtils.bind(this, function (sender, evt) {
+    this.graphModelChangeListener = (sender, evt) => {
       this.graphModelChanged(evt.getProperty('edit').changes);
-    });
+    };
     this.model.addListener(mxEvent.CHANGE, this.graphModelChangeListener);
     this.createHandlers();
     if (!!container) {
@@ -1580,18 +1580,18 @@ export class mxGraph {
     this.cellEditor = this.createCellEditor();
     this.view.init();
     this.sizeDidChange();
-    mxEvent.addListener(container, 'mouseleave', mxUtils.bind(this, function () {
+    mxEvent.addListener(container, 'mouseleave', () => {
       if (!!this.tooltipHandler) {
         this.tooltipHandler.hide();
       }
-    }));
+    });
     if (mxClient.IS_IE) {
-      mxEvent.addListener(window, 'unload', mxUtils.bind(this, function () {
+      mxEvent.addListener(window, 'unload', () => {
         this.destroy();
-      }));
-      mxEvent.addListener(container, 'selectstart', mxUtils.bind(this, function (evt) {
+      });
+      mxEvent.addListener(container, 'selectstart', (evt) => {
         return this.isEditing() || (!this.isMouseDown && !mxEvent.isShiftDown(evt));
-      }));
+      });
     }
     if (document.documentMode == 8) {
       container.insertAdjacentHTML('beforeend', '<' + mxClient.VML_PREFIX + ':group' + ' style="DISPLAY: none;"></' + mxClient.VML_PREFIX + ':group>');
@@ -1777,7 +1777,7 @@ export class mxGraph {
   getSelectionCellsForChanges(changes: any): any {
     const dict = new mxDictionary();
     const cells = [];
-    const addCell = mxUtils.bind(this, function (cell) {
+    const addCell = (cell) => {
       if (!dict.get(cell) && this.model.contains(cell)) {
         if (this.model.isEdge(cell) || this.model.isVertex(cell)) {
           dict.put(cell, true);
@@ -1789,7 +1789,7 @@ export class mxGraph {
           }
         }
       }
-    });
+    };
     for (let i = 0; i < changes.length; i++) {
       const change = changes[i];
       if (change.constructor != mxRootChange) {
@@ -2077,11 +2077,11 @@ export class mxGraph {
       img = (!!img) ? img : this.warningImage;
       const overlay = new mxCellOverlay(img, '<font color=red>' + warning + '</font>');
       if (isSelect) {
-        overlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function (sender, evt) {
+        overlay.addListener(mxEvent.CLICK, (sender, evt) => {
           if (this.isEnabled()) {
             this.setSelectionCell(cell);
           }
-        }));
+        });
       }
       return this.addCellOverlay(cell, overlay);
     } else {
@@ -2287,11 +2287,11 @@ export class mxGraph {
       if (!!cell) {
         if (this.isTransparentClickEvent(evt)) {
           let active = false;
-          const tmp = this.getCellAt(me.graphX, me.graphY, null, null, null, mxUtils.bind(this, function (state) {
+          const tmp = this.getCellAt(me.graphX, me.graphY, null, null, null, (state) => {
             const selected = this.isCellSelected(state.cell);
             active = active || selected;
             return !active || selected;
-          }));
+          });
           if (!!tmp) {
             cell = tmp;
           }
@@ -2705,7 +2705,7 @@ export class mxGraph {
     if (!this.verticalPageBreaks && verticalCount > 0) {
       this.verticalPageBreaks = [];
     }
-    const drawPageBreaks = mxUtils.bind(this, function (breaks) {
+    const drawPageBreaks = (breaks) => {
       if (!!breaks) {
         const count = (breaks == this.horizontalPageBreaks) ? horizontalCount : verticalCount;
         for (let i = 0; i <= count; i++) {
@@ -2728,7 +2728,7 @@ export class mxGraph {
         }
         breaks.splice(count, breaks.length - count);
       }
-    });
+    };
     drawPageBreaks(this.horizontalPageBreaks);
     drawPageBreaks(this.verticalPageBreaks);
   }
@@ -3905,7 +3905,7 @@ export class mxGraph {
         }
         for (let i = 0; i < cells.length; i++) {
           const edges = this.getAllEdges([cells[i]]);
-          const disconnectTerminal = mxUtils.bind(this, function (edge, source) {
+          const disconnectTerminal = (edge, source) => {
             let geo = this.model.getGeometry(edge);
             if (!!geo) {
               const terminal = this.model.getTerminal(edge, source);
@@ -3935,7 +3935,7 @@ export class mxGraph {
                 this.model.setTerminal(edge, null, source);
               }
             }
-          });
+          };
           for (let j = 0; j < edges.length; j++) {
             if (!dict.get(edges[j])) {
               dict.put(edges[j], true);
@@ -4734,7 +4734,7 @@ export class mxGraph {
         for (let i = 0; i < cells.length; i++) {
           dict.put(cells[i], true);
         }
-        const isSelected = mxUtils.bind(this, function (cell) {
+        const isSelected = (cell) => {
           while (!!cell) {
             if (dict.get(cell)) {
               return true;
@@ -4742,7 +4742,7 @@ export class mxGraph {
             cell = this.model.getParent(cell);
           }
           return false;
-        });
+        };
         const checked = [];
         for (let i = 0; i < cells.length; i++) {
           const geo = this.getCellGeometry(cells[i]);
@@ -7272,9 +7272,9 @@ export class mxGraph {
    * Returns the cells which may be exported in the given array of cells.
    */
   getCloneableCells(cells: mxCell[]): any {
-    return this.model.filterCells(cells, mxUtils.bind(this, function (cell) {
+    return this.model.filterCells(cells, (cell) => {
       return this.isCellCloneable(cell);
-    }));
+    });
   }
 
   /**
@@ -7325,9 +7325,9 @@ export class mxGraph {
    * Returns the cells which may be exported in the given array of cells.
    */
   getExportableCells(cells: mxCell[]): any {
-    return this.model.filterCells(cells, mxUtils.bind(this, function (cell) {
+    return this.model.filterCells(cells, (cell) => {
       return this.canExportCell(cell);
-    }));
+    });
   }
 
   /**
@@ -7350,9 +7350,9 @@ export class mxGraph {
    * Returns the cells which may be imported in the given array of cells.
    */
   getImportableCells(cells: mxCell[]): any {
-    return this.model.filterCells(cells, mxUtils.bind(this, function (cell) {
+    return this.model.filterCells(cells, (cell) => {
       return this.canImportCell(cell);
-    }));
+    });
   }
 
   /**
@@ -7425,9 +7425,9 @@ export class mxGraph {
    * Returns the cells which may be exported in the given array of cells.
    */
   getDeletableCells(cells: mxCell[]): any {
-    return this.model.filterCells(cells, mxUtils.bind(this, function (cell) {
+    return this.model.filterCells(cells, (cell) => {
       return this.isCellDeletable(cell);
-    }));
+    });
   }
 
   /**
@@ -7506,9 +7506,9 @@ export class mxGraph {
    * Returns the cells which are movable in the given array of cells.
    */
   getMovableCells(cells: mxCell[]): any {
-    return this.model.filterCells(cells, mxUtils.bind(this, function (cell) {
+    return this.model.filterCells(cells, (cell) => {
       return this.isCellMovable(cell);
-    }));
+    });
   }
 
   /**
@@ -8455,9 +8455,9 @@ export class mxGraph {
    * Returns the cells which are movable in the given array of cells.
    */
   getFoldableCells(cells: mxCell[], collapse: any): any {
-    return this.model.filterCells(cells, mxUtils.bind(this, function (cell) {
+    return this.model.filterCells(cells, (cell) => {
       return this.isCellFoldable(cell, collapse);
-    }));
+    });
   }
 
   /**
@@ -9496,9 +9496,9 @@ export class mxGraph {
    */
   selectAll(parent: any, descendants: any): any {
     parent = parent || this.getDefaultParent();
-    const cells = (descendants) ? this.model.filterDescendants(mxUtils.bind(this, function (cell) {
+    const cells = (descendants) ? this.model.filterDescendants((cell) => {
       return cell != parent && this.view.getState(cell);
-    }), parent) : this.model.getChildren(parent);
+    }, parent) : this.model.getChildren(parent);
     if (!!cells) {
       this.setSelectionCells(cells);
     }
@@ -9539,9 +9539,9 @@ export class mxGraph {
    */
   selectCells(vertices: any, edges: any, parent: any): any {
     parent = parent || this.getDefaultParent();
-    const filter = mxUtils.bind(this, function (cell) {
+    const filter = (cell) => {
       return this.view.getState(cell) && ((this.model.getChildCount(cell) == 0 && this.model.isVertex(cell) && vertices && !this.model.isEdge(this.model.getParent(cell))) || (this.model.isEdge(cell) && edges));
-    });
+    };
     const cells = this.model.filterDescendants(filter, parent);
     if (!!cells) {
       this.setSelectionCells(cells);
@@ -9777,12 +9777,12 @@ export class mxGraph {
       result = true;
     } else if (mxClient.IS_TOUCH && evtName == mxEvent.MOUSE_DOWN && !mouseEvent && !mxEvent.isPenEvent(me.getEvent())) {
       this.eventSource = me.getSource();
-      this.mouseMoveRedirect = mxUtils.bind(this, function (evt) {
+      this.mouseMoveRedirect = (evt) => {
         this.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt, this.getStateForTouchEvent(evt)));
-      });
-      this.mouseUpRedirect = mxUtils.bind(this, function (evt) {
+      };
+      this.mouseUpRedirect = (evt) => {
         this.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt, this.getStateForTouchEvent(evt)));
-      });
+      };
       mxEvent.addGestureListeners(this.eventSource, null, this.mouseMoveRedirect, this.mouseUpRedirect);
     }
     if (this.isSyntheticEventIgnored(evtName, me, sender)) {

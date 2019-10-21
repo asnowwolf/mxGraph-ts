@@ -29,7 +29,6 @@
  * Constructs a new image export.
  */
 import { mxShape } from '../shape/mxShape';
-import { mxUtils } from './mxUtils';
 
 export class mxImageExport {
   /**
@@ -46,13 +45,13 @@ export class mxImageExport {
    */
   drawState(state: any, canvas: any): void {
     if (!!state) {
-      this.visitStatesRecursive(state, canvas, mxUtils.bind(this, function () {
+      this.visitStatesRecursive(state, canvas, () => {
         this.drawCellState.apply(this, arguments);
-      }));
+      });
       if (this.includeOverlays) {
-        this.visitStatesRecursive(state, canvas, mxUtils.bind(this, function () {
+        this.visitStatesRecursive(state, canvas, () => {
           this.drawOverlays.apply(this, arguments);
-        }));
+        });
       }
     }
   }

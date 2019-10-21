@@ -388,9 +388,9 @@ export class mxEditor extends mxEventSource {
         this.onInit();
       }
       if (mxClient.IS_IE) {
-        mxEvent.addListener(window, 'unload', mxUtils.bind(this, function () {
+        mxEvent.addListener(window, 'unload', () => {
           this.destroy();
-        }));
+        });
       }
     }
   }
@@ -1283,12 +1283,12 @@ export class mxEditor extends mxEventSource {
     this.installDrillHandler(graph);
     this.installChangeHandler(graph);
     this.installInsertHandler(graph);
-    graph.popupMenuHandler.factoryMethod = mxUtils.bind(this, function (menu, cell, evt) {
+    graph.popupMenuHandler.factoryMethod = (menu, cell, evt) => {
       return this.createPopupMenu(menu, cell, evt);
-    });
-    graph.connectionHandler.factoryMethod = mxUtils.bind(this, function (source, target) {
+    };
+    graph.connectionHandler.factoryMethod = (source, target) => {
       return this.createEdge(source, target);
-    });
+    };
     this.createSwimlaneManager(graph);
     this.createLayoutManager(graph);
     return graph;
@@ -1301,12 +1301,12 @@ export class mxEditor extends mxEventSource {
    */
   createSwimlaneManager(graph: mxGraph): any {
     const swimlaneMgr = new mxSwimlaneManager(graph, false);
-    swimlaneMgr.isHorizontal = mxUtils.bind(this, function () {
+    swimlaneMgr.isHorizontal = () => {
       return this.horizontalFlow;
-    });
-    swimlaneMgr.isEnabled = mxUtils.bind(this, function () {
+    };
+    swimlaneMgr.isEnabled = () => {
       return this.maintainSwimlanes;
-    });
+    };
     return swimlaneMgr;
   }
 
@@ -1365,13 +1365,13 @@ export class mxEditor extends mxEventSource {
    * on a cell and reset the selection tool in the toolbar.
    */
   installDblClickHandler(graph: mxGraph): void {
-    graph.addListener(mxEvent.DOUBLE_CLICK, mxUtils.bind(this, function (sender, evt) {
+    graph.addListener(mxEvent.DOUBLE_CLICK, (sender, evt) => {
       const cell = evt.getProperty('cell');
       if (!!cell && graph.isEnabled() && !!this.dblClickAction) {
         this.execute(this.dblClickAction, cell);
         evt.consume();
       }
-    }));
+    });
   }
 
   /**
@@ -1380,10 +1380,10 @@ export class mxEditor extends mxEventSource {
    * Adds the <undoManager> to the graph model and the view.
    */
   installUndoHandler(graph: mxGraph): void {
-    const listener = mxUtils.bind(this, function (sender, evt) {
+    const listener = (sender, evt) => {
       const edit = evt.getProperty('edit');
       this.undoManager.undoableEditHappened(edit);
-    });
+    };
     graph.getModel().addListener(mxEvent.UNDO, listener);
     graph.getView().addListener(mxEvent.UNDO, listener);
     const undoHandler = function (sender, evt) {
@@ -1400,9 +1400,9 @@ export class mxEditor extends mxEventSource {
    * Installs listeners for dispatching the <root> event.
    */
   installDrillHandler(graph: mxGraph): void {
-    const listener = mxUtils.bind(this, function (sender) {
+    const listener = (sender) => {
       this.fireEvent(new mxEventObject(mxEvent.ROOT));
-    });
+    };
     graph.getView().addListener(mxEvent.DOWN, listener);
     graph.getView().addListener(mxEvent.UP, listener);
   }
@@ -1415,7 +1415,7 @@ export class mxEditor extends mxEventSource {
    * fires a <root> event.
    */
   installChangeHandler(graph: mxGraph): void {
-    const listener = mxUtils.bind(this, function (sender, evt) {
+    const listener = (sender, evt) => {
       this.setModified(true);
       if (this.validating == true) {
         graph.validateGraph();
@@ -1428,7 +1428,7 @@ export class mxEditor extends mxEventSource {
           break;
         }
       }
-    });
+    };
     graph.getModel().addListener(mxEvent.CHANGE, listener);
   }
 
@@ -1524,13 +1524,13 @@ export class mxEditor extends mxEventSource {
   setStatusContainer(container: HTMLElement): void {
     if (!this.status) {
       this.status = container;
-      this.addListener(mxEvent.SAVE, mxUtils.bind(this, function () {
+      this.addListener(mxEvent.SAVE, () => {
         const tstamp = new Date().toLocaleString();
         this.setStatus((mxResources.get(this.lastSavedResource) || this.lastSavedResource) + ': ' + tstamp);
-      }));
-      this.addListener(mxEvent.OPEN, mxUtils.bind(this, function () {
+      });
+      this.addListener(mxEvent.OPEN, () => {
         this.setStatus((mxResources.get(this.currentFileResource) || this.currentFileResource) + ': ' + this.filename);
-      }));
+      });
       if (mxClient.IS_QUIRKS) {
         new mxDivResizer(container);
       }
@@ -1564,9 +1564,9 @@ export class mxEditor extends mxEventSource {
    * container - DOM node that will contain the title.
    */
   setTitleContainer(container: HTMLElement): void {
-    this.addListener(mxEvent.ROOT, mxUtils.bind(this, function (sender) {
+    this.addListener(mxEvent.ROOT, (sender) => {
       container.innerHTML = this.getTitle();
-    }));
+    });
     if (mxClient.IS_QUIRKS) {
       new mxDivResizer(container);
     }
@@ -1764,9 +1764,9 @@ export class mxEditor extends mxEventSource {
     if (this.escapePostData) {
       data = encodeURIComponent(data);
     }
-    mxUtils.post(url, this.postParameterName + '=' + data, mxUtils.bind(this, function (req) {
+    mxUtils.post(url, this.postParameterName + '=' + data, (req) => {
       this.fireEvent(new mxEventObject(mxEvent.POST, 'request', req, 'url', url, 'data', data));
-    }));
+    });
   }
 
   /**
@@ -1916,7 +1916,7 @@ export class mxEditor extends mxEventSource {
         const val = attrs[i].value;
         texts[i] = form.addTextarea(attrs[i].nodeName, val, (attrs[i].nodeName == 'label') ? 4 : 2);
       }
-      const okFunction = mxUtils.bind(this, function () {
+      const okFunction = () => {
         this.hideProperties();
         model.beginUpdate();
         try {
@@ -1943,10 +1943,10 @@ export class mxEditor extends mxEventSource {
         } finally {
           model.endUpdate();
         }
-      });
-      const cancelFunction = mxUtils.bind(this, function () {
+      };
+      const cancelFunction = () => {
         this.hideProperties();
-      });
+      };
       form.addButtons(okFunction, cancelFunction);
       return form.table;
     }
@@ -1996,11 +1996,11 @@ export class mxEditor extends mxEventSource {
       const wnd = new mxWindow(mxResources.get(this.tasksResource) || this.tasksResource, div, w - 220, this.tasksTop, 200);
       wnd.setClosable(true);
       wnd.destroyOnClose = false;
-      const funct = mxUtils.bind(this, function (sender) {
+      const funct = (sender) => {
         mxEvent.release(div);
         div.innerHTML = '';
         this.createTasks(div);
-      });
+      };
       this.graph.getModel().addListener(mxEvent.CHANGE, funct);
       this.graph.getSelectionModel().addListener(mxEvent.CHANGE, funct);
       this.graph.addListener(mxEvent.ROOT, funct);

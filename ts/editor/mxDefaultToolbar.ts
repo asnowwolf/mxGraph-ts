@@ -106,11 +106,11 @@ export class mxDefaultToolbar {
           this.editor.insertFunction = undefined;
         }
       });
-      this.resetHandler = mxUtils.bind(this, function () {
+      this.resetHandler = () => {
         if (!!this.toolbar) {
           this.toolbar.resetMode(true);
         }
-      });
+      };
       this.editor.graph.addListener(mxEvent.DOUBLE_CLICK, this.resetHandler);
       this.editor.addListener(mxEvent.ESCAPE, this.resetHandler);
     }
@@ -130,11 +130,11 @@ export class mxDefaultToolbar {
    * pressed - Optional URL of the icon for the pressed state.
    */
   addItem(title: string, icon: any, action: any, pressed: any): any {
-    const clickHandler = mxUtils.bind(this, function () {
+    const clickHandler = () => {
       if (!!action && action.length > 0) {
         this.editor.execute(action);
       }
-    });
+    };
     return this.toolbar.addItem(title, icon, clickHandler, pressed);
   }
 
@@ -191,9 +191,9 @@ export class mxDefaultToolbar {
    * action - Name of the action to execute in <editor>.
    */
   addActionOption(combo: any, title: string, action: any): void {
-    const clickHandler = mxUtils.bind(this, function () {
+    const clickHandler = () => {
       this.editor.execute(action);
-    });
+    };
     this.addOption(combo, title, clickHandler);
   }
 
@@ -231,12 +231,12 @@ export class mxDefaultToolbar {
    * selected.
    */
   addMode(title: string, icon: any, mode: any, pressed: any, funct: Function): any {
-    const clickHandler = mxUtils.bind(this, function () {
+    const clickHandler = () => {
       this.editor.setMode(mode);
       if (!!funct) {
         funct(this.editor);
       }
-    });
+    };
     return this.toolbar.addSwitchMode(title, icon, clickHandler, pressed);
   }
 
@@ -262,15 +262,15 @@ export class mxDefaultToolbar {
    * Default is true.
    */
   addPrototype(title: string, icon: any, ptype: any, pressed: any, insert: any, toggle: any): any {
-    const factory = mxUtils.bind(this, function () {
+    const factory = () => {
       if (typeof (ptype) == 'function') {
         return ptype();
       } else if (!!ptype) {
         return this.editor.graph.cloneCell(ptype);
       }
       return null;
-    });
-    const clickHandler = mxUtils.bind(this, function (evt, cell) {
+    };
+    const clickHandler = (evt, cell) => {
       if (typeof (insert) == 'function') {
         insert(this.editor, factory(), evt, cell);
       } else {
@@ -278,7 +278,7 @@ export class mxDefaultToolbar {
       }
       this.toolbar.resetMode();
       mxEvent.consume(evt);
-    });
+    };
     const img = this.toolbar.addMode(title, icon, clickHandler, pressed, null, toggle);
     const dropHandler = function (graph, evt, cell) {
       clickHandler(evt, cell);
@@ -400,12 +400,12 @@ export class mxDefaultToolbar {
   installDropHandler(img: any, dropHandler: Function): void {
     const sprite = document.createElement('img');
     sprite.setAttribute('src', img.getAttribute('src'));
-    const loader = mxUtils.bind(this, function (evt) {
+    const loader = (evt) => {
       sprite.style.width = (2 * img.offsetWidth) + 'px';
       sprite.style.height = (2 * img.offsetHeight) + 'px';
       mxUtils.makeDraggable(img, this.editor.graph, dropHandler, sprite);
       mxEvent.removeListener(sprite, 'load', loader);
-    });
+    };
     if (mxClient.IS_IE) {
       loader();
     } else {

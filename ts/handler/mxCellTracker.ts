@@ -70,7 +70,6 @@
  */
 import { mxClient } from '../mxClient';
 import { mxEvent } from '../util/mxEvent';
-import { mxUtils } from '../util/mxUtils';
 import { mxCellMarker } from './mxCellMarker';
 
 export class mxCellTracker extends mxCellMarker {
@@ -81,9 +80,9 @@ export class mxCellTracker extends mxCellMarker {
       this.getCell = funct;
     }
     if (mxClient.IS_IE) {
-      mxEvent.addListener(window, 'unload', mxUtils.bind(this, function () {
+      mxEvent.addListener(window, 'unload', () => {
         this.destroy();
-      }));
+      });
     }
   }
 
