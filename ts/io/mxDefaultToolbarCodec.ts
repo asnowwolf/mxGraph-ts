@@ -13,10 +13,10 @@ export let mxDefaultToolbarCodec = mxCodecRegistry.register(function () {
     return null;
   };
   codec.decode = function (dec, node, into) {
-    if (into != null) {
+    if (!!into) {
       const editor = into.editor;
       node = node.firstChild;
-      while (node != null) {
+      while (!!node) {
         if (node.nodeType == mxConstants.NODETYPE_ELEMENT) {
           if (!this.processInclude(dec, node, into)) {
             if (node.nodeName == 'separator') {
@@ -35,28 +35,28 @@ export let mxDefaultToolbarCodec = mxCodecRegistry.register(function () {
               const template = node.getAttribute('template');
               const toggle = node.getAttribute('toggle') != '0';
               const text = mxUtils.getTextContent(node);
-              let elt = null;
-              if (action != null) {
+              let elt = undefined;
+              if (!!action) {
                 elt = into.addItem(as, icon, action, pressedIcon);
-              } else if (mode != null) {
+              } else if (!!mode) {
                 const funct = (mxDefaultToolbarCodec.allowEval) ? mxUtils.eval(text) : null;
                 elt = into.addMode(as, icon, mode, pressedIcon, funct);
-              } else if (template != null || (text != null && text.length > 0)) {
+              } else if (!!template || (!!text && text.length > 0)) {
                 let cell = editor.templates[template];
                 const style = node.getAttribute('style');
-                if (cell != null && style != null) {
+                if (!!cell && !!style) {
                   cell = editor.graph.cloneCell(cell);
                   cell.setStyle(style);
                 }
-                let insertFunction = null;
-                if (text != null && text.length > 0 && mxDefaultToolbarCodec.allowEval) {
+                let insertFunction = undefined;
+                if (!!text && text.length > 0 && mxDefaultToolbarCodec.allowEval) {
                   insertFunction = mxUtils.eval(text);
                 }
                 elt = into.addPrototype(as, icon, cell, pressedIcon, insertFunction, toggle);
               } else {
                 const children = mxUtils.getChildNodes(node);
                 if (children.length > 0) {
-                  if (icon == null) {
+                  if (!icon) {
                     const combo = into.addActionCombo(as);
                     for (let i = 0; i < children.length; i++) {
                       const child = children[i];
@@ -69,13 +69,13 @@ export let mxDefaultToolbarCodec = mxCodecRegistry.register(function () {
                       }
                     }
                   } else {
-                    let select = null;
+                    let select = undefined;
                     const create = function () {
                       const template = editor.templates[select.value];
-                      if (template != null) {
+                      if (!!template) {
                         const clone = template.clone();
                         const style = select.options[select.selectedIndex].cellStyle;
-                        if (style != null) {
+                        if (!!style) {
                           clone.setStyle(style);
                         }
                         return clone;
@@ -107,9 +107,9 @@ export let mxDefaultToolbarCodec = mxCodecRegistry.register(function () {
                   }
                 }
               }
-              if (elt != null) {
+              if (!!elt) {
                 const id = node.getAttribute('id');
-                if (id != null && id.length > 0) {
+                if (!!id && id.length > 0) {
                   elt.setAttribute('id', id);
                 }
               }

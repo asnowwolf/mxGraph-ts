@@ -46,7 +46,7 @@
 export class mxImageBundle {
   constructor(alt: any) {
     this.images = [];
-    this.alt = (alt != null) ? alt : false;
+    this.alt = (!!alt) ? alt : false;
   }
 
   images: any[];
@@ -70,10 +70,10 @@ export class mxImageBundle {
    * <alt> is true, the value is returned otherwise.
    */
   getImage(key: string): any {
-    let result = null;
-    if (key != null) {
+    let result = undefined;
+    if (!!key) {
       const img = this.images[key];
-      if (img != null) {
+      if (!!img) {
         result = (this.alt) ? img.fallback : img.value;
       }
     }

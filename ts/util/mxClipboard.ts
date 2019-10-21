@@ -4,7 +4,7 @@ export let mxClipboard = {
   }, getCells() {
     return mxClipboard.cells;
   }, isEmpty() {
-    return mxClipboard.getCells() == null;
+    return !mxClipboard.getCells();
   }, cut(graph, cells) {
     cells = mxClipboard.copy(graph, cells);
     mxClipboard.insertCount = 0;
@@ -19,7 +19,7 @@ export let mxClipboard = {
     mxClipboard.setCells(graph.cloneCells(result));
     return result;
   }, paste(graph) {
-    let cells = null;
+    let cells = undefined;
     if (!mxClipboard.isEmpty()) {
       cells = graph.getImportableCells(mxClipboard.getCells());
       const delta = mxClipboard.insertCount * mxClipboard.STEPSIZE;

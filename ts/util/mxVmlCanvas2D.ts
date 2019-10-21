@@ -125,9 +125,9 @@ export class mxVmlCanvas2D {
   addNode(filled: any, stroked: any): void {
     const node = this.node;
     const s = this.state;
-    if (node != null) {
+    if (!!node) {
       if (node.nodeName == 'shape') {
-        if (this.path != null && this.path.length > 0) {
+        if (!!this.path && this.path.length > 0) {
           node.path = this.path.join(' ') + ' e';
           node.style.width = this.root.style.width;
           node.style.height = this.root.style.height;
@@ -138,16 +138,16 @@ export class mxVmlCanvas2D {
       }
       node.strokeweight = this.format(Math.max(1, s.strokeWidth * s.scale / this.vmlScale)) + 'px';
       if (s.shadow) {
-        this.root.appendChild(this.createShadow(node, filled && s.fillColor != null, stroked && s.strokeColor != null));
+        this.root.appendChild(this.createShadow(node, filled && !!s.fillColor, stroked && !!s.strokeColor));
       }
-      if (stroked && s.strokeColor != null) {
+      if (stroked && !!s.strokeColor) {
         node.stroked = 'true';
         node.strokecolor = s.strokeColor;
       } else {
         node.stroked = 'false';
       }
       node.appendChild(this.createStroke());
-      if (filled && s.fillColor != null) {
+      if (filled && !!s.fillColor) {
         node.appendChild(this.createFill());
       } else if (this.pointerEvents && (node.nodeName != 'shape' || this.path[this.path.length - 1] == this.closeOp)) {
         node.appendChild(this.createTransparentFill());
@@ -179,7 +179,7 @@ export class mxVmlCanvas2D {
     const s = this.state;
     const fill = this.createVmlElement('fill');
     fill.color = s.fillColor;
-    if (s.gradientColor != null) {
+    if (!!s.gradientColor) {
       fill.type = 'gradient';
       fill.method = 'none';
       fill.color2 = s.gradientColor;
@@ -413,7 +413,7 @@ export class mxVmlCanvas2D {
    * Paints an image.
    */
   image(x: number, y: number, w: number, h: number, src: any, aspect: any, flipH: any, flipV: any): void {
-    let node = null;
+    let node = undefined;
     if (!aspect) {
       node = this.createRect('image', x, y, w, h);
       node.src = src;
@@ -449,10 +449,10 @@ export class mxVmlCanvas2D {
     const div = this.createElement('div');
     const state = this.state;
     let css = '';
-    if (state.fontBackgroundColor != null) {
+    if (!!state.fontBackgroundColor) {
       css += 'background-color:' + mxUtils.htmlEntities(state.fontBackgroundColor) + ';';
     }
-    if (state.fontBorderColor != null) {
+    if (!!state.fontBorderColor) {
       css += 'border:1px solid ' + mxUtils.htmlEntities(state.fontBorderColor) + ';';
     }
     if (mxUtils.isNode(str)) {
@@ -498,10 +498,10 @@ export class mxVmlCanvas2D {
    * supported for plain text in VML.
    */
   text(x: number, y: number, w: number, h: number, str: string, align: any, valign: any, wrap: any, format: string, overflow: any, clip: any, rotation: any, dir: any): void {
-    if (this.textEnabled && str != null) {
+    if (this.textEnabled && !!str) {
       const s = this.state;
       if (format == 'html') {
-        if (s.rotation != null) {
+        if (!!s.rotation) {
           const pt = this.rotatePoint(x, y, s.rotation, s.rotationCx, s.rotationCy);
           x = pt.x;
           y = pt.y;
@@ -530,7 +530,7 @@ export class mxVmlCanvas2D {
         const dy = margin.y;
         const div = this.createDiv(str, align, valign, overflow);
         const inner = this.createElement('div');
-        if (dir != null) {
+        if (!!dir) {
           div.setAttribute('dir', dir);
         }
         if (wrap && w > 0) {
@@ -541,7 +541,7 @@ export class mxVmlCanvas2D {
           div.style.whiteSpace = 'normal';
           if (div.style.wordWrap == 'break-word') {
             const tmp = div;
-            if (tmp.firstChild != null && tmp.firstChild.nodeName == 'DIV') {
+            if (!!tmp.firstChild && tmp.firstChild.nodeName == 'DIV') {
               tmp.firstChild.style.width = '100%';
             }
           }
@@ -613,7 +613,7 @@ export class mxVmlCanvas2D {
           div.style.position = 'absolute';
           document.body.appendChild(div);
           let sizeDiv = div;
-          if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV') {
+          if (!!sizeDiv.firstChild && sizeDiv.firstChild.nodeName == 'DIV') {
             sizeDiv = sizeDiv.firstChild;
           }
           const tmp = sizeDiv.offsetWidth + 3;
@@ -734,7 +734,7 @@ export class mxVmlCanvas2D {
     } else if (valign != mxConstants.ALIGN_MIDDLE) {
       dy = textHeight / 2;
     }
-    if (rotation != null) {
+    if (!!rotation) {
       node.style.rotation = rotation;
       const rad = rotation * (Math.PI / 180);
       dx = Math.sin(rad) * dy;

@@ -49,7 +49,7 @@ import { mxCellHighlight } from './mxCellHighlight';
 export class mxCellMarker extends mxEventSource {
   constructor(graph: mxGraph, validColor: string = mxConstants.DEFAULT_VALID_COLOR, invalidColor: string = mxConstants.DEFAULT_INVALID_COLOR, hotspot: number = mxConstants.DEFAULT_HOTSPOT) {
     super(graph);
-    if (graph != null) {
+    if (!!graph) {
       this.graph = graph;
       this.highlight = new mxCellHighlight(graph);
     }
@@ -158,7 +158,7 @@ export class mxCellMarker extends mxEventSource {
    * Returns true if <validState> is not null.
    */
   hasValidState(): boolean {
-    return this.validState != null;
+    return !!this.validState;
   }
 
   /**
@@ -185,9 +185,9 @@ export class mxCellMarker extends mxEventSource {
    * Resets the state of the cell marker.
    */
   reset(): void {
-    this.validState = null;
-    if (this.markedState != null) {
-      this.markedState = null;
+    this.validState = undefined;
+    if (!!this.markedState) {
+      this.markedState = undefined;
       this.unmark();
     }
   }
@@ -203,7 +203,7 @@ export class mxCellMarker extends mxEventSource {
    * marker color and valid state.
    */
   process(me: any): any {
-    let state = null;
+    let state = undefined;
     if (this.isEnabled()) {
       state = this.getState(me);
       this.setCurrentState(state, me);
@@ -217,20 +217,20 @@ export class mxCellMarker extends mxEventSource {
    * Sets and marks the current valid state.
    */
   setCurrentState(state: any, me: any, color: string): void {
-    const isValid = (state != null) ? this.isValidState(state) : false;
-    color = (color != null) ? color : this.getMarkerColor(me.getEvent(), state, isValid);
+    const isValid = (!!state) ? this.isValidState(state) : false;
+    color = (!!color) ? color : this.getMarkerColor(me.getEvent(), state, isValid);
     if (isValid) {
       this.validState = state;
     } else {
-      this.validState = null;
+      this.validState = undefined;
     }
     if (state != this.markedState || color != this.currentColor) {
       this.currentColor = color;
-      if (state != null && this.currentColor != null) {
+      if (!!state && !!this.currentColor) {
         this.markedState = state;
         this.mark();
-      } else if (this.markedState != null) {
-        this.markedState = null;
+      } else if (!!this.markedState) {
+        this.markedState = undefined;
         this.unmark();
       }
     }
@@ -243,8 +243,8 @@ export class mxCellMarker extends mxEventSource {
    */
   markCell(cell: mxCell, color: string): void {
     const state = this.graph.getView().getState(cell);
-    if (state != null) {
-      this.currentColor = (color != null) ? color : this.validColor;
+    if (!!state) {
+      this.currentColor = (!!color) ? color : this.validColor;
       this.markedState = state;
       this.mark();
     }
@@ -301,7 +301,7 @@ export class mxCellMarker extends mxEventSource {
     const view = this.graph.getView();
     const cell = this.getCell(me);
     const state = this.getStateToMark(view.getState(cell));
-    return (state != null && this.intersects(state, me)) ? state : null;
+    return (!!state && this.intersects(state, me)) ? state : null;
   }
 
   /**

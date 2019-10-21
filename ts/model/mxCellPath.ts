@@ -1,9 +1,9 @@
 export let mxCellPath = {
   PATH_SEPARATOR: '.', create(cell) {
     let result = '';
-    if (cell != null) {
+    if (!!cell) {
       let parent = cell.getParent();
-      while (parent != null) {
+      while (!!parent) {
         const index = parent.getIndex(cell);
         result = index + mxCellPath.PATH_SEPARATOR + result;
         cell = parent;
@@ -16,7 +16,7 @@ export let mxCellPath = {
     }
     return result;
   }, getParentPath(path) {
-    if (path != null) {
+    if (!!path) {
       const index = path.lastIndexOf(mxCellPath.PATH_SEPARATOR);
       if (index >= 0) {
         return path.substring(0, index);
@@ -27,7 +27,7 @@ export let mxCellPath = {
     return null;
   }, resolve(root, path) {
     let parent = root;
-    if (path != null) {
+    if (!!path) {
       const tokens = path.split(mxCellPath.PATH_SEPARATOR);
       for (let i = 0; i < tokens.length; i++) {
         parent = parent.getChildAt(parseInt(tokens[i]));

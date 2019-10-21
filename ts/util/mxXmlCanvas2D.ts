@@ -261,7 +261,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
    */
   setFillColor(value: any): void {
     if (value == mxConstants.NONE) {
-      value = null;
+      value = undefined;
     }
     if (this.compressed) {
       if (this.state.fillColor == value) {
@@ -270,7 +270,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
       mxAbstractCanvas2D.prototype.setFillColor.apply(this, arguments);
     }
     const elem = this.createElement('fillcolor');
-    elem.setAttribute('color', (value != null) ? value : mxConstants.NONE);
+    elem.setAttribute('color', (!!value) ? value : mxConstants.NONE);
     this.root.appendChild(elem);
   }
 
@@ -295,7 +295,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
    * are between 1 (opaque) and 0 (transparent).
    */
   setGradient(color1: any, color2: any, x: number, y: number, w: number, h: number, direction: any, alpha1: any, alpha2: any): void {
-    if (color1 != null && color2 != null) {
+    if (!!color1 && !!color2) {
       mxAbstractCanvas2D.prototype.setGradient.apply(this, arguments);
       const elem = this.createElement('gradient');
       elem.setAttribute('c1', color1);
@@ -304,13 +304,13 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
       elem.setAttribute('y', this.format(y));
       elem.setAttribute('w', this.format(w));
       elem.setAttribute('h', this.format(h));
-      if (direction != null) {
+      if (!!direction) {
         elem.setAttribute('direction', direction);
       }
-      if (alpha1 != null) {
+      if (!!alpha1) {
         elem.setAttribute('alpha1', alpha1);
       }
-      if (alpha2 != null) {
+      if (!!alpha2) {
         elem.setAttribute('alpha2', alpha2);
       }
       this.root.appendChild(elem);
@@ -328,7 +328,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
    */
   setStrokeColor(value: any): void {
     if (value == mxConstants.NONE) {
-      value = null;
+      value = undefined;
     }
     if (this.compressed) {
       if (this.state.strokeColor == value) {
@@ -337,7 +337,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
       mxAbstractCanvas2D.prototype.setStrokeColor.apply(this, arguments);
     }
     const elem = this.createElement('strokecolor');
-    elem.setAttribute('color', (value != null) ? value : mxConstants.NONE);
+    elem.setAttribute('color', (!!value) ? value : mxConstants.NONE);
     this.root.appendChild(elem);
   }
 
@@ -382,7 +382,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
     }
     const elem = this.createElement('dashed');
     elem.setAttribute('dashed', (value) ? '1' : '0');
-    if (fixDash != null) {
+    if (!!fixDash) {
       elem.setAttribute('fixDash', (fixDash) ? '1' : '0');
     }
     this.root.appendChild(elem);
@@ -489,7 +489,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
   setFontColor(value: any): void {
     if (this.textEnabled) {
       if (value == mxConstants.NONE) {
-        value = null;
+        value = undefined;
       }
       if (this.compressed) {
         if (this.state.fontColor == value) {
@@ -498,7 +498,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
         mxAbstractCanvas2D.prototype.setFontColor.apply(this, arguments);
       }
       const elem = this.createElement('fontcolor');
-      elem.setAttribute('color', (value != null) ? value : mxConstants.NONE);
+      elem.setAttribute('color', (!!value) ? value : mxConstants.NONE);
       this.root.appendChild(elem);
     }
   }
@@ -515,7 +515,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
   setFontBackgroundColor(value: any): void {
     if (this.textEnabled) {
       if (value == mxConstants.NONE) {
-        value = null;
+        value = undefined;
       }
       if (this.compressed) {
         if (this.state.fontBackgroundColor == value) {
@@ -524,7 +524,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
         mxAbstractCanvas2D.prototype.setFontBackgroundColor.apply(this, arguments);
       }
       const elem = this.createElement('fontbackgroundcolor');
-      elem.setAttribute('color', (value != null) ? value : mxConstants.NONE);
+      elem.setAttribute('color', (!!value) ? value : mxConstants.NONE);
       this.root.appendChild(elem);
     }
   }
@@ -541,7 +541,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
   setFontBorderColor(value: any): void {
     if (this.textEnabled) {
       if (value == mxConstants.NONE) {
-        value = null;
+        value = undefined;
       }
       if (this.compressed) {
         if (this.state.fontBorderColor == value) {
@@ -550,7 +550,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
         mxAbstractCanvas2D.prototype.setFontBorderColor.apply(this, arguments);
       }
       const elem = this.createElement('fontbordercolor');
-      elem.setAttribute('color', (value != null) ? value : mxConstants.NONE);
+      elem.setAttribute('color', (!!value) ? value : mxConstants.NONE);
       this.root.appendChild(elem);
     }
   }
@@ -614,7 +614,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
    */
   setFontStyle(value: any): void {
     if (this.textEnabled) {
-      if (value == null) {
+      if (!value) {
         value = 0;
       }
       if (this.compressed) {
@@ -662,7 +662,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
   setShadowColor(value: any): void {
     if (this.compressed) {
       if (value == mxConstants.NONE) {
-        value = null;
+        value = undefined;
       }
       if (this.state.shadowColor == value) {
         return;
@@ -670,7 +670,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
       mxAbstractCanvas2D.prototype.setShadowColor.apply(this, arguments);
     }
     const elem = this.createElement('shadowcolor');
-    elem.setAttribute('color', (value != null) ? value : mxConstants.NONE);
+    elem.setAttribute('color', (!!value) ? value : mxConstants.NONE);
     this.root.appendChild(elem);
   }
 
@@ -950,7 +950,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
    * dir - Optional string that specifies the text direction. Possible values are rtl and lrt.
    */
   text(x: number, y: number, w: number, h: number, str: string, align: any, valign: any, wrap: any, format: string, overflow: any, clip: any, rotation: any, dir: any): void {
-    if (this.textEnabled && str != null) {
+    if (this.textEnabled && !!str) {
       if (mxUtils.isNode(str)) {
         str = mxUtils.getOuterHtml(str);
       }
@@ -960,27 +960,27 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
       elem.setAttribute('w', this.format(w));
       elem.setAttribute('h', this.format(h));
       elem.setAttribute('str', str);
-      if (align != null) {
+      if (!!align) {
         elem.setAttribute('align', align);
       }
-      if (valign != null) {
+      if (!!valign) {
         elem.setAttribute('valign', valign);
       }
       elem.setAttribute('wrap', (wrap) ? '1' : '0');
-      if (format == null) {
+      if (!format) {
         format = '';
       }
       elem.setAttribute('format', format);
-      if (overflow != null) {
+      if (!!overflow) {
         elem.setAttribute('overflow', overflow);
       }
-      if (clip != null) {
+      if (!!clip) {
         elem.setAttribute('clip', (clip) ? '1' : '0');
       }
-      if (rotation != null) {
+      if (!!rotation) {
         elem.setAttribute('rotation', rotation);
       }
-      if (dir != null) {
+      if (!!dir) {
         elem.setAttribute('dir', dir);
       }
       this.root.appendChild(elem);

@@ -115,24 +115,24 @@ export class mxSelectionCellsHandler extends mxEventSource {
     const tmp = this.graph.getSelectionCells();
     for (let i = 0; i < tmp.length; i++) {
       const state = this.graph.view.getState(tmp[i]);
-      if (state != null) {
+      if (!!state) {
         let handler = oldHandlers.remove(tmp[i]);
-        if (handler != null) {
+        if (!!handler) {
           if (handler.state != state) {
             handler.destroy();
-            handler = null;
+            handler = undefined;
           } else if (!this.isHandlerActive(handler)) {
-            if (handler.refresh != null) {
+            if (!!handler.refresh) {
               handler.refresh();
             }
             handler.redraw();
           }
         }
-        if (handler == null) {
+        if (!handler) {
           handler = this.graph.createHandler(state);
           this.fireEvent(new mxEventObject(mxEvent.ADD, 'state', state));
         }
-        if (handler != null) {
+        if (!!handler) {
           this.handlers.put(tmp[i], handler);
         }
       }
@@ -149,7 +149,7 @@ export class mxSelectionCellsHandler extends mxEventSource {
    * Returns true if the given handler is active and should not be redrawn.
    */
   isHandlerActive(handler: Function): boolean {
-    return handler.index != null;
+    return !!handler.index;
   }
 
   /**
@@ -159,15 +159,15 @@ export class mxSelectionCellsHandler extends mxEventSource {
    */
   updateHandler(state: any): void {
     let handler = this.handlers.remove(state.cell);
-    if (handler != null) {
+    if (!!handler) {
       const index = handler.index;
       const x = handler.startX;
       const y = handler.startY;
       handler.destroy();
       handler = this.graph.createHandler(state);
-      if (handler != null) {
+      if (!!handler) {
         this.handlers.put(state.cell, handler);
-        if (index != null && x != null && y != null) {
+        if (!!index && !!x && !!y) {
           handler.start(x, y, index);
         }
       }
@@ -223,11 +223,11 @@ export class mxSelectionCellsHandler extends mxEventSource {
    */
   destroy(): void {
     this.graph.removeMouseListener(this);
-    if (this.refreshHandler != null) {
+    if (!!this.refreshHandler) {
       this.graph.getSelectionModel().removeListener(this.refreshHandler);
       this.graph.getModel().removeListener(this.refreshHandler);
       this.graph.getView().removeListener(this.refreshHandler);
-      this.refreshHandler = null;
+      this.refreshHandler = undefined;
     }
   }
 }

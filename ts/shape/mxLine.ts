@@ -25,7 +25,7 @@ export class mxLine extends mxShape {
     super();
     this.bounds = bounds;
     this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
+    this.strokewidth = (!!strokewidth) ? strokewidth : 1;
   }
 
   bounds: any;

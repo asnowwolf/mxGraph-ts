@@ -22,9 +22,9 @@ import { mxUtils } from '../util/mxUtils';
 
 export class mxSwimlaneManager {
   constructor(graph: mxGraph, horizontal: any, addEnabled: any, resizeEnabled: any) {
-    this.horizontal = (horizontal != null) ? horizontal : true;
-    this.addEnabled = (addEnabled != null) ? addEnabled : true;
-    this.resizeEnabled = (resizeEnabled != null) ? resizeEnabled : true;
+    this.horizontal = (!!horizontal) ? horizontal : true;
+    this.addEnabled = (!!addEnabled) ? addEnabled : true;
+    this.resizeEnabled = (!!resizeEnabled) ? resizeEnabled : true;
     this.addHandler = mxUtils.bind(this, function (sender, evt) {
       if (this.isEnabled() && this.isAddEnabled()) {
         this.cellsAdded(evt.getProperty('cells'));
@@ -150,12 +150,12 @@ export class mxSwimlaneManager {
    * Sets the graph that the manager operates on.
    */
   setGraph(graph: mxGraph): void {
-    if (this.graph != null) {
+    if (!!this.graph) {
       this.graph.removeListener(this.addHandler);
       this.graph.removeListener(this.resizeHandler);
     }
     this.graph = graph;
-    if (this.graph != null) {
+    if (!!this.graph) {
       this.graph.addListener(mxEvent.ADD_CELLS, this.addHandler);
       this.graph.addListener(mxEvent.CELLS_RESIZED, this.resizeHandler);
     }
@@ -194,7 +194,7 @@ export class mxSwimlaneManager {
    * cell - Array of <mxCells> that have been added.
    */
   cellsAdded(cells: mxCell[]): void {
-    if (cells != null) {
+    if (!!cells) {
       const model = this.getGraph().getModel();
       model.beginUpdate();
       try {
@@ -223,18 +223,18 @@ export class mxSwimlaneManager {
     const model = this.getGraph().getModel();
     const parent = model.getParent(swimlane);
     const childCount = model.getChildCount(parent);
-    let geo = null;
+    let geo = undefined;
     for (let i = 0; i < childCount; i++) {
       const child = model.getChildAt(parent, i);
       if (child != swimlane && !this.isSwimlaneIgnored(child)) {
         geo = model.getGeometry(child);
-        if (geo != null) {
+        if (!!geo) {
           break;
         }
       }
     }
-    if (geo != null) {
-      const parentHorizontal = (parent != null) ? this.isCellHorizontal(parent) : this.horizontal;
+    if (!!geo) {
+      const parentHorizontal = (!!parent) ? this.isCellHorizontal(parent) : this.horizontal;
       this.resizeSwimlane(swimlane, geo.width, geo.height, parentHorizontal);
     }
   }
@@ -250,25 +250,25 @@ export class mxSwimlaneManager {
    * cells - Array of <mxCells> whose size was changed.
    */
   cellsResized(cells: mxCell[]): void {
-    if (cells != null) {
+    if (!!cells) {
       const model = this.getGraph().getModel();
       model.beginUpdate();
       try {
         for (let i = 0; i < cells.length; i++) {
           if (!this.isSwimlaneIgnored(cells[i])) {
             const geo = model.getGeometry(cells[i]);
-            if (geo != null) {
+            if (!!geo) {
               const size = new mxRectangle(0, 0, geo.width, geo.height);
               let top = cells[i];
               let current = top;
-              while (current != null) {
+              while (!!current) {
                 top = current;
                 current = model.getParent(current);
                 const tmp = (this.graph.isSwimlane(current)) ? this.graph.getStartSize(current) : new mxRectangle();
                 size.width += tmp.width;
                 size.height += tmp.height;
               }
-              const parentHorizontal = (current != null) ? this.isCellHorizontal(current) : this.horizontal;
+              const parentHorizontal = (!!current) ? this.isCellHorizontal(current) : this.horizontal;
               this.resizeSwimlane(top, size.width, size.height, parentHorizontal);
             }
           }
@@ -297,7 +297,7 @@ export class mxSwimlaneManager {
       const horizontal = this.isCellHorizontal(swimlane);
       if (!this.isSwimlaneIgnored(swimlane)) {
         let geo = model.getGeometry(swimlane);
-        if (geo != null) {
+        if (!!geo) {
           if ((parentHorizontal && geo.height != h) || (!parentHorizontal && geo.width != w)) {
             geo = geo.clone();
             if (parentHorizontal) {

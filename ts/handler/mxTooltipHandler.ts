@@ -28,7 +28,7 @@ import { mxUtils } from '../util/mxUtils';
 
 export class mxTooltipHandler {
   constructor(graph: mxGraph, delay: any) {
-    if (graph != null) {
+    if (!!graph) {
       this.graph = graph;
       this.delay = delay || 500;
       this.graph.addMouseListener(this);
@@ -123,7 +123,7 @@ export class mxTooltipHandler {
    * Initializes the DOM nodes required for this tooltip handler.
    */
   init(): void {
-    if (document.body != null) {
+    if (!!document.body) {
       this.div = document.createElement('div');
       this.div.className = 'mxTooltip';
       this.div.style.visibility = 'hidden';
@@ -164,7 +164,7 @@ export class mxTooltipHandler {
     if (me.getX() != this.lastX || me.getY() != this.lastY) {
       this.reset(me, true);
       const state = this.getStateForEvent(me);
-      if (this.isHideOnHover() || state != this.state || (me.getSource() != this.node && (!this.stateSource || (state != null && this.stateSource == (me.isSource(state.shape) || !me.isSource(state.text)))))) {
+      if (this.isHideOnHover() || state != this.state || (me.getSource() != this.node && (!this.stateSource || (!!state && this.stateSource == (me.isSource(state.shape) || !me.isSource(state.text)))))) {
         this.hideTooltip();
       }
     }
@@ -189,9 +189,9 @@ export class mxTooltipHandler {
    * Resets the timer.
    */
   resetTimer(): void {
-    if (this.thread != null) {
+    if (!!this.thread) {
       window.clearTimeout(this.thread);
-      this.thread = null;
+      this.thread = undefined;
     }
   }
 
@@ -203,8 +203,8 @@ export class mxTooltipHandler {
   reset(me: any, restart: any, state: any): void {
     if (!this.ignoreTouchEvents || mxEvent.isMouseEvent(me.getEvent())) {
       this.resetTimer();
-      state = (state != null) ? state : this.getStateForEvent(me);
-      if (restart && this.isEnabled() && state != null && (this.div == null || this.div.style.visibility == 'hidden')) {
+      state = (!!state) ? state : this.getStateForEvent(me);
+      if (restart && this.isEnabled() && !!state && (!this.div || this.div.style.visibility == 'hidden')) {
         const node = me.getSource();
         const x = me.getX();
         const y = me.getY();
@@ -238,7 +238,7 @@ export class mxTooltipHandler {
    * Hides the tooltip.
    */
   hideTooltip(): void {
-    if (this.div != null) {
+    if (!!this.div) {
       this.div.style.visibility = 'hidden';
       this.div.innerHTML = '';
     }
@@ -251,8 +251,8 @@ export class mxTooltipHandler {
    * specified location (with a vertical offset of 10 pixels).
    */
   show(tip: any, x: number, y: number): void {
-    if (!this.destroyed && tip != null && tip.length > 0) {
-      if (this.div == null) {
+    if (!this.destroyed && !!tip && tip.length > 0) {
+      if (!this.div) {
         this.init();
       }
       const origin = mxUtils.getScrollOrigin();
@@ -279,11 +279,11 @@ export class mxTooltipHandler {
     if (!this.destroyed) {
       this.graph.removeMouseListener(this);
       mxEvent.release(this.div);
-      if (this.div != null && this.div.parentNode != null) {
+      if (!!this.div && !!this.div.parentNode) {
         this.div.parentNode.removeChild(this.div);
       }
       this.destroyed = true;
-      this.div = null;
+      this.div = undefined;
     }
   }
 }

@@ -68,7 +68,7 @@ export class mxCell {
     this.value = value;
     this.setGeometry(geometry);
     this.setStyle(style);
-    if (this.onInit != null) {
+    if (!!this.onInit) {
       this.onInit();
     }
   }
@@ -428,7 +428,7 @@ export class mxCell {
    * Returns the number of child cells.
    */
   getChildCount(): any {
-    return (this.children == null) ? 0 : this.children.length;
+    return (!this.children) ? 0 : this.children.length;
   }
 
   /**
@@ -454,7 +454,7 @@ export class mxCell {
    * index - Integer that specifies the child to be returned.
    */
   getChildAt(index: number): any {
-    return (this.children == null) ? null : this.children[index];
+    return (!this.children) ? null : this.children[index];
   }
 
   /**
@@ -472,8 +472,8 @@ export class mxCell {
    * should be inserted into the child array.
    */
   insert(child: any, index: number): any {
-    if (child != null) {
-      if (index == null) {
+    if (!!child) {
+      if (!index) {
         index = this.getChildCount();
         if (child.getParent() == this) {
           index--;
@@ -481,7 +481,7 @@ export class mxCell {
       }
       child.removeFromParent();
       child.setParent(this);
-      if (this.children == null) {
+      if (!this.children) {
         this.children = [];
         this.children.push(child);
       } else {
@@ -504,10 +504,10 @@ export class mxCell {
    * removed.
    */
   remove(index: number): any {
-    let child = null;
-    if (this.children != null && index >= 0) {
+    let child = undefined;
+    if (!!this.children && index >= 0) {
       child = this.getChildAt(index);
-      if (child != null) {
+      if (!!child) {
         this.children.splice(index, 1);
         child.setParent(null);
       }
@@ -521,7 +521,7 @@ export class mxCell {
    * Removes the cell from its parent.
    */
   removeFromParent(): void {
-    if (this.parent != null) {
+    if (!!this.parent) {
       const index = this.parent.getIndex(this);
       this.parent.remove(index);
     }
@@ -533,7 +533,7 @@ export class mxCell {
    * Returns the number of edges in the edge array.
    */
   getEdgeCount(): any {
-    return (this.edges == null) ? 0 : this.edges.length;
+    return (!this.edges) ? 0 : this.edges.length;
   }
 
   /**
@@ -559,7 +559,7 @@ export class mxCell {
    * index - Integer that specifies the index of the edge to be returned.
    */
   getEdgeAt(index: number): any {
-    return (this.edges == null) ? null : this.edges[index];
+    return (!this.edges) ? null : this.edges[index];
   }
 
   /**
@@ -574,11 +574,11 @@ export class mxCell {
    * isOutgoing - Boolean that specifies if the edge is outgoing.
    */
   insertEdge(edge: any, isOutgoing: boolean): any {
-    if (edge != null) {
+    if (!!edge) {
       edge.removeFromTerminal(isOutgoing);
       edge.setTerminal(this, isOutgoing);
-      if (this.edges == null || edge.getTerminal(!isOutgoing) != this || mxUtils.indexOf(this.edges, edge) < 0) {
-        if (this.edges == null) {
+      if (!this.edges || edge.getTerminal(!isOutgoing) != this || mxUtils.indexOf(this.edges, edge) < 0) {
+        if (!this.edges) {
           this.edges = [];
         }
         this.edges.push(edge);
@@ -599,8 +599,8 @@ export class mxCell {
    * isOutgoing - Boolean that specifies if the edge is outgoing.
    */
   removeEdge(edge: any, isOutgoing: boolean): any {
-    if (edge != null) {
-      if (edge.getTerminal(!isOutgoing) != this && this.edges != null) {
+    if (!!edge) {
+      if (edge.getTerminal(!isOutgoing) != this && !!this.edges) {
         const index = this.getEdgeIndex(edge);
         if (index >= 0) {
           this.edges.splice(index, 1);
@@ -623,7 +623,7 @@ export class mxCell {
    */
   removeFromTerminal(isSource: boolean): void {
     const terminal = this.getTerminal(isSource);
-    if (terminal != null) {
+    if (!!terminal) {
       terminal.removeEdge(this, isSource);
     }
   }
@@ -640,7 +640,7 @@ export class mxCell {
    */
   hasAttribute(name: string): boolean {
     const userObject = this.getValue();
-    return (userObject != null && userObject.nodeType == mxConstants.NODETYPE_ELEMENT && userObject.hasAttribute) ? userObject.hasAttribute(name) : userObject.getAttribute(name) != null;
+    return (!!userObject && userObject.nodeType == mxConstants.NODETYPE_ELEMENT && userObject.hasAttribute) ? userObject.hasAttribute(name) : userObject.getAttribute(name);
   }
 
   /**
@@ -657,7 +657,7 @@ export class mxCell {
    */
   getAttribute(name: string, defaultValue: any): any {
     const userObject = this.getValue();
-    const val = (userObject != null && userObject.nodeType == mxConstants.NODETYPE_ELEMENT) ? userObject.getAttribute(name) : null;
+    const val = (!!userObject && userObject.nodeType == mxConstants.NODETYPE_ELEMENT) ? userObject.getAttribute(name) : null;
     return val || defaultValue;
   }
 
@@ -673,7 +673,7 @@ export class mxCell {
    */
   setAttribute(name: string, value: any): void {
     const userObject = this.getValue();
-    if (userObject != null && userObject.nodeType == mxConstants.NODETYPE_ELEMENT) {
+    if (!!userObject && userObject.nodeType == mxConstants.NODETYPE_ELEMENT) {
       userObject.setAttribute(name, value);
     }
   }
@@ -698,7 +698,7 @@ export class mxCell {
    */
   cloneValue(): any {
     let value = this.getValue();
-    if (value != null) {
+    if (!!value) {
       if (typeof (value.clone) == 'function') {
         value = value.clone();
       } else if (!isNaN(value.nodeType)) {

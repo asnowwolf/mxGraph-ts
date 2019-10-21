@@ -250,7 +250,7 @@ export class mxFastOrganicLayout extends mxGraphLayout {
           }
           const id = mxObjectIdentity.get(cells[j]);
           const index = this.indices[id];
-          if (index != null) {
+          if (!!index) {
             this.neighbours[i][j] = index;
           } else {
             this.neighbours[i][j] = i;
@@ -270,24 +270,24 @@ export class mxFastOrganicLayout extends mxGraphLayout {
         this.calcPositions();
         this.reduceTemperature();
       }
-      let minx = null;
-      let miny = null;
+      let minx = undefined;
+      let miny = undefined;
       for (let i = 0; i < this.vertexArray.length; i++) {
         const vertex = this.vertexArray[i];
         if (this.isVertexMovable(vertex)) {
           const bounds = this.getVertexBounds(vertex);
-          if (bounds != null) {
+          if (!!bounds) {
             this.cellLocation[i][0] -= bounds.width / 2;
             this.cellLocation[i][1] -= bounds.height / 2;
             const x = this.graph.snap(Math.round(this.cellLocation[i][0]));
             const y = this.graph.snap(Math.round(this.cellLocation[i][1]));
             this.setVertexLocation(vertex, x, y);
-            if (minx == null) {
+            if (!minx) {
               minx = x;
             } else {
               minx = Math.min(minx, x);
             }
-            if (miny == null) {
+            if (!miny) {
               miny = y;
             } else {
               miny = Math.min(miny, y);
@@ -297,7 +297,7 @@ export class mxFastOrganicLayout extends mxGraphLayout {
       }
       let dx = -(minx || 0) + 1;
       let dy = -(miny || 0) + 1;
-      if (initialBounds != null) {
+      if (!!initialBounds) {
         dx += initialBounds.x;
         dy += initialBounds.y;
       }

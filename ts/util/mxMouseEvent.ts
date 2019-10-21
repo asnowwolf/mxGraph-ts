@@ -90,7 +90,7 @@ export class mxMouseEvent {
    * Returns true if the given <mxShape> is the source of <evt>.
    */
   isSource(shape: any): boolean {
-    if (shape != null) {
+    if (!!shape) {
       return mxUtils.isAncestorNode(shape.node, this.getSource());
     }
     return false;
@@ -148,7 +148,7 @@ export class mxMouseEvent {
    */
   getCell(): any {
     const state = this.getState();
-    if (state != null) {
+    if (!!state) {
       return state.cell;
     }
     return null;
@@ -186,7 +186,7 @@ export class mxMouseEvent {
    * is true.
    */
   consume(preventDefault: any): void {
-    preventDefault = (preventDefault != null) ? preventDefault : mxEvent.isMouseEvent(this.evt);
+    preventDefault = (!!preventDefault) ? preventDefault : mxEvent.isMouseEvent(this.evt);
     if (preventDefault && this.evt.preventDefault) {
       this.evt.preventDefault();
     }

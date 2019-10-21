@@ -13,11 +13,11 @@ export let mxStylesheetCodec = mxCodecRegistry.register(function () {
     for (const i in obj.styles) {
       const style = obj.styles[i];
       const styleNode = enc.document.createElement('add');
-      if (i != null) {
+      if (!!i) {
         styleNode.setAttribute('as', i);
         for (const j in style) {
           const value = this.getStringValue(j, style[j]);
-          if (value != null) {
+          if (!!value) {
             const entry = enc.document.createElement('add');
             entry.setAttribute('value', value);
             entry.setAttribute('as', j);
@@ -36,37 +36,37 @@ export let mxStylesheetCodec = mxCodecRegistry.register(function () {
     if (type == 'function') {
       value = mxStyleRegistry.getName(value);
     } else if (type == 'object') {
-      value = null;
+      value = undefined;
     }
     return value;
   };
   codec.decode = function (dec, node, into) {
     const obj = into || new this.template.constructor();
     const id = node.getAttribute('id');
-    if (id != null) {
+    if (!!id) {
       dec.objects[id] = obj;
     }
     node = node.firstChild;
-    while (node != null) {
+    while (!!node) {
       if (!this.processInclude(dec, node, obj) && node.nodeName == 'add') {
         const as = node.getAttribute('as');
-        if (as != null) {
+        if (!!as) {
           const extend = node.getAttribute('extend');
-          let style = (extend != null) ? mxUtils.clone(obj.styles[extend]) : null;
-          if (style == null) {
-            if (extend != null) {
+          let style = (!!extend) ? mxUtils.clone(obj.styles[extend]) : null;
+          if (!style) {
+            if (!!extend) {
               mxLog.warn('mxStylesheetCodec.decode: stylesheet ' + extend + ' not found to extend');
             }
             style = {};
           }
           let entry = node.firstChild;
-          while (entry != null) {
+          while (!!entry) {
             if (entry.nodeType == mxConstants.NODETYPE_ELEMENT) {
               const key = entry.getAttribute('as');
               if (entry.nodeName == 'add') {
                 const text = mxUtils.getTextContent(entry);
-                let value = null;
-                if (text != null && text.length > 0 && mxStylesheetCodec.allowEval) {
+                let value = undefined;
+                if (!!text && text.length > 0 && mxStylesheetCodec.allowEval) {
                   value = mxUtils.eval(text);
                 } else {
                   value = entry.getAttribute('value');
@@ -74,7 +74,7 @@ export let mxStylesheetCodec = mxCodecRegistry.register(function () {
                     value = parseFloat(value);
                   }
                 }
-                if (value != null) {
+                if (!!value) {
                   style[key] = value;
                 }
               } else if (entry.nodeName == 'remove') {

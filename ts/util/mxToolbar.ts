@@ -84,39 +84,39 @@ export class mxToolbar {
    * function(menu, evt, cell) { menu.addItem('Hello, World!'); }
    */
   addItem(title: string, icon: any, funct: () => any, pressedIcon: any, style: any, factoryMethod: any): any {
-    const img = document.createElement((icon != null) ? 'img' : 'button');
-    const initialClassName = style || ((factoryMethod != null) ? 'mxToolbarMode' : 'mxToolbarItem');
+    const img = document.createElement((!!icon) ? 'img' : 'button');
+    const initialClassName = style || ((!!factoryMethod) ? 'mxToolbarMode' : 'mxToolbarItem');
     img.className = initialClassName;
     img.setAttribute('src', icon);
-    if (title != null) {
-      if (icon != null) {
+    if (!!title) {
+      if (!!icon) {
         img.setAttribute('title', title);
       } else {
         mxUtils.write(img, title);
       }
     }
     this.container.appendChild(img);
-    if (funct != null) {
+    if (!!funct) {
       mxEvent.addListener(img, 'click', funct);
       if (mxClient.IS_TOUCH) {
         mxEvent.addListener(img, 'touchend', funct);
       }
     }
     const mouseHandler = mxUtils.bind(this, function (evt) {
-      if (pressedIcon != null) {
+      if (!!pressedIcon) {
         img.setAttribute('src', icon);
       } else {
         img.style.backgroundColor = '';
       }
     });
     mxEvent.addGestureListeners(img, mxUtils.bind(this, function (evt) {
-      if (pressedIcon != null) {
+      if (!!pressedIcon) {
         img.setAttribute('src', pressedIcon);
       } else {
         img.style.backgroundColor = 'gray';
       }
-      if (factoryMethod != null) {
-        if (this.menu == null) {
+      if (!!factoryMethod) {
+        if (!this.menu) {
           this.menu = new mxPopupMenu();
           this.menu.init();
         }
@@ -134,7 +134,7 @@ export class mxToolbar {
             this.menu.hideMenu = function () {
               mxPopupMenu.prototype.hideMenu.apply(this);
               img.className = initialClassName;
-              this.currentImg = null;
+              this.currentImg = undefined;
             };
           }
         }
@@ -184,7 +184,7 @@ export class mxToolbar {
     mxEvent.addListener(select, 'change', function (evt) {
       const value = select.options[select.selectedIndex];
       select.selectedIndex = 0;
-      if (value.funct != null) {
+      if (!!value.funct) {
         value.funct(evt);
       }
     });
@@ -230,12 +230,12 @@ export class mxToolbar {
     img.className = img.initialClassName;
     img.setAttribute('src', icon);
     img.altIcon = pressedIcon;
-    if (title != null) {
+    if (!!title) {
       img.setAttribute('title', title);
     }
     mxEvent.addListener(img, 'click', mxUtils.bind(this, function (evt) {
       let tmp = this.selectedMode.altIcon;
-      if (tmp != null) {
+      if (!!tmp) {
         this.selectedMode.altIcon = this.selectedMode.getAttribute('src');
         this.selectedMode.setAttribute('src', tmp);
       } else {
@@ -246,7 +246,7 @@ export class mxToolbar {
       }
       this.selectedMode = img;
       const tmp = img.altIcon;
-      if (tmp != null) {
+      if (!!tmp) {
         img.altIcon = img.getAttribute('src');
         img.setAttribute('src', tmp);
       } else {
@@ -256,7 +256,7 @@ export class mxToolbar {
       funct();
     }));
     this.container.appendChild(img);
-    if (this.defaultMode == null) {
+    if (!this.defaultMode) {
       this.defaultMode = img;
       this.selectMode(img);
       funct();
@@ -275,13 +275,13 @@ export class mxToolbar {
    * evt is the native mouse event and cell is the cell under the mouse.
    */
   addMode(title: string, icon: any, funct: () => any, pressedIcon: any, style: any, toggle: any): any {
-    toggle = (toggle != null) ? toggle : true;
-    const img = document.createElement((icon != null) ? 'img' : 'button');
+    toggle = (!!toggle) ? toggle : true;
+    const img = document.createElement((!!icon) ? 'img' : 'button');
     img.initialClassName = style || 'mxToolbarMode';
     img.className = img.initialClassName;
     img.setAttribute('src', icon);
     img.altIcon = pressedIcon;
-    if (title != null) {
+    if (!!title) {
       img.setAttribute('title', title);
     }
     if (this.enabled && toggle) {
@@ -293,7 +293,7 @@ export class mxToolbar {
         this.selectMode(img, funct);
         this.noReset = true;
       }));
-      if (this.defaultMode == null) {
+      if (!this.defaultMode) {
         this.defaultMode = img;
         this.defaultFunction = funct;
         this.selectMode(img, funct);
@@ -312,9 +312,9 @@ export class mxToolbar {
    */
   selectMode(domNode: any, funct: () => any): void {
     if (this.selectedMode != domNode) {
-      if (this.selectedMode != null) {
+      if (!!this.selectedMode) {
         const tmp = this.selectedMode.altIcon;
-        if (tmp != null) {
+        if (!!tmp) {
           this.selectedMode.altIcon = this.selectedMode.getAttribute('src');
           this.selectedMode.setAttribute('src', tmp);
         } else {
@@ -323,7 +323,7 @@ export class mxToolbar {
       }
       this.selectedMode = domNode;
       const tmp = this.selectedMode.altIcon;
-      if (tmp != null) {
+      if (!!tmp) {
         this.selectedMode.altIcon = this.selectedMode.getAttribute('src');
         this.selectedMode.setAttribute('src', tmp);
       } else {
@@ -386,11 +386,11 @@ export class mxToolbar {
    */
   destroy(): void {
     mxEvent.release(this.container);
-    this.container = null;
-    this.defaultMode = null;
-    this.defaultFunction = null;
-    this.selectedMode = null;
-    if (this.menu != null) {
+    this.container = undefined;
+    this.defaultMode = undefined;
+    this.defaultFunction = undefined;
+    this.selectedMode = undefined;
+    if (!!this.menu) {
       this.menu.destroy();
     }
   }

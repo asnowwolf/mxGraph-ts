@@ -91,8 +91,8 @@ export class mxParallelEdgeLayout extends mxGraphLayout {
       const child = model.getChildAt(parent, i);
       if (!this.isEdgeIgnored(child)) {
         const id = this.getEdgeId(child);
-        if (id != null) {
-          if (lookup[id] == null) {
+        if (!!id) {
+          if (!lookup[id]) {
             lookup[id] = [];
           }
           lookup[id].push(child);
@@ -113,7 +113,7 @@ export class mxParallelEdgeLayout extends mxGraphLayout {
     const view = this.graph.getView();
     let src = view.getVisibleTerminal(edge, true);
     let trg = view.getVisibleTerminal(edge, false);
-    if (src != null && trg != null) {
+    if (!!src && !!trg) {
       src = mxObjectIdentity.get(src);
       trg = mxObjectIdentity.get(trg);
       return (src > trg) ? trg + '-' + src : src + '-' + trg;
@@ -139,7 +139,7 @@ export class mxParallelEdgeLayout extends mxGraphLayout {
         this.route(parallels[i], x0, y0);
         x0 += this.spacing;
       }
-    } else if (src != null && trg != null) {
+    } else if (!!src && !!trg) {
       const scx = src.x + src.width / 2;
       const scy = src.y + src.height / 2;
       const tcx = trg.x + trg.width / 2;

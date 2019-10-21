@@ -66,7 +66,7 @@ export class mxLabel extends mxRectangleShape {
    */
   init(container: HTMLElement): void {
     mxShape.prototype.init.apply(this, arguments);
-    if (this.indicatorShape != null) {
+    if (!!this.indicatorShape) {
       this.indicator = new this.indicatorShape();
       this.indicator.dialect = this.dialect;
       this.indicator.init(this.node);
@@ -80,7 +80,7 @@ export class mxLabel extends mxRectangleShape {
    * and reconfigure it if required.
    */
   redraw(): void {
-    if (this.indicator != null) {
+    if (!!this.indicator) {
       this.indicator.fill = this.indicatorColor;
       this.indicator.stroke = this.indicatorStrokeColor;
       this.indicator.gradient = this.indicatorGradientColor;
@@ -96,7 +96,7 @@ export class mxLabel extends mxRectangleShape {
    * no indicator shape.
    */
   isHtmlAllowed(): boolean {
-    return mxRectangleShape.prototype.isHtmlAllowed.apply(this, arguments) && this.indicatorColor == null && this.indicatorShape == null;
+    return mxRectangleShape.prototype.isHtmlAllowed.apply(this, arguments) && !this.indicatorColor && !this.indicatorShape;
   }
 
   /**
@@ -116,7 +116,7 @@ export class mxLabel extends mxRectangleShape {
    * Generic background painting implementation.
    */
   paintImage(c: any, x: number, y: number, w: number, h: number): void {
-    if (this.image != null) {
+    if (!!this.image) {
       const bounds = this.getImageBounds(x, y, w, h);
       c.image(bounds.x, bounds.y, bounds.width, bounds.height, this.image, false, false, false);
     }
@@ -156,10 +156,10 @@ export class mxLabel extends mxRectangleShape {
    * Generic background painting implementation.
    */
   paintIndicator(c: any, x: number, y: number, w: number, h: number): void {
-    if (this.indicator != null) {
+    if (!!this.indicator) {
       this.indicator.bounds = this.getIndicatorBounds(x, y, w, h);
       this.indicator.paint(c);
-    } else if (this.indicatorImage != null) {
+    } else if (!!this.indicatorImage) {
       const bounds = this.getIndicatorBounds(x, y, w, h);
       c.image(bounds.x, bounds.y, bounds.width, bounds.height, this.indicatorImage, false, false, false);
     }
@@ -203,7 +203,7 @@ export class mxLabel extends mxRectangleShape {
     while (this.node.hasChildNodes()) {
       this.node.removeChild(this.node.lastChild);
     }
-    if (this.image != null) {
+    if (!!this.image) {
       const node = document.createElement('img');
       node.style.position = 'relative';
       node.setAttribute('border', '0');

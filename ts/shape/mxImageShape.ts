@@ -32,7 +32,7 @@ export class mxImageShape extends mxShape {
     this.image = image;
     this.fill = fill;
     this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
+    this.strokewidth = (!!strokewidth) ? strokewidth : 1;
     this.shadow = false;
   }
 
@@ -81,10 +81,10 @@ export class mxImageShape extends mxShape {
    */
   apply(state: any): void {
     mxShape.prototype.apply.apply(this, arguments);
-    this.fill = null;
-    this.stroke = null;
-    this.gradient = null;
-    if (this.style != null) {
+    this.fill = undefined;
+    this.stroke = undefined;
+    this.gradient = undefined;
+    if (!!this.style) {
       this.preserveImageAspect = mxUtils.getNumber(this.style, mxConstants.STYLE_IMAGE_ASPECT, 1) == 1;
       this.flipH = this.flipH || mxUtils.getValue(this.style, 'imageFlipH', 0) == 1;
       this.flipV = this.flipV || mxUtils.getValue(this.style, 'imageFlipV', 0) == 1;
@@ -129,10 +129,10 @@ export class mxImageShape extends mxShape {
    * Generic background painting implementation.
    */
   paintVertexShape(c: any, x: number, y: number, w: number, h: number): void {
-    if (this.image != null) {
+    if (!!this.image) {
       const fill = mxUtils.getValue(this.style, mxConstants.STYLE_IMAGE_BACKGROUND, null);
       let stroke = mxUtils.getValue(this.style, mxConstants.STYLE_IMAGE_BORDER, null);
-      if (fill != null) {
+      if (!!fill) {
         c.setFillColor(fill);
         c.setStrokeColor(stroke);
         c.rect(x, y, w, h);
@@ -140,7 +140,7 @@ export class mxImageShape extends mxShape {
       }
       c.image(x, y, w, h, this.image, this.preserveImageAspect, false, false);
       const stroke = mxUtils.getValue(this.style, mxConstants.STYLE_IMAGE_BORDER, null);
-      if (stroke != null) {
+      if (!!stroke) {
         c.setShadow(false);
         c.setStrokeColor(stroke);
         c.rect(x, y, w, h);
@@ -162,12 +162,12 @@ export class mxImageShape extends mxShape {
     this.node.style.width = Math.max(0, Math.round(this.bounds.width)) + 'px';
     this.node.style.height = Math.max(0, Math.round(this.bounds.height)) + 'px';
     this.node.innerHTML = '';
-    if (this.image != null) {
+    if (!!this.image) {
       const fill = mxUtils.getValue(this.style, mxConstants.STYLE_IMAGE_BACKGROUND, '');
       const stroke = mxUtils.getValue(this.style, mxConstants.STYLE_IMAGE_BORDER, '');
       this.node.style.backgroundColor = fill;
       this.node.style.borderColor = stroke;
-      const useVml = mxClient.IS_IE6 || ((document.documentMode == null || document.documentMode <= 8) && this.rotation != 0);
+      const useVml = mxClient.IS_IE6 || ((!document.documentMode || document.documentMode <= 8) && this.rotation != 0);
       const img = document.createElement((useVml) ? mxClient.VML_PREFIX + ':image' : 'img');
       img.setAttribute('border', '0');
       img.style.position = 'absolute';

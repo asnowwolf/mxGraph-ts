@@ -2,8 +2,8 @@ import { mxUtils } from './mxUtils';
 
 export let mxObjectIdentity = {
   FIELD_NAME: 'mxObjectId', counter: 0, get(obj) {
-    if (obj != null) {
-      if (obj[mxObjectIdentity.FIELD_NAME] == null) {
+    if (!!obj) {
+      if (!obj[mxObjectIdentity.FIELD_NAME]) {
         if (typeof obj === 'object') {
           const ctor = mxUtils.getFunctionName(obj.constructor);
           obj[mxObjectIdentity.FIELD_NAME] = ctor + '#' + mxObjectIdentity.counter++;

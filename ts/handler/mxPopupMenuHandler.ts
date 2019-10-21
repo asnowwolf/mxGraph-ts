@@ -13,7 +13,7 @@ import { mxUtils } from '../util/mxUtils';
 
 export class mxPopupMenuHandler {
   constructor(graph: mxGraph, factoryMethod: any) {
-    if (graph != null) {
+    if (!!graph) {
       this.graph = graph;
       this.factoryMethod = factoryMethod;
       this.graph.addMouseListener(this);
@@ -117,7 +117,7 @@ export class mxPopupMenuHandler {
    * Handles the event by updating the panning on the graph.
    */
   mouseMove(sender: any, me: any): void {
-    if (this.inTolerance && this.screenX != null && this.screenY != null) {
+    if (this.inTolerance && !!this.screenX && !!this.screenY) {
       if (Math.abs(mxEvent.getMainEvent(me.getEvent()).screenX - this.screenX) > this.graph.tolerance || Math.abs(mxEvent.getMainEvent(me.getEvent()).screenY - this.screenY) > this.graph.tolerance) {
         this.inTolerance = false;
       }
@@ -131,11 +131,11 @@ export class mxPopupMenuHandler {
    * popupmenu.
    */
   mouseUp(sender: any, me: any): void {
-    if (this.popupTrigger && this.inTolerance && this.triggerX != null && this.triggerY != null) {
+    if (this.popupTrigger && this.inTolerance && !!this.triggerX && !!this.triggerY) {
       const cell = this.getCellForPopupEvent(me);
-      if (this.graph.isEnabled() && this.isSelectOnPopup(me) && cell != null && !this.graph.isCellSelected(cell)) {
+      if (this.graph.isEnabled() && this.isSelectOnPopup(me) && !!cell && !this.graph.isCellSelected(cell)) {
         this.graph.setSelectionCell(cell);
-      } else if (this.clearSelectionOnBackground && cell == null) {
+      } else if (this.clearSelectionOnBackground && !cell) {
         this.graph.clearSelection();
       }
       this.graph.tooltipHandler.hide();

@@ -6,10 +6,10 @@
  *
  * (code)
  * var svgDoc = mxUtils.createXmlDocument();
- * var root = (svgDoc.createElementNS != null) ?
+ * var root = (!!svgDoc.createElementNS) ?
  *    svgDoc.createElementNS(mxConstants.NS_SVG, 'svg') : svgDoc.createElement('svg');
  *
- * if (svgDoc.createElementNS == null)
+ * if (!svgDoc.createElementNS)
  * {
  *   root.setAttribute('xmlns', mxConstants.NS_SVG);
  *   root.setAttribute('xmlns:xlink', mxConstants.NS_XLINK);
@@ -61,24 +61,24 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
     super();
     this.root = root;
     this.gradients = [];
-    this.defs = null;
-    this.styleEnabled = (styleEnabled != null) ? styleEnabled : false;
-    let svg = null;
+    this.defs = undefined;
+    this.styleEnabled = (!!styleEnabled) ? styleEnabled : false;
+    let svg = undefined;
     if (root.ownerDocument != document) {
       let node = root;
-      while (node != null && node.nodeName != 'svg') {
+      while (!!node && node.nodeName != 'svg') {
         node = node.parentNode;
       }
       svg = node;
     }
-    if (svg != null) {
+    if (!!svg) {
       const tmp = svg.getElementsByTagName('defs');
       if (tmp.length > 0) {
         this.defs = svg.getElementsByTagName('defs')[0];
       }
-      if (this.defs == null) {
+      if (!this.defs) {
         this.defs = this.createElement('defs');
-        if (svg.firstChild != null) {
+        if (!!svg.firstChild) {
           svg.insertBefore(this.defs, svg.firstChild);
         } else {
           svg.appendChild(this.defs);
@@ -277,11 +277,11 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * Private helper function to create SVG elements
    */
   createElement(tagName: string, namespace: any): any {
-    if (this.root.ownerDocument.createElementNS != null) {
+    if (!!this.root.ownerDocument.createElementNS) {
       return this.root.ownerDocument.createElementNS(namespace || mxConstants.NS_SVG, tagName);
     } else {
       const elt = this.root.ownerDocument.createElement(tagName);
-      if (namespace != null) {
+      if (!!namespace) {
         elt.setAttribute('xmlns', namespace);
       }
       return elt;
@@ -294,7 +294,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * Returns the alternate content for the given foreignObject.
    */
   createAlternateContent(fo: any, x: number, y: number, w: number, h: number, str: string, align: any, valign: any, wrap: any, format: string, overflow: any, clip: any, rotation: any): any {
-    if (this.foAltText != null) {
+    if (!!this.foAltText) {
       const s = this.state;
       const alt = this.createElement('text');
       alt.setAttribute('x', Math.round(w / 2));
@@ -333,8 +333,8 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
     }
     start = start.toLowerCase() + '-' + alpha1;
     end = end.toLowerCase() + '-' + alpha2;
-    let dir = null;
-    if (direction == null || direction == mxConstants.DIRECTION_SOUTH) {
+    let dir = undefined;
+    if (!direction || direction == mxConstants.DIRECTION_SOUTH) {
       dir = 's';
     } else if (direction == mxConstants.DIRECTION_EAST) {
       dir = 'e';
@@ -359,23 +359,23 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
   getSvgGradient(start: any, end: any, alpha1: any, alpha2: any, direction: any): any {
     const id = this.createGradientId(start, end, alpha1, alpha2, direction);
     let gradient = this.gradients[id];
-    if (gradient == null) {
+    if (!gradient) {
       const svg = this.root.ownerSVGElement;
       let counter = 0;
       let tmpId = id + '-' + counter;
-      if (svg != null) {
+      if (!!svg) {
         gradient = svg.ownerDocument.getElementById(tmpId);
-        while (gradient != null && gradient.ownerSVGElement != svg) {
+        while (!!gradient && gradient.ownerSVGElement != svg) {
           tmpId = id + '-' + counter++;
           gradient = svg.ownerDocument.getElementById(tmpId);
         }
       } else {
         tmpId = 'id' + (++this.refCount);
       }
-      if (gradient == null) {
+      if (!gradient) {
         gradient = this.createSvgGradient(start, end, alpha1, alpha2, direction);
         gradient.setAttribute('id', tmpId);
-        if (this.defs != null) {
+        if (!!this.defs) {
           this.defs.appendChild(gradient);
         } else {
           svg.appendChild(gradient);
@@ -397,7 +397,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
     gradient.setAttribute('y1', '0%');
     gradient.setAttribute('x2', '0%');
     gradient.setAttribute('y2', '0%');
-    if (direction == null || direction == mxConstants.DIRECTION_SOUTH) {
+    if (!direction || direction == mxConstants.DIRECTION_SOUTH) {
       gradient.setAttribute('y2', '100%');
     } else if (direction == mxConstants.DIRECTION_EAST) {
       gradient.setAttribute('x2', '100%');
@@ -427,15 +427,15 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
   addNode(filled: any, stroked: any): void {
     const node = this.node;
     const s = this.state;
-    if (node != null) {
+    if (!!node) {
       if (node.nodeName == 'path') {
-        if (this.path != null && this.path.length > 0) {
+        if (!!this.path && this.path.length > 0) {
           node.setAttribute('d', this.path.join(' '));
         } else {
           return;
         }
       }
-      if (filled && s.fillColor != null) {
+      if (filled && !!s.fillColor) {
         this.updateFill();
       } else if (!this.styleEnabled) {
         if (node.nodeName == 'ellipse' && mxClient.IS_FF) {
@@ -445,12 +445,12 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
         }
         filled = false;
       }
-      if (stroked && s.strokeColor != null) {
+      if (stroked && !!s.strokeColor) {
         this.updateStroke();
       } else if (!this.styleEnabled) {
         node.setAttribute('stroke', 'none');
       }
-      if (s.transform != null && s.transform.length > 0) {
+      if (!!s.transform && s.transform.length > 0) {
         node.setAttribute('transform', s.transform);
       }
       if (s.shadow) {
@@ -461,13 +461,13 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
       }
       if (this.pointerEvents) {
         node.setAttribute('pointer-events', this.pointerEventsValue);
-      } else if (!this.pointerEvents && this.originalRoot == null) {
+      } else if (!this.pointerEvents && !this.originalRoot) {
         node.setAttribute('pointer-events', 'none');
       }
       if ((node.nodeName != 'rect' && node.nodeName != 'path' && node.nodeName != 'ellipse') || (node.getAttribute('fill') != 'none' && node.getAttribute('fill') != 'transparent') || node.getAttribute('stroke') != 'none' || node.getAttribute('pointer-events') != 'none') {
         this.root.appendChild(node);
       }
-      this.node = null;
+      this.node = undefined;
     }
   }
 
@@ -481,8 +481,8 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
     if (s.alpha < 1 || s.fillAlpha < 1) {
       this.node.setAttribute('fill-opacity', s.alpha * s.fillAlpha);
     }
-    if (s.fillColor != null) {
-      if (s.gradientColor != null) {
+    if (!!s.fillColor) {
+      if (!!s.gradientColor) {
         const id = this.getSvgGradient(String(s.fillColor), String(s.gradientColor), s.gradientFillAlpha, s.gradientAlpha, s.gradientDirection);
         if (!mxClient.IS_CHROMEAPP && !mxClient.IS_IE && !mxClient.IS_IE11 && !mxClient.IS_EDGE && this.root.ownerDocument == document) {
           const base = this.getBaseUrl().replace(/([\(\)])/g, '\\$1');
@@ -535,10 +535,10 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    */
   updateStrokeAttributes(): void {
     const s = this.state;
-    if (s.lineJoin != null && s.lineJoin != 'miter') {
+    if (!!s.lineJoin && s.lineJoin != 'miter') {
       this.node.setAttribute('stroke-linejoin', s.lineJoin);
     }
-    if (s.lineCap != null) {
+    if (!!s.lineCap) {
       let value = s.lineCap;
       if (value == 'flat') {
         value = 'butt';
@@ -547,7 +547,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
         this.node.setAttribute('stroke-linecap', value);
       }
     }
-    if (s.miterLimit != null && (!this.styleEnabled || s.miterLimit != 10)) {
+    if (!!s.miterLimit && (!this.styleEnabled || s.miterLimit != 10)) {
       this.node.setAttribute('stroke-miterlimit', s.miterLimit);
     }
   }
@@ -612,12 +612,12 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * Experimental implementation for hyperlinks.
    */
   setLink(link: string): void {
-    if (link == null) {
+    if (!link) {
       this.root = this.originalRoot;
     } else {
       this.originalRoot = this.root;
       const node = this.createElement('a');
-      if (node.setAttributeNS == null || (this.root.ownerDocument != document && document.documentMode == null)) {
+      if (!node.setAttributeNS || (this.root.ownerDocument != document && !document.documentMode)) {
         node.setAttribute('xlink:href', link);
       } else {
         node.setAttributeNS(mxConstants.NS_XLINK, 'xlink:href', link);
@@ -723,9 +723,9 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    */
   image(x: number, y: number, w: number, h: number, src: any, aspect: any, flipH: any, flipV: any): void {
     src = this.converter.convert(src);
-    aspect = (aspect != null) ? aspect : true;
-    flipH = (flipH != null) ? flipH : false;
-    flipV = (flipV != null) ? flipV : false;
+    aspect = (!!aspect) ? aspect : true;
+    flipH = (!!flipH) ? flipH : false;
+    flipV = (!!flipV) ? flipV : false;
     const s = this.state;
     x += s.dx;
     y += s.dy;
@@ -734,7 +734,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
     node.setAttribute('y', this.format(y * s.scale) + this.imageOffset);
     node.setAttribute('width', this.format(w * s.scale));
     node.setAttribute('height', this.format(h * s.scale));
-    if (node.setAttributeNS == null) {
+    if (!node.setAttributeNS) {
       node.setAttribute('xlink:href', src);
     } else {
       node.setAttributeNS(mxConstants.NS_XLINK, 'xlink:href', src);
@@ -789,7 +789,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
   convertHtml(val: any): any {
     if (this.useDomParser) {
       const doc = new DOMParser().parseFromString(val, 'text/html');
-      if (doc != null) {
+      if (!!doc) {
         val = new XMLSerializer().serializeToString(doc.body);
         if (val.substring(0, 5) == '<body') {
           val = val.substring(val.indexOf('>', 5) + 1);
@@ -798,14 +798,14 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
           val = val.substring(0, val.length - 7);
         }
       }
-    } else if (document.implementation != null && document.implementation.createDocument != null) {
+    } else if (!!document.implementation && !!document.implementation.createDocument) {
       const xd = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null);
       const xb = xd.createElement('body');
       xd.documentElement.appendChild(xb);
       const div = document.createElement('div');
       div.innerHTML = val;
       let child = div.firstChild;
-      while (child != null) {
+      while (!!child) {
         const next = child.nextSibling;
         xb.appendChild(xd.adoptNode(child));
         child = next;
@@ -845,17 +845,17 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
       style += 'text-align:left;';
     }
     let css = '';
-    if (s.fontBackgroundColor != null) {
+    if (!!s.fontBackgroundColor) {
       css += 'background-color:' + mxUtils.htmlEntities(s.fontBackgroundColor) + ';';
     }
-    if (s.fontBorderColor != null) {
+    if (!!s.fontBorderColor) {
       css += 'border:1px solid ' + mxUtils.htmlEntities(s.fontBorderColor) + ';';
     }
     let val = str;
     if (!mxUtils.isNode(val)) {
       val = this.convertHtml(val);
       if (overflow != 'fill' && overflow != 'width') {
-        if (whiteSpace != null) {
+        if (!!whiteSpace) {
           css += 'white-space:' + whiteSpace + ';';
         }
         val = '<div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;text-align:inherit;text-decoration:inherit;' + css + '">' + val + '</div>';
@@ -897,11 +897,11 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * Updates existing DOM nodes for text rendering. LATER: Merge common parts with text function below.
    */
   updateText(x: number, y: number, w: number, h: number, align: any, valign: any, wrap: any, overflow: any, clip: any, rotation: any, node: Node): void {
-    if (node != null && node.firstChild != null && node.firstChild.firstChild != null && node.firstChild.firstChild.firstChild != null) {
+    if (!!node && !!node.firstChild && !!node.firstChild.firstChild && !!node.firstChild.firstChild.firstChild) {
       const group = node.firstChild;
       const fo = group.firstChild;
       const div = fo.firstChild;
-      rotation = (rotation != null) ? rotation : 0;
+      rotation = (!!rotation) ? rotation : 0;
       const s = this.state;
       x += s.dx;
       y += s.dy;
@@ -925,10 +925,10 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
       const padX = 0;
       const padY = 2;
       let sizeDiv = div;
-      if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV') {
+      if (!!sizeDiv.firstChild && sizeDiv.firstChild.nodeName == 'DIV') {
         sizeDiv = sizeDiv.firstChild;
       }
-      const tmp = (group.mxCachedOffsetWidth != null) ? group.mxCachedOffsetWidth : sizeDiv.offsetWidth;
+      const tmp = (!!group.mxCachedOffsetWidth) ? group.mxCachedOffsetWidth : sizeDiv.offsetWidth;
       ow = tmp + padX;
       if (wrap && overflow != 'fill') {
         if (clip) {
@@ -936,8 +936,8 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
         }
         div.style.width = Math.round(ow + 1) + 'px';
       }
-      ow = (group.mxCachedFinalOffsetWidth != null) ? group.mxCachedFinalOffsetWidth : sizeDiv.offsetWidth;
-      oh = (group.mxCachedFinalOffsetHeight != null) ? group.mxCachedFinalOffsetHeight : sizeDiv.offsetHeight;
+      ow = (!!group.mxCachedFinalOffsetWidth) ? group.mxCachedFinalOffsetWidth : sizeDiv.offsetWidth;
+      oh = (!!group.mxCachedFinalOffsetHeight) ? group.mxCachedFinalOffsetHeight : sizeDiv.offsetHeight;
       if (this.cacheOffsetSize) {
         group.mxCachedOffsetWidth = tmp;
         group.mxCachedFinalOffsetWidth = ow;
@@ -1000,8 +1000,8 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * does currently not support HTML text as part of shapes.)
    */
   text(x: number, y: number, w: number, h: number, str: string, align: any, valign: any, wrap: any, format: string, overflow: any, clip: any, rotation: any, dir: any): void {
-    if (this.textEnabled && str != null) {
-      rotation = (rotation != null) ? rotation : 0;
+    if (this.textEnabled && !!str) {
+      rotation = (!!rotation) ? rotation : 0;
       const s = this.state;
       x += s.dx;
       y += s.dy;
@@ -1030,9 +1030,9 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
         fo.setAttribute('style', 'overflow:visible;');
         fo.setAttribute('pointer-events', 'all');
         const div = this.createDiv(str, align, valign, style, overflow, (wrap && w > 0) ? 'normal' : null);
-        if (div == null) {
+        if (!div) {
           return;
-        } else if (dir != null) {
+        } else if (!!dir) {
           div.setAttribute('dir', dir);
         }
         group.appendChild(fo);
@@ -1053,7 +1053,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
           div2.innerHTML = (mxUtils.isNode(str)) ? str.outerHTML : str;
           clone.appendChild(div2);
           document.body.appendChild(clone);
-          if (document.documentMode != 8 && document.documentMode != 9 && s.fontBorderColor != null) {
+          if (document.documentMode != 8 && document.documentMode != 9 && !!s.fontBorderColor) {
             padX += 2;
             padY += 2;
           }
@@ -1092,7 +1092,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
             fo.appendChild(div);
           }
           let sizeDiv = div;
-          if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV') {
+          if (!!sizeDiv.firstChild && sizeDiv.firstChild.nodeName == 'DIV') {
             sizeDiv = sizeDiv.firstChild;
             if (wrap && div.style.wordWrap == 'break-word') {
               sizeDiv.style.width = '100%';
@@ -1181,7 +1181,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
         fo.setAttribute('height', Math.round(Math.max(1, h)));
         if (this.root.ownerDocument != document) {
           const alt = this.createAlternateContent(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation);
-          if (alt != null) {
+          if (!!alt) {
             fo.setAttribute('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility');
             const sw = this.createElement('switch');
             sw.appendChild(fo);
@@ -1208,7 +1208,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
     const id = 'mx-clip-' + x + '-' + y + '-' + w + '-' + h;
     let counter = 0;
     let tmp = id + '-' + counter;
-    while (document.getElementById(tmp) != null) {
+    while (document.getElementById(tmp)) {
       tmp = id + '-' + (++counter);
     }
     clip = this.createElement('clipPath');
@@ -1229,7 +1229,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * plain text and html for HTML markup.
    */
   plainText(x: number, y: number, w: number, h: number, str: string, align: any, valign: any, wrap: any, overflow: any, clip: any, rotation: any, dir: any): void {
-    rotation = (rotation != null) ? rotation : 0;
+    rotation = (!!rotation) ? rotation : 0;
     const s = this.state;
     const size = s.fontSize;
     const node = this.createElement('g');
@@ -1238,7 +1238,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
     if (rotation != 0) {
       tr += 'rotate(' + rotation + ',' + this.format(x * s.scale) + ',' + this.format(y * s.scale) + ')';
     }
-    if (dir != null) {
+    if (!!dir) {
       node.setAttribute('direction', dir);
     }
     if (clip && w > 0 && h > 0) {
@@ -1257,7 +1257,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
         }
       }
       const c = this.createClip(cx * s.scale - 2, cy * s.scale - 2, w * s.scale + 4, h * s.scale + 4);
-      if (this.defs != null) {
+      if (!!this.defs) {
         this.defs.appendChild(c);
       } else {
         this.root.appendChild(c);
@@ -1345,8 +1345,8 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    */
   addTextBackground(node: Node, str: string, x: number, y: number, w: number, h: number, align: any, valign: any, overflow: any): void {
     const s = this.state;
-    if (s.fontBackgroundColor != null || s.fontBorderColor != null) {
-      let bbox = null;
+    if (!!s.fontBackgroundColor || !!s.fontBorderColor) {
+      let bbox = undefined;
       if (overflow == 'fill' || overflow == 'width') {
         if (align == mxConstants.ALIGN_CENTER) {
           x -= w / 2;
@@ -1359,7 +1359,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
           y -= h;
         }
         bbox = new mxRectangle((x + 1) * s.scale, y * s.scale, (w - 2) * s.scale, (h + 2) * s.scale);
-      } else if (node.getBBox != null && this.root.ownerDocument == document) {
+      } else if (!!node.getBBox && this.root.ownerDocument == document) {
         try {
           bbox = node.getBBox();
           const ie = mxClient.IS_IE && mxClient.IS_SVG;
@@ -1400,7 +1400,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
         }
         bbox = new mxRectangle((x + 1) * s.scale, (y + 2) * s.scale, w * s.scale, (h + 1) * s.scale);
       }
-      if (bbox != null) {
+      if (!!bbox) {
         const n = this.createElement('rect');
         n.setAttribute('fill', s.fontBackgroundColor || 'none');
         n.setAttribute('stroke', s.fontBorderColor || 'none');
@@ -1408,7 +1408,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
         n.setAttribute('y', Math.floor(bbox.y - 1));
         n.setAttribute('width', Math.ceil(bbox.width + 2));
         n.setAttribute('height', Math.ceil(bbox.height));
-        const sw = (s.fontBorderColor != null) ? Math.max(1, this.format(s.scale)) : 0;
+        const sw = (!!s.fontBorderColor) ? Math.max(1, this.format(s.scale)) : 0;
         n.setAttribute('stroke-width', sw);
         if (this.root.ownerDocument == document && mxUtils.mod(sw, 2) == 1) {
           n.setAttribute('transform', 'translate(0.5, 0.5)');

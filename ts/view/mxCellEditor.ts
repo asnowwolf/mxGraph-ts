@@ -111,6 +111,7 @@ import { mxConstants } from '../util/mxConstants';
 import { mxEvent } from '../util/mxEvent';
 import { mxRectangle } from '../util/mxRectangle';
 import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from './mxGraph';
 
 export class mxCellEditor {
   constructor(graph: mxGraph) {
@@ -123,7 +124,7 @@ export class mxCellEditor {
     this.graph.view.addListener(mxEvent.SCALE, this.zoomHandler);
     this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.zoomHandler);
     this.changeHandler = mxUtils.bind(this, function (sender) {
-      if (this.editingCell != null && this.graph.getView().getState(this.editingCell) == null) {
+      if (!!this.editingCell && !this.graph.getView().getState(this.editingCell)) {
         this.stopEditing(true);
       }
     });
@@ -276,7 +277,7 @@ export class mxCellEditor {
    * Sets the temporary horizontal alignment for the current editing session.
    */
   setAlign(align: any): void {
-    if (this.textarea != null) {
+    if (!!this.textarea) {
       this.textarea.style.textAlign = align;
     }
     this.align = align;
@@ -342,7 +343,7 @@ export class mxCellEditor {
       }
     }));
     const keypressHandler = mxUtils.bind(this, function (evt) {
-      if (this.editingCell != null) {
+      if (!!this.editingCell) {
         if (this.clearOnChange && elt.innerHTML == this.getEmptyLabelText() && (!mxClient.IS_FF || (evt.keyCode != 8 && evt.keyCode != 46))) {
           this.clearOnChange = false;
           elt.innerHTML = '';
@@ -352,7 +353,7 @@ export class mxCellEditor {
     mxEvent.addListener(elt, 'keypress', keypressHandler);
     mxEvent.addListener(elt, 'paste', keypressHandler);
     const keyupHandler = mxUtils.bind(this, function (evt) {
-      if (this.editingCell != null) {
+      if (!!this.editingCell) {
         if (this.textarea.innerHTML.length == 0 || this.textarea.innerHTML == '<br>') {
           this.textarea.innerHTML = this.getEmptyLabelText();
           this.clearOnChange = this.textarea.innerHTML.length > 0;
@@ -366,12 +367,12 @@ export class mxCellEditor {
     mxEvent.addListener(elt, 'paste', keyupHandler);
     const evtName = (!mxClient.IS_IE11 && !mxClient.IS_IE) ? 'input' : 'keydown';
     const resizeHandler = mxUtils.bind(this, function (evt) {
-      if (this.editingCell != null && this.autoSize && !mxEvent.isConsumed(evt)) {
-        if (this.resizeThread != null) {
+      if (!!this.editingCell && this.autoSize && !mxEvent.isConsumed(evt)) {
+        if (!!this.resizeThread) {
           window.clearTimeout(this.resizeThread);
         }
         this.resizeThread = window.setTimeout(mxUtils.bind(this, function () {
-          this.resizeThread = null;
+          this.resizeThread = undefined;
           this.resize();
         }), 0);
       }
@@ -414,12 +415,12 @@ export class mxCellEditor {
    */
   resize(): void {
     const state = this.graph.getView().getState(this.editingCell);
-    if (state == null) {
+    if (!state) {
       this.stopEditing(true);
-    } else if (this.textarea != null) {
+    } else if (!!this.textarea) {
       const isEdge = this.graph.getModel().isEdge(state.cell);
       const scale = this.graph.getView().scale;
-      let m = null;
+      let m = undefined;
       if (!this.autoSize || (state.style[mxConstants.STYLE_OVERFLOW] == 'fill')) {
         this.bounds = this.getEditorBounds(state);
         this.textarea.style.width = Math.round(this.bounds.width / scale) + 'px';
@@ -445,13 +446,13 @@ export class mxCellEditor {
         }
       } else {
         const lw = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_WIDTH, null);
-        m = (state.text != null && this.align == null) ? state.text.margin : null;
-        if (m == null) {
+        m = (!!state.text && !this.align) ? state.text.margin : null;
+        if (!m) {
           m = mxUtils.getAlignmentAsPoint(this.align || mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER), mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE));
         }
         if (isEdge) {
           this.bounds = new mxRectangle(state.absoluteOffset.x, state.absoluteOffset.y, 0, 0);
-          if (lw != null) {
+          if (!!lw) {
             const tmp = (parseFloat(lw) + 2) * scale;
             this.bounds.width = tmp;
             this.bounds.x += m.x * tmp;
@@ -460,8 +461,8 @@ export class mxCellEditor {
           let bds = mxRectangle.fromRectangle(state);
           const hpos = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_CENTER);
           const vpos = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE);
-          bds = (state.shape != null && hpos == mxConstants.ALIGN_CENTER && vpos == mxConstants.ALIGN_MIDDLE) ? state.shape.getLabelBounds(bds) : bds;
-          if (lw != null) {
+          bds = (!!state.shape && hpos == mxConstants.ALIGN_CENTER && vpos == mxConstants.ALIGN_MIDDLE) ? state.shape.getLabelBounds(bds) : bds;
+          if (!!lw) {
             bds.width = parseFloat(lw) * scale;
           }
           if (!state.view.graph.cellRenderer.legacySpacing || state.style[mxConstants.STYLE_OVERFLOW] != 'width') {
@@ -472,7 +473,7 @@ export class mxCellEditor {
             const spacingLeft = (parseInt(state.style[mxConstants.STYLE_SPACING_LEFT] || 0) + mxText.prototype.baseSpacingLeft) * scale + spacing;
             const hpos = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_CENTER);
             const vpos = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE);
-            bds = new mxRectangle(bds.x + spacingLeft, bds.y + spacingTop, bds.width - ((hpos == mxConstants.ALIGN_CENTER && lw == null) ? (spacingLeft + spacingRight) : 0), bds.height - ((vpos == mxConstants.ALIGN_MIDDLE) ? (spacingTop + spacingBottom) : 0));
+            bds = new mxRectangle(bds.x + spacingLeft, bds.y + spacingTop, bds.width - ((hpos == mxConstants.ALIGN_CENTER && !lw) ? (spacingLeft + spacingRight) : 0), bds.height - ((vpos == mxConstants.ALIGN_MIDDLE) ? (spacingTop + spacingBottom) : 0));
           }
           this.bounds = new mxRectangle(bds.x + state.absoluteOffset.x, bds.y + state.absoluteOffset.y, bds.width, bds.height);
         }
@@ -515,7 +516,7 @@ export class mxCellEditor {
         this.textarea.style.zoom = scale;
       } else {
         mxUtils.setPrefixedStyle(this.textarea.style, 'transformOrigin', '0px 0px');
-        mxUtils.setPrefixedStyle(this.textarea.style, 'transform', 'scale(' + scale + ',' + scale + ')' + ((m == null) ? '' : ' translate(' + (m.x * 100) + '%,' + (m.y * 100) + '%)'));
+        mxUtils.setPrefixedStyle(this.textarea.style, 'transform', 'scale(' + scale + ',' + scale + ')' + ((!m) ? '' : ' translate(' + (m.x * 100) + '%,' + (m.y * 100) + '%)'));
       }
     }
   }
@@ -556,7 +557,7 @@ export class mxCellEditor {
       let absoluteRoot = false;
       if (mxClient.IS_SVG) {
         const root = this.graph.view.getDrawPane().ownerSVGElement;
-        if (root != null) {
+        if (!!root) {
           absoluteRoot = mxUtils.getCurrentStyle(root).position == 'absolute';
         }
       }
@@ -576,15 +577,15 @@ export class mxCellEditor {
    */
   startEditing(cell: mxCell, trigger: any): void {
     this.stopEditing(true);
-    this.align = null;
-    if (this.textarea == null) {
+    this.align = undefined;
+    if (!this.textarea) {
       this.init();
     }
-    if (this.graph.tooltipHandler != null) {
+    if (!!this.graph.tooltipHandler) {
       this.graph.tooltipHandler.hideTooltip();
     }
     const state = this.graph.getView().getState(cell);
-    if (state != null) {
+    if (!!state) {
       const scale = this.graph.getView().scale;
       const size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
       const family = mxUtils.getValue(state.style, mxConstants.STYLE_FONTFAMILY, mxConstants.DEFAULT_FONTFAMILY);
@@ -606,7 +607,7 @@ export class mxCellEditor {
       this.textarea.style.color = color;
       let dir = this.textDirection = mxUtils.getValue(state.style, mxConstants.STYLE_TEXT_DIRECTION, mxConstants.DEFAULT_TEXT_DIRECTION);
       if (dir == mxConstants.TEXT_DIRECTION_AUTO) {
-        if (state != null && state.text != null && state.text.dialect != mxConstants.DIALECT_STRICTHTML && !mxUtils.isNode(state.text.value)) {
+        if (!!state && !!state.text && state.text.dialect != mxConstants.DIALECT_STRICTHTML && !mxUtils.isNode(state.text.value)) {
           dir = state.text.getAutoDirection();
         }
       }
@@ -626,8 +627,8 @@ export class mxCellEditor {
       this.graph.container.appendChild(this.textarea);
       this.editingCell = cell;
       this.trigger = trigger;
-      this.textNode = null;
-      if (state.text != null && this.isHideLabel(state)) {
+      this.textNode = undefined;
+      if (!!state.text && this.isHideLabel(state)) {
         this.textNode = state.text.node;
         this.textNode.style.visibility = 'hidden';
       }
@@ -662,13 +663,13 @@ export class mxCellEditor {
    * Returns <selectText>.
    */
   clearSelection(): void {
-    let selection = null;
+    let selection = undefined;
     if (window.getSelection) {
       selection = window.getSelection();
     } else if (document.selection) {
       selection = document.selection;
     }
-    if (selection != null) {
+    if (!!selection) {
       if (selection.empty) {
         selection.empty();
       } else if (selection.removeAllRanges) {
@@ -684,35 +685,35 @@ export class mxCellEditor {
    */
   stopEditing(cancel: any): void {
     cancel = cancel || false;
-    if (this.editingCell != null) {
-      if (this.textNode != null) {
+    if (!!this.editingCell) {
+      if (!!this.textNode) {
         this.textNode.style.visibility = 'visible';
-        this.textNode = null;
+        this.textNode = undefined;
       }
       const state = (!cancel) ? this.graph.view.getState(this.editingCell) : null;
       const initial = this.initialValue;
-      this.initialValue = null;
-      this.editingCell = null;
-      this.trigger = null;
-      this.bounds = null;
+      this.initialValue = undefined;
+      this.editingCell = undefined;
+      this.trigger = undefined;
+      this.bounds = undefined;
       this.textarea.blur();
       this.clearSelection();
-      if (this.textarea.parentNode != null) {
+      if (!!this.textarea.parentNode) {
         this.textarea.parentNode.removeChild(this.textarea);
       }
       if (this.clearOnChange && this.textarea.innerHTML == this.getEmptyLabelText()) {
         this.textarea.innerHTML = '';
         this.clearOnChange = false;
       }
-      if (state != null && (this.textarea.innerHTML != initial || this.align != null)) {
+      if (!!state && (this.textarea.innerHTML != initial || !!this.align)) {
         this.prepareTextarea();
         const value = this.getCurrentValue(state);
         this.graph.getModel().beginUpdate();
         try {
-          if (value != null) {
+          if (!!value) {
             this.applyValue(state, value);
           }
-          if (this.align != null) {
+          if (!!this.align) {
             this.graph.setCellStyles(mxConstants.STYLE_ALIGN, this.align, [state.cell]);
           }
         } finally {
@@ -720,8 +721,8 @@ export class mxCellEditor {
         }
       }
       mxEvent.release(this.textarea);
-      this.textarea = null;
-      this.align = null;
+      this.textarea = undefined;
+      this.align = undefined;
     }
   }
 
@@ -732,7 +733,7 @@ export class mxCellEditor {
    * This implementation removes the extra trailing linefeed in Firefox.
    */
   prepareTextarea(): void {
-    if (this.textarea.lastChild != null && this.textarea.lastChild.nodeName == 'BR') {
+    if (!!this.textarea.lastChild && this.textarea.lastChild.nodeName == 'BR') {
       this.textarea.removeChild(this.textarea.lastChild);
     }
   }
@@ -754,7 +755,7 @@ export class mxCellEditor {
    */
   getMinimumSize(state: any): any {
     const scale = this.graph.getView().scale;
-    return new mxRectangle(0, 0, (state.text == null) ? 30 : state.text.size * scale + 20, (this.textarea.style.textAlign == 'left') ? 120 : 40);
+    return new mxRectangle(0, 0, (!state.text) ? 30 : state.text.size * scale + 20, (this.textarea.style.textAlign == 'left') ? 120 : 40);
   }
 
   /**
@@ -768,7 +769,7 @@ export class mxCellEditor {
     const minSize = this.getMinimumSize(state);
     const minWidth = minSize.width;
     const minHeight = minSize.height;
-    let result = null;
+    let result = undefined;
     if (!isEdge && state.view.graph.cellRenderer.legacySpacing && state.style[mxConstants.STYLE_OVERFLOW] == 'fill') {
       result = state.shape.getLabelBounds(mxRectangle.fromRectangle(state));
     } else {
@@ -780,11 +781,11 @@ export class mxCellEditor {
       result = new mxRectangle(state.x, state.y, Math.max(minWidth, state.width - spacingLeft - spacingRight), Math.max(minHeight, state.height - spacingTop - spacingBottom));
       const hpos = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_CENTER);
       const vpos = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE);
-      result = (state.shape != null && hpos == mxConstants.ALIGN_CENTER && vpos == mxConstants.ALIGN_MIDDLE) ? state.shape.getLabelBounds(result) : result;
+      result = (!!state.shape && hpos == mxConstants.ALIGN_CENTER && vpos == mxConstants.ALIGN_MIDDLE) ? state.shape.getLabelBounds(result) : result;
       if (isEdge) {
         result.x = state.absoluteOffset.x;
         result.y = state.absoluteOffset.y;
-        if (state.text != null && state.text.boundingBox != null) {
+        if (!!state.text && !!state.text.boundingBox) {
           if (state.text.boundingBox.x > 0) {
             result.x = state.text.boundingBox.x;
           }
@@ -792,13 +793,13 @@ export class mxCellEditor {
             result.y = state.text.boundingBox.y;
           }
         }
-      } else if (state.text != null && state.text.boundingBox != null) {
+      } else if (!!state.text && !!state.text.boundingBox) {
         result.x = Math.min(result.x, state.text.boundingBox.x);
         result.y = Math.min(result.y, state.text.boundingBox.y);
       }
       result.x += spacingLeft;
       result.y += spacingTop;
-      if (state.text != null && state.text.boundingBox != null) {
+      if (!!state.text && !!state.text.boundingBox) {
         if (!isEdge) {
           result.width = Math.max(result.width, state.text.boundingBox.width);
           result.height = Math.max(result.height, state.text.boundingBox.height);
@@ -857,20 +858,20 @@ export class mxCellEditor {
    * Destroys the editor and removes all associated resources.
    */
   destroy(): void {
-    if (this.textarea != null) {
+    if (!!this.textarea) {
       mxEvent.release(this.textarea);
-      if (this.textarea.parentNode != null) {
+      if (!!this.textarea.parentNode) {
         this.textarea.parentNode.removeChild(this.textarea);
       }
-      this.textarea = null;
+      this.textarea = undefined;
     }
-    if (this.changeHandler != null) {
+    if (!!this.changeHandler) {
       this.graph.getModel().removeListener(this.changeHandler);
-      this.changeHandler = null;
+      this.changeHandler = undefined;
     }
     if (this.zoomHandler) {
       this.graph.view.removeListener(this.zoomHandler);
-      this.zoomHandler = null;
+      this.zoomHandler = undefined;
     }
   }
 }

@@ -24,12 +24,13 @@ import { mxEvent } from '../util/mxEvent';
 import { mxImage } from '../util/mxImage';
 import { mxRectangle } from '../util/mxRectangle';
 import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from '../view/mxGraph';
 
 export class mxConstraintHandler {
   constructor(graph: mxGraph) {
     this.graph = graph;
     this.resetHandler = mxUtils.bind(this, function (sender, evt) {
-      if (this.currentFocus != null && this.graph.view.getState(this.currentFocus.cell) == null) {
+      if (!!this.currentFocus && !this.graph.view.getState(this.currentFocus.cell)) {
         this.reset();
       } else {
         this.redraw();
@@ -103,21 +104,21 @@ export class mxConstraintHandler {
    * Resets the state of this handler.
    */
   reset(): void {
-    if (this.focusIcons != null) {
+    if (!!this.focusIcons) {
       for (let i = 0; i < this.focusIcons.length; i++) {
         this.focusIcons[i].destroy();
       }
-      this.focusIcons = null;
+      this.focusIcons = undefined;
     }
-    if (this.focusHighlight != null) {
+    if (!!this.focusHighlight) {
       this.focusHighlight.destroy();
-      this.focusHighlight = null;
+      this.focusHighlight = undefined;
     }
-    this.currentConstraint = null;
-    this.currentFocusArea = null;
-    this.currentPoint = null;
-    this.currentFocus = null;
-    this.focusPoints = null;
+    this.currentConstraint = undefined;
+    this.currentFocusArea = undefined;
+    this.currentPoint = undefined;
+    this.currentFocus = undefined;
+    this.focusPoints = undefined;
   }
 
   /**
@@ -168,12 +169,12 @@ export class mxConstraintHandler {
    * Destroys the <focusIcons> if they exist.
    */
   destroyIcons(): void {
-    if (this.focusIcons != null) {
+    if (!!this.focusIcons) {
       for (let i = 0; i < this.focusIcons.length; i++) {
         this.focusIcons[i].destroy();
       }
-      this.focusIcons = null;
-      this.focusPoints = null;
+      this.focusIcons = undefined;
+      this.focusPoints = undefined;
     }
   }
 
@@ -183,9 +184,9 @@ export class mxConstraintHandler {
    * Destroys the <focusHighlight> if one exists.
    */
   destroyFocusHighlight(): void {
-    if (this.focusHighlight != null) {
+    if (!!this.focusHighlight) {
       this.focusHighlight.destroy();
-      this.focusHighlight = null;
+      this.focusHighlight = undefined;
     }
   }
 
@@ -206,10 +207,10 @@ export class mxConstraintHandler {
    */
   getCellForEvent(me: any, point: any): any {
     let cell = me.getCell();
-    if (cell == null && point != null && (me.getGraphX() != point.x || me.getGraphY() != point.y)) {
+    if (!cell && !!point && (me.getGraphX() != point.x || me.getGraphY() != point.y)) {
       cell = this.graph.getCellAt(point.x, point.y);
     }
-    if (cell != null && !this.graph.isCellConnectable(cell)) {
+    if (!!cell && !this.graph.isCellConnectable(cell)) {
       const parent = this.graph.getModel().getParent(cell);
       if (this.graph.getModel().isVertex(parent) && this.graph.isCellConnectable(parent)) {
         cell = parent;
@@ -226,34 +227,34 @@ export class mxConstraintHandler {
    */
   update(me: any, source: any, existingEdge: any, point: any): any {
     if (this.isEnabled() && !this.isEventIgnored(me)) {
-      if (this.mouseleaveHandler == null && this.graph.container != null) {
+      if (!this.mouseleaveHandler && !!this.graph.container) {
         this.mouseleaveHandler = mxUtils.bind(this, function () {
           this.reset();
         });
         mxEvent.addListener(this.graph.container, 'mouseleave', this.resetHandler);
       }
       const tol = this.getTolerance(me);
-      const x = (point != null) ? point.x : me.getGraphX();
-      const y = (point != null) ? point.y : me.getGraphY();
+      const x = (!!point) ? point.x : me.getGraphX();
+      const y = (!!point) ? point.y : me.getGraphY();
       const grid = new mxRectangle(x - tol, y - tol, 2 * tol, 2 * tol);
       const mouse = new mxRectangle(me.getGraphX() - tol, me.getGraphY() - tol, 2 * tol, 2 * tol);
       const state = this.graph.view.getState(this.getCellForEvent(me, point));
-      if (!this.isKeepFocusEvent(me) && (this.currentFocusArea == null || this.currentFocus == null || (state != null) || !this.graph.getModel().isVertex(this.currentFocus.cell) || !mxUtils.intersects(this.currentFocusArea, mouse)) && (state != this.currentFocus)) {
-        this.currentFocusArea = null;
-        this.currentFocus = null;
+      if (!this.isKeepFocusEvent(me) && (!this.currentFocusArea || !this.currentFocus || (!!state) || !this.graph.getModel().isVertex(this.currentFocus.cell) || !mxUtils.intersects(this.currentFocusArea, mouse)) && (state != this.currentFocus)) {
+        this.currentFocusArea = undefined;
+        this.currentFocus = undefined;
         this.setFocus(me, state, source);
       }
-      this.currentConstraint = null;
-      this.currentPoint = null;
-      let minDistSq = null;
-      if (this.focusIcons != null && this.constraints != null && (state == null || this.currentFocus == state)) {
+      this.currentConstraint = undefined;
+      this.currentPoint = undefined;
+      let minDistSq = undefined;
+      if (!!this.focusIcons && !!this.constraints && (!state || this.currentFocus == state)) {
         const cx = mouse.getCenterX();
         const cy = mouse.getCenterY();
         for (let i = 0; i < this.focusIcons.length; i++) {
           const dx = cx - this.focusIcons[i].bounds.getCenterX();
           const dy = cy - this.focusIcons[i].bounds.getCenterY();
           const tmp = dx * dx + dy * dy;
-          if ((this.intersects(this.focusIcons[i], mouse, source, existingEdge) || (point != null && this.intersects(this.focusIcons[i], grid, source, existingEdge))) && (minDistSq == null || tmp < minDistSq)) {
+          if ((this.intersects(this.focusIcons[i], mouse, source, existingEdge) || (!!point && this.intersects(this.focusIcons[i], grid, source, existingEdge))) && (!minDistSq || tmp < minDistSq)) {
             this.currentConstraint = this.constraints[i];
             this.currentPoint = this.focusPoints[i];
             minDistSq = tmp;
@@ -261,14 +262,14 @@ export class mxConstraintHandler {
             tmp.grow(mxConstants.HIGHLIGHT_SIZE + 1);
             tmp.width -= 1;
             tmp.height -= 1;
-            if (this.focusHighlight == null) {
+            if (!this.focusHighlight) {
               const hl = this.createHighlightShape();
               hl.dialect = (this.graph.dialect == mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_SVG : mxConstants.DIALECT_VML;
               hl.pointerEvents = false;
               hl.init(this.graph.getView().getOverlayPane());
               this.focusHighlight = hl;
               const getState = mxUtils.bind(this, function () {
-                return (this.currentFocus != null) ? this.currentFocus : state;
+                return (!!this.currentFocus) ? this.currentFocus : state;
               });
               mxEvent.redirectMouseEvents(hl.node, this.graph, getState);
             }
@@ -277,13 +278,13 @@ export class mxConstraintHandler {
           }
         }
       }
-      if (this.currentConstraint == null) {
+      if (!this.currentConstraint) {
         this.destroyFocusHighlight();
       }
     } else {
-      this.currentConstraint = null;
-      this.currentFocus = null;
-      this.currentPoint = null;
+      this.currentConstraint = undefined;
+      this.currentFocus = undefined;
+      this.currentPoint = undefined;
     }
   }
 
@@ -295,7 +296,7 @@ export class mxConstraintHandler {
    * are ignored.
    */
   redraw(): void {
-    if (this.currentFocus != null && this.constraints != null && this.focusIcons != null) {
+    if (!!this.currentFocus && !!this.constraints && !!this.focusIcons) {
       const state = this.graph.view.getState(this.currentFocus.cell);
       this.currentFocus = state;
       this.currentFocusArea = new mxRectangle(state.x, state.y, state.width, state.height);
@@ -319,16 +320,16 @@ export class mxConstraintHandler {
    * are ignored.
    */
   setFocus(me: any, state: any, source: any): any {
-    this.constraints = (state != null && !this.isStateIgnored(state, source) && this.graph.isCellConnectable(state.cell)) ? ((this.isEnabled()) ? (this.graph.getAllConnectionConstraints(state, source) || []) : []) : null;
-    if (this.constraints != null) {
+    this.constraints = (!!state && !this.isStateIgnored(state, source) && this.graph.isCellConnectable(state.cell)) ? ((this.isEnabled()) ? (this.graph.getAllConnectionConstraints(state, source) || []) : []) : null;
+    if (!!this.constraints) {
       this.currentFocus = state;
       this.currentFocusArea = new mxRectangle(state.x, state.y, state.width, state.height);
-      if (this.focusIcons != null) {
+      if (!!this.focusIcons) {
         for (let i = 0; i < this.focusIcons.length; i++) {
           this.focusIcons[i].destroy();
         }
-        this.focusIcons = null;
-        this.focusPoints = null;
+        this.focusIcons = undefined;
+        this.focusPoints = undefined;
       }
       this.focusPoints = [];
       this.focusIcons = [];
@@ -347,11 +348,11 @@ export class mxConstraintHandler {
             return false;
           });
         }
-        if (icon.node.previousSibling != null) {
+        if (!!icon.node.previousSibling) {
           icon.node.parentNode.insertBefore(icon.node, icon.node.parentNode.firstChild);
         }
         const getState = mxUtils.bind(this, function () {
-          return (this.currentFocus != null) ? this.currentFocus : state;
+          return (!!this.currentFocus) ? this.currentFocus : state;
         });
         icon.redraw();
         mxEvent.redirectMouseEvents(icon.node, this.graph, getState);
@@ -395,15 +396,15 @@ export class mxConstraintHandler {
    */
   destroy(): void {
     this.reset();
-    if (this.resetHandler != null) {
+    if (!!this.resetHandler) {
       this.graph.model.removeListener(this.resetHandler);
       this.graph.view.removeListener(this.resetHandler);
       this.graph.removeListener(this.resetHandler);
-      this.resetHandler = null;
+      this.resetHandler = undefined;
     }
-    if (this.mouseleaveHandler != null && this.graph.container != null) {
+    if (!!this.mouseleaveHandler && !!this.graph.container) {
       mxEvent.removeListener(this.graph.container, 'mouseleave', this.mouseleaveHandler);
-      this.mouseleaveHandler = null;
+      this.mouseleaveHandler = undefined;
     }
   }
 }

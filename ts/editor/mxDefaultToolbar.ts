@@ -40,16 +40,17 @@ import { mxClient } from '../mxClient';
 import { mxEvent } from '../util/mxEvent';
 import { mxToolbar } from '../util/mxToolbar';
 import { mxUtils } from '../util/mxUtils';
+import { mxEditor } from './mxEditor';
 
 export class mxDefaultToolbar {
-  constructor(container: HTMLElement, editor: any) {
+  constructor(container: HTMLElement, editor: mxEditor) {
     this.editor = editor;
-    if (container != null && editor != null) {
+    if (!!container && !!editor) {
       this.init(container);
     }
   }
 
-  editor: any;
+  editor: mxEditor;
   /**
    * Variable: toolbar
    *
@@ -61,7 +62,7 @@ export class mxDefaultToolbar {
    *
    * Reference to the function used to reset the <toolbar>.
    */
-  resetHandler: Function;
+  resetHandler?: Function;
   /**
    * Variable: spacing
    *
@@ -70,14 +71,14 @@ export class mxDefaultToolbar {
    * cell. Default is 4 (40 pixels).
    * @example 4
    */
-  spacing: number;
+  spacing: number = 4;
   /**
    * Variable: connectOnDrop
    *
    * Specifies if elements should be connected if new cells are dropped onto
    * connectable elements. Default is false.
    */
-  connectOnDrop: boolean;
+  connectOnDrop: boolean = false;
 
   /**
    * Variable: init
@@ -91,21 +92,21 @@ export class mxDefaultToolbar {
    * container - DOM node that contains the toolbar.
    */
   init(container: HTMLElement): void {
-    if (container != null) {
+    if (!!container) {
       this.toolbar = new mxToolbar(container);
-      this.toolbar.addListener(mxEvent.SELECT, mxUtils.bind(this, function (sender, evt) {
+      this.toolbar.addListener(mxEvent.SELECT, (sender, evt) => {
         const funct = evt.getProperty('function');
-        if (funct != null) {
-          this.editor.insertFunction = mxUtils.bind(this, function () {
+        if (!!funct) {
+          this.editor.insertFunction = () => {
             funct.apply(this, arguments);
             this.toolbar.resetMode();
-          });
+          };
         } else {
-          this.editor.insertFunction = null;
+          this.editor.insertFunction = undefined;
         }
-      }));
+      });
       this.resetHandler = mxUtils.bind(this, function () {
-        if (this.toolbar != null) {
+        if (!!this.toolbar) {
           this.toolbar.resetMode(true);
         }
       });
@@ -129,7 +130,7 @@ export class mxDefaultToolbar {
    */
   addItem(title: string, icon: any, action: any, pressed: any): any {
     const clickHandler = mxUtils.bind(this, function () {
-      if (action != null && action.length > 0) {
+      if (!!action && action.length > 0) {
         this.editor.execute(action);
       }
     });
@@ -231,7 +232,7 @@ export class mxDefaultToolbar {
   addMode(title: string, icon: any, mode: any, pressed: any, funct: () => any): any {
     const clickHandler = mxUtils.bind(this, function () {
       this.editor.setMode(mode);
-      if (funct != null) {
+      if (!!funct) {
         funct(this.editor);
       }
     });
@@ -263,7 +264,7 @@ export class mxDefaultToolbar {
     const factory = mxUtils.bind(this, function () {
       if (typeof (ptype) == 'function') {
         return ptype();
-      } else if (ptype != null) {
+      } else if (!!ptype) {
         return this.editor.graph.cloneCell(ptype);
       }
       return null;
@@ -301,8 +302,8 @@ export class mxDefaultToolbar {
   drop(vertex: any, evt: Event, target: string): void {
     const graph = this.editor.graph;
     const model = graph.getModel();
-    if (target == null || model.isEdge(target) || !this.connectOnDrop || !graph.isCellConnectable(target)) {
-      while (target != null && !graph.isValidDropTarget(target, [vertex], evt)) {
+    if (!target || model.isEdge(target) || !this.connectOnDrop || !graph.isCellConnectable(target)) {
+      while (!!target && !graph.isValidDropTarget(target, [vertex], evt)) {
         target = model.getParent(target);
       }
       this.insert(vertex, evt, target);
@@ -350,8 +351,8 @@ export class mxDefaultToolbar {
   connect(vertex: any, evt: Event, source: any): void {
     const graph = this.editor.graph;
     const model = graph.getModel();
-    if (source != null && graph.isCellConnectable(vertex) && graph.isEdgeValid(null, source, vertex)) {
-      let edge = null;
+    if (!!source && graph.isCellConnectable(vertex) && graph.isEdgeValid(null, source, vertex)) {
+      let edge = undefined;
       model.beginUpdate();
       try {
         const geo = model.getGeometry(source);
@@ -370,7 +371,7 @@ export class mxDefaultToolbar {
         graph.addCell(vertex, parent);
         graph.constrainChild(vertex);
         edge = this.editor.createEdge(source, vertex);
-        if (model.getGeometry(edge) == null) {
+        if (!model.getGeometry(edge)) {
           const edgeGeometry = new mxGeometry();
           edgeGeometry.relative = true;
           model.setGeometry(edge, edgeGeometry);
@@ -420,14 +421,14 @@ export class mxDefaultToolbar {
    * <mxEditor>.
    */
   destroy(): void {
-    if (this.resetHandler != null) {
+    if (!!this.resetHandler) {
       this.editor.graph.removeListener('dblclick', this.resetHandler);
       this.editor.removeListener('escape', this.resetHandler);
-      this.resetHandler = null;
+      this.resetHandler = undefined;
     }
-    if (this.toolbar != null) {
+    if (!!this.toolbar) {
       this.toolbar.destroy();
-      this.toolbar = null;
+      this.toolbar = undefined;
     }
   }
 }

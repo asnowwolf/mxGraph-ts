@@ -30,7 +30,7 @@ export class mxCylinder extends mxShape {
     this.bounds = bounds;
     this.fill = fill;
     this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
+    this.strokewidth = (!!strokewidth) ? strokewidth : 1;
   }
 
   bounds: any;
@@ -62,7 +62,7 @@ export class mxCylinder extends mxShape {
     c.begin();
     this.redrawPath(c, x, y, w, h, false);
     c.fillAndStroke();
-    if (!this.outline || this.style == null || mxUtils.getValue(this.style, mxConstants.STYLE_BACKGROUND_OUTLINE, 0) == 0) {
+    if (!this.outline || !this.style || mxUtils.getValue(this.style, mxConstants.STYLE_BACKGROUND_OUTLINE, 0) == 0) {
       c.setShadow(false);
       c.begin();
       this.redrawPath(c, x, y, w, h, true);
@@ -86,7 +86,7 @@ export class mxCylinder extends mxShape {
    */
   redrawPath(c: any, x: number, y: number, w: number, h: number, isForeground: boolean): void {
     const dy = this.getCylinderSize(x, y, w, h);
-    if ((isForeground && this.fill != null) || (!isForeground && this.fill == null)) {
+    if ((isForeground && !!this.fill) || (!isForeground && !this.fill)) {
       c.moveTo(0, dy);
       c.curveTo(0, 2 * dy, w, 2 * dy, w, dy);
       if (!isForeground) {

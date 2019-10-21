@@ -23,20 +23,20 @@
  *
  *     if (tmp != this.cell)
  *     {
- *       if (this.cell != null)
+ *       if (!!this.cell)
  *       {
  *         this.dragLeave(me.getEvent(), this.cell);
  *       }
  *
  *       this.cell = tmp;
  *
- *       if (this.cell != null)
+ *       if (!!this.cell)
  *       {
  *         this.dragEnter(me.getEvent(), this.cell);
  *       }
  *     }
  *
- *     if (this.cell != null)
+ *     if (!!this.cell)
  *     {
  *       this.dragOver(me.getEvent(), this.cell);
  *     }
@@ -77,7 +77,7 @@ export class mxCellTracker extends mxCellMarker {
   constructor(graph: mxGraph, color: string, funct: () => any) {
     super(graph, color);
     this.graph.addMouseListener(this);
-    if (funct != null) {
+    if (!!funct) {
       this.getCell = funct;
     }
     if (mxClient.IS_IE) {

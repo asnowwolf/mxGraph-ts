@@ -21,13 +21,13 @@ import { mxGraph } from '../view/mxGraph';
 
 export class mxCellHighlight {
   constructor(graph: mxGraph, highlightColor: string = mxConstants.DEFAULT_VALID_COLOR, strokeWidth: number = mxConstants.HIGHLIGHT_STROKEWIDTH, dashed: boolean = false) {
-    if (graph != null) {
+    if (!!graph) {
       this.graph = graph;
       this.opacity = mxConstants.HIGHLIGHT_OPACITY;
       this.repaintHandler = mxUtils.bind(this, function () {
-        if (this.state != null) {
+        if (!!this.state) {
           const tmp = this.graph.view.getState(this.state.cell);
-          if (tmp == null) {
+          if (!tmp) {
             this.hide();
           } else {
             this.state = tmp;
@@ -83,7 +83,7 @@ export class mxCellHighlight {
    */
   setHighlightColor(color: string): void {
     this.highlightColor = color;
-    if (this.shape != null) {
+    if (!!this.shape) {
       this.shape.stroke = color;
     }
   }
@@ -141,7 +141,7 @@ export class mxCellHighlight {
    * Updates the highlight after a change of the model or view.
    */
   repaint(): void {
-    if (this.state != null && this.shape != null) {
+    if (!!this.state && !!this.shape) {
       this.shape.scale = this.state.view.scale;
       if (this.graph.model.isEdge(this.state.cell)) {
         this.shape.strokewidth = this.getStrokeWidth();
@@ -153,7 +153,7 @@ export class mxCellHighlight {
         this.shape.strokewidth = this.getStrokeWidth() / this.state.view.scale;
         this.shape.outline = true;
       }
-      if (this.state.shape != null) {
+      if (!!this.state.shape) {
         this.shape.setCursor(this.state.shape.getCursor());
       }
       if (mxClient.IS_QUIRKS || document.documentMode == 8) {
@@ -184,12 +184,12 @@ export class mxCellHighlight {
    */
   highlight(state: any): void {
     if (this.state != state) {
-      if (this.shape != null) {
+      if (!!this.shape) {
         this.shape.destroy();
-        this.shape = null;
+        this.shape = undefined;
       }
       this.state = state;
-      if (this.state != null) {
+      if (!!this.state) {
         this.drawHighlight();
       }
     }
@@ -202,9 +202,9 @@ export class mxCellHighlight {
    */
   isHighlightAt(x: number, y: number): boolean {
     let hit = false;
-    if (this.shape != null && document.elementFromPoint != null && !mxClient.IS_QUIRKS) {
+    if (!!this.shape && !!document.elementFromPoint && !mxClient.IS_QUIRKS) {
       let elt = document.elementFromPoint(x, y);
-      while (elt != null) {
+      while (!!elt) {
         if (elt == this.shape.node) {
           hit = true;
           break;
@@ -224,9 +224,9 @@ export class mxCellHighlight {
     this.graph.getView().removeListener(this.resetHandler);
     this.graph.getView().removeListener(this.repaintHandler);
     this.graph.getModel().removeListener(this.repaintHandler);
-    if (this.shape != null) {
+    if (!!this.shape) {
       this.shape.destroy();
-      this.shape = null;
+      this.shape = undefined;
     }
   }
 }

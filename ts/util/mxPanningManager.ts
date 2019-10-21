@@ -9,7 +9,7 @@ import { mxUtils } from './mxUtils';
 
 export class mxPanningManager {
   constructor(graph: mxGraph) {
-    this.thread = null;
+    this.thread = undefined;
     this.active = false;
     this.tdx = 0;
     this.tdy = 0;
@@ -75,8 +75,8 @@ export class mxPanningManager {
       }
       this.scrollLeft = graph.container.scrollLeft;
       this.scrollTop = graph.container.scrollTop;
-      w = (w != null) ? w : 0;
-      h = (h != null) ? h : 0;
+      w = (!!w) ? w : 0;
+      h = (!!h) ? h : 0;
       const c = graph.container;
       this.dx = x + w - c.scrollLeft - c.clientWidth;
       if (this.dx < 0 && Math.abs(this.dx) < this.border) {
@@ -117,20 +117,20 @@ export class mxPanningManager {
       if (this.dx != 0 || this.dy != 0) {
         this.dx *= this.damper;
         this.dy *= this.damper;
-        if (this.thread == null) {
+        if (!this.thread) {
           this.thread = createThread();
         }
-      } else if (this.thread != null) {
+      } else if (!!this.thread) {
         window.clearInterval(this.thread);
-        this.thread = null;
+        this.thread = undefined;
       }
     };
     this.stop = function () {
       if (this.active) {
         this.active = false;
-        if (this.thread != null) {
+        if (!!this.thread) {
           window.clearInterval(this.thread);
-          this.thread = null;
+          this.thread = undefined;
         }
         this.tdx = 0;
         this.tdy = 0;
@@ -218,8 +218,8 @@ export class mxPanningManager {
     }
     this.scrollLeft = graph.container.scrollLeft;
     this.scrollTop = graph.container.scrollTop;
-    w = (w != null) ? w : 0;
-    h = (h != null) ? h : 0;
+    w = (!!w) ? w : 0;
+    h = (!!h) ? h : 0;
     const c = graph.container;
     this.dx = x + w - c.scrollLeft - c.clientWidth;
     if (this.dx < 0 && Math.abs(this.dx) < this.border) {
@@ -260,21 +260,21 @@ export class mxPanningManager {
     if (this.dx != 0 || this.dy != 0) {
       this.dx *= this.damper;
       this.dy *= this.damper;
-      if (this.thread == null) {
+      if (!this.thread) {
         this.thread = createThread();
       }
-    } else if (this.thread != null) {
+    } else if (!!this.thread) {
       window.clearInterval(this.thread);
-      this.thread = null;
+      this.thread = undefined;
     }
   }
 
   stop(): void {
     if (this.active) {
       this.active = false;
-      if (this.thread != null) {
+      if (!!this.thread) {
         window.clearInterval(this.thread);
-        this.thread = null;
+        this.thread = undefined;
       }
       this.tdx = 0;
       this.tdy = 0;

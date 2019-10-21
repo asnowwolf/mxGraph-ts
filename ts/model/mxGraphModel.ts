@@ -121,7 +121,7 @@
  *     var change = changes[i];
  *
  *     if (change instanceof mxChildChange &&
- *       change.change.previous == null)
+ *       !change.change.previous)
  *     {
  *       graph.startEditingAtCell(change.child);
  *       break;
@@ -202,7 +202,7 @@ import { mxCellPath } from './mxCellPath';
 export class mxGraphModel {
   constructor(root: any) {
     this.currentEdit = this.createUndoableEdit();
-    if (root != null) {
+    if (!!root) {
       this.setRoot(root);
     } else {
       this.clear();
@@ -331,7 +331,7 @@ export class mxGraphModel {
    * id - A string representing the Id of the cell.
    */
   getCell(id: any): any {
-    return (this.cells != null) ? this.cells[id] : null;
+    return (!!this.cells) ? this.cells[id] : null;
   }
 
   /**
@@ -341,8 +341,8 @@ export class mxGraphModel {
    * returns true.
    */
   filterCells(cells: mxCell[], filter: any): any {
-    let result = null;
-    if (cells != null) {
+    let result = undefined;
+    if (!!cells) {
       result = [];
       for (let i = 0; i < cells.length; i++) {
         if (filter(cells[i])) {
@@ -393,7 +393,7 @@ export class mxGraphModel {
   filterDescendants(filter: any, parent: any): any {
     let result = [];
     parent = parent || this.getRoot();
-    if (filter == null || filter(parent)) {
+    if (!filter || filter(parent)) {
       result.push(parent);
     }
     const childCount = this.getChildCount(parent);
@@ -415,8 +415,8 @@ export class mxGraphModel {
    */
   getRoot(cell: mxCell): any {
     let root = cell || this.root;
-    if (cell != null) {
-      while (cell != null) {
+    if (!!cell) {
+      while (!!cell) {
         root = cell;
         cell = this.getParent(cell);
       }
@@ -463,7 +463,7 @@ export class mxGraphModel {
     const oldRoot = this.root;
     this.root = root;
     this.nextId = 0;
-    this.cells = null;
+    this.cells = undefined;
     this.cellAdded(root);
     return oldRoot;
   }
@@ -479,7 +479,7 @@ export class mxGraphModel {
    * cell - <mxCell> that represents the possible root.
    */
   isRoot(cell: mxCell): boolean {
-    return cell != null && this.root == cell;
+    return !!cell && this.root == cell;
   }
 
   /**
@@ -507,7 +507,7 @@ export class mxGraphModel {
    * child - <mxCell> that specifies the child.
    */
   isAncestor(parent: any, child: any): boolean {
-    while (child != null && child != parent) {
+    while (!!child && child != parent) {
       child = this.getParent(child);
     }
     return child == parent;
@@ -536,7 +536,7 @@ export class mxGraphModel {
    * cell - <mxCell> whose parent should be returned.
    */
   getParent(cell: mxCell): any {
-    return (cell != null) ? cell.getParent() : null;
+    return (!!cell) ? cell.getParent() : null;
   }
 
   /**
@@ -554,8 +554,8 @@ export class mxGraphModel {
    * index - Optional integer that specifies the index of the child.
    */
   add(parent: any, child: any, index: number): any {
-    if (child != parent && parent != null && child != null) {
-      if (index == null) {
+    if (child != parent && !!parent && !!child) {
+      if (!index) {
         index = this.getChildCount(parent);
       }
       const parentChanged = parent != this.getParent(child);
@@ -590,18 +590,18 @@ export class mxGraphModel {
    * cell - <mxCell> that specifies the cell that has been added.
    */
   cellAdded(cell: mxCell): void {
-    if (cell != null) {
-      if (cell.getId() == null && this.createIds) {
+    if (!!cell) {
+      if (!cell.getId() && this.createIds) {
         cell.setId(this.createId(cell));
       }
-      if (cell.getId() != null) {
+      if (cell.getId()) {
         let collision = this.getCell(cell.getId());
         if (collision != cell) {
-          while (collision != null) {
+          while (!!collision) {
             cell.setId(this.createId(cell));
             collision = this.getCell(cell.getId());
           }
-          if (this.cells == null) {
+          if (!this.cells) {
             this.cells = {};
           }
           this.cells[cell.getId()] = cell;
@@ -675,11 +675,11 @@ export class mxGraphModel {
   updateEdgeParent(edge: any, root: any): void {
     let source = this.getTerminal(edge, true);
     let target = this.getTerminal(edge, false);
-    let cell = null;
-    while (source != null && !this.isEdge(source) && source.geometry != null && source.geometry.relative) {
+    let cell = undefined;
+    while (!!source && !this.isEdge(source) && !!source.geometry && source.geometry.relative) {
       source = this.getParent(source);
     }
-    while (target != null && this.ignoreRelativeEdgeParent && !this.isEdge(target) && target.geometry != null && target.geometry.relative) {
+    while (!!target && this.ignoreRelativeEdgeParent && !this.isEdge(target) && !!target.geometry && target.geometry.relative) {
       target = this.getParent(target);
     }
     if (this.isAncestor(root, source) && this.isAncestor(root, target)) {
@@ -688,9 +688,9 @@ export class mxGraphModel {
       } else {
         cell = this.getNearestCommonAncestor(source, target);
       }
-      if (cell != null && (this.getParent(cell) != this.root || this.isAncestor(cell, edge)) && this.getParent(edge) != cell) {
+      if (!!cell && (this.getParent(cell) != this.root || this.isAncestor(cell, edge)) && this.getParent(edge) != cell) {
         let geo = this.getGeometry(edge);
-        if (geo != null) {
+        if (!!geo) {
           const origin1 = this.getOrigin(this.getParent(edge));
           const origin2 = this.getOrigin(cell);
           const dx = origin2.x - origin1.x;
@@ -711,12 +711,12 @@ export class mxGraphModel {
    * given parent as an <mxPoint>.
    */
   getOrigin(cell: mxCell): any {
-    let result = null;
-    if (cell != null) {
+    let result = undefined;
+    if (!!cell) {
       result = this.getOrigin(this.getParent(cell));
       if (!this.isEdge(cell)) {
         const geo = this.getGeometry(cell);
-        if (geo != null) {
+        if (!!geo) {
           result.x += geo.x;
           result.y += geo.y;
         }
@@ -738,9 +738,9 @@ export class mxGraphModel {
    * cell2 - <mxCell> that specifies the second cell in the tree.
    */
   getNearestCommonAncestor(cell1: any, cell2: any): any {
-    if (cell1 != null && cell2 != null) {
+    if (!!cell1 && !!cell2) {
       let path = mxCellPath.create(cell2);
-      if (path != null && path.length > 0) {
+      if (!!path && path.length > 0) {
         let cell = cell1;
         let current = mxCellPath.create(cell);
         if (path.length < current.length) {
@@ -749,9 +749,9 @@ export class mxGraphModel {
           current = path;
           path = tmp;
         }
-        while (cell != null) {
+        while (!!cell) {
           const parent = this.getParent(cell);
-          if (path.indexOf(current + mxCellPath.PATH_SEPARATOR) == 0 && parent != null) {
+          if (path.indexOf(current + mxCellPath.PATH_SEPARATOR) == 0 && !!parent) {
             return cell;
           }
           current = mxCellPath.getParentPath(current);
@@ -776,7 +776,7 @@ export class mxGraphModel {
   remove(cell: mxCell): any {
     if (cell == this.root) {
       this.setRoot(null);
-    } else if (this.getParent(cell) != null) {
+    } else if (this.getParent(cell)) {
       this.execute(new mxChildChange(this, null, cell));
     }
     return cell;
@@ -792,12 +792,12 @@ export class mxGraphModel {
    * cell - <mxCell> that specifies the cell that has been removed.
    */
   cellRemoved(cell: mxCell): void {
-    if (cell != null && this.cells != null) {
+    if (!!cell && !!this.cells) {
       const childCount = this.getChildCount(cell);
       for (let i = childCount - 1; i >= 0; i--) {
         this.cellRemoved(this.getChildAt(cell, i));
       }
-      if (this.cells != null && cell.getId() != null) {
+      if (!!this.cells && cell.getId()) {
         delete this.cells[cell.getId()];
       }
     }
@@ -818,11 +818,11 @@ export class mxGraphModel {
    */
   parentForCellChanged(cell: mxCell, parent: any, index: number): any {
     const previous = this.getParent(cell);
-    if (parent != null) {
+    if (!!parent) {
       if (parent != previous || previous.getIndex(cell) != index) {
         parent.insert(cell, index);
       }
-    } else if (previous != null) {
+    } else if (!!previous) {
       const oldIndex = previous.getIndex(cell);
       previous.remove(oldIndex);
     }
@@ -846,7 +846,7 @@ export class mxGraphModel {
    * cell - <mxCell> whose number of children should be returned.
    */
   getChildCount(cell: mxCell): any {
-    return (cell != null) ? cell.getChildCount() : 0;
+    return (!!cell) ? cell.getChildCount() : 0;
   }
 
   /**
@@ -860,7 +860,7 @@ export class mxGraphModel {
    * index - Integer that specifies the index of the child to be returned.
    */
   getChildAt(cell: mxCell, index: number): any {
-    return (cell != null) ? cell.getChildAt(index) : null;
+    return (!!cell) ? cell.getChildAt(index) : null;
   }
 
   /**
@@ -874,7 +874,7 @@ export class mxGraphModel {
    * cell - <mxCell> the represents the parent.
    */
   getChildren(cell: mxCell): any {
-    return (cell != null) ? cell.children : null;
+    return (!!cell) ? cell.children : null;
   }
 
   /**
@@ -918,8 +918,8 @@ export class mxGraphModel {
    * Default is false.
    */
   getChildCells(parent: any, vertices: any, edges: any): any {
-    vertices = (vertices != null) ? vertices : false;
-    edges = (edges != null) ? edges : false;
+    vertices = (!!vertices) ? vertices : false;
+    edges = (!!edges) ? edges : false;
     const childCount = this.getChildCount(parent);
     const result = [];
     for (let i = 0; i < childCount; i++) {
@@ -943,7 +943,7 @@ export class mxGraphModel {
    * isSource - Boolean indicating which end of the edge should be returned.
    */
   getTerminal(edge: any, isSource: boolean): any {
-    return (edge != null) ? edge.getTerminal(isSource) : null;
+    return (!!edge) ? edge.getTerminal(isSource) : null;
   }
 
   /**
@@ -1007,9 +1007,9 @@ export class mxGraphModel {
    */
   terminalForCellChanged(edge: any, terminal: any, isSource: boolean): any {
     const previous = this.getTerminal(edge, isSource);
-    if (terminal != null) {
+    if (!!terminal) {
       terminal.insertEdge(edge, isSource);
-    } else if (previous != null) {
+    } else if (!!previous) {
       previous.removeEdge(edge, isSource);
     }
     return previous;
@@ -1025,7 +1025,7 @@ export class mxGraphModel {
    * cell - <mxCell> that represents the vertex.
    */
   getEdgeCount(cell: mxCell): any {
-    return (cell != null) ? cell.getEdgeCount() : 0;
+    return (!!cell) ? cell.getEdgeCount() : 0;
   }
 
   /**
@@ -1040,7 +1040,7 @@ export class mxGraphModel {
    * to return.
    */
   getEdgeAt(cell: mxCell, index: number): any {
-    return (cell != null) ? cell.getEdgeAt(index) : null;
+    return (!!cell) ? cell.getEdgeAt(index) : null;
   }
 
   /**
@@ -1126,9 +1126,9 @@ export class mxGraphModel {
    * Default is true.
    */
   getEdges(cell: mxCell, incoming: any, outgoing: any, includeLoops: any): any {
-    incoming = (incoming != null) ? incoming : true;
-    outgoing = (outgoing != null) ? outgoing : true;
-    includeLoops = (includeLoops != null) ? includeLoops : true;
+    incoming = (!!incoming) ? incoming : true;
+    outgoing = (!!outgoing) ? outgoing : true;
+    includeLoops = (!!includeLoops) ? includeLoops : true;
     const edgeCount = this.getEdgeCount(cell);
     const result = [];
     for (let i = 0; i < edgeCount; i++) {
@@ -1159,7 +1159,7 @@ export class mxGraphModel {
    * edge should be taken into account. Default is false.
    */
   getEdgesBetween(source: any, target: string, directed: any): any {
-    directed = (directed != null) ? directed : false;
+    directed = (!!directed) ? directed : false;
     const tmp1 = this.getEdgeCount(source);
     const tmp2 = this.getEdgeCount(target);
     let terminal = source;
@@ -1199,16 +1199,16 @@ export class mxGraphModel {
    * in the result. Default is true.
    */
   getOpposites(edges: any, terminal: any, sources: any, targets: any): any {
-    sources = (sources != null) ? sources : true;
-    targets = (targets != null) ? targets : true;
+    sources = (!!sources) ? sources : true;
+    targets = (!!targets) ? targets : true;
     const terminals = [];
-    if (edges != null) {
+    if (!!edges) {
       for (let i = 0; i < edges.length; i++) {
         const source = this.getTerminal(edges[i], true);
         const target = this.getTerminal(edges[i], false);
-        if (source == terminal && target != null && target != terminal && targets) {
+        if (source == terminal && !!target && target != terminal && targets) {
           terminals.push(target);
-        } else if (target == terminal && source != null && source != terminal && sources) {
+        } else if (target == terminal && !!source && source != terminal && sources) {
           terminals.push(source);
         }
       }
@@ -1237,7 +1237,7 @@ export class mxGraphModel {
       const cell = cells[i];
       let topmost = true;
       let parent = this.getParent(cell);
-      while (parent != null) {
+      while (!!parent) {
         if (dict.get(parent)) {
           topmost = false;
           break;
@@ -1261,7 +1261,7 @@ export class mxGraphModel {
    * cell - <mxCell> that represents the possible vertex.
    */
   isVertex(cell: mxCell): boolean {
-    return (cell != null) ? cell.isVertex() : false;
+    return (!!cell) ? cell.isVertex() : false;
   }
 
   /**
@@ -1274,7 +1274,7 @@ export class mxGraphModel {
    * cell - <mxCell> that represents the possible edge.
    */
   isEdge(cell: mxCell): boolean {
-    return (cell != null) ? cell.isEdge() : false;
+    return (!!cell) ? cell.isEdge() : false;
   }
 
   /**
@@ -1289,7 +1289,7 @@ export class mxGraphModel {
    * cell - <mxCell> whose connectable state should be returned.
    */
   isConnectable(cell: mxCell): boolean {
-    return (cell != null) ? cell.isConnectable() : false;
+    return (!!cell) ? cell.isConnectable() : false;
   }
 
   /**
@@ -1302,7 +1302,7 @@ export class mxGraphModel {
    * cell - <mxCell> whose user object should be returned.
    */
   getValue(cell: mxCell): any {
-    return (cell != null) ? cell.getValue() : null;
+    return (!!cell) ? cell.getValue() : null;
   }
 
   /**
@@ -1355,7 +1355,7 @@ export class mxGraphModel {
    * cell - <mxCell> whose geometry should be returned.
    */
   getGeometry(cell: mxCell): any {
-    return (cell != null) ? cell.getGeometry() : null;
+    return (!!cell) ? cell.getGeometry() : null;
   }
 
   /**
@@ -1399,7 +1399,7 @@ export class mxGraphModel {
    * cell - <mxCell> whose style should be returned.
    */
   getStyle(cell: mxCell): any {
-    return (cell != null) ? cell.getStyle() : null;
+    return (!!cell) ? cell.getStyle() : null;
   }
 
   /**
@@ -1449,7 +1449,7 @@ export class mxGraphModel {
    * cell - <mxCell> whose collapsed state should be returned.
    */
   isCollapsed(cell: mxCell): boolean {
-    return (cell != null) ? cell.isCollapsed() : false;
+    return (!!cell) ? cell.isCollapsed() : false;
   }
 
   /**
@@ -1498,7 +1498,7 @@ export class mxGraphModel {
    * cell - <mxCell> whose visible state should be returned.
    */
   isVisible(cell: mxCell): boolean {
-    return (cell != null) ? cell.isVisible() : false;
+    return (!!cell) ? cell.isVisible() : false;
   }
 
   /**
@@ -1657,7 +1657,7 @@ export class mxGraphModel {
    * significant. Default is true.
    */
   createUndoableEdit(significant: any): any {
-    const edit = new mxUndoableEdit(this, (significant != null) ? significant : true);
+    const edit = new mxUndoableEdit(this, (!!significant) ? significant : true);
     edit.notify = function () {
       edit.source.fireEvent(new mxEventObject(mxEvent.CHANGE, 'edit', edit, 'changes', edit.changes));
       edit.source.fireEvent(new mxEventObject(mxEvent.NOTIFY, 'edit', edit, 'changes', edit.changes));
@@ -1678,7 +1678,7 @@ export class mxGraphModel {
    * source edges.
    */
   mergeChildren(from: any, to: any, cloneAllEdges: any): void {
-    cloneAllEdges = (cloneAllEdges != null) ? cloneAllEdges : true;
+    cloneAllEdges = (!!cloneAllEdges) ? cloneAllEdges : true;
     this.beginUpdate();
     try {
       const mapping = {};
@@ -1686,12 +1686,12 @@ export class mxGraphModel {
       for (const key in mapping) {
         const cell = mapping[key];
         let terminal = this.getTerminal(cell, true);
-        if (terminal != null) {
+        if (!!terminal) {
           terminal = mapping[mxCellPath.create(terminal)];
           this.setTerminal(cell, terminal, true);
         }
         terminal = this.getTerminal(cell, false);
-        if (terminal != null) {
+        if (!!terminal) {
           terminal = mapping[mxCellPath.create(terminal)];
           this.setTerminal(cell, terminal, false);
         }
@@ -1717,8 +1717,8 @@ export class mxGraphModel {
         const cell = from.getChildAt(i);
         if (typeof (cell.getId) == 'function') {
           const id = cell.getId();
-          let target = (id != null && (!this.isEdge(cell) || !cloneAllEdges)) ? this.getCell(id) : null;
-          if (target == null) {
+          let target = (!!id && (!this.isEdge(cell) || !cloneAllEdges)) ? this.getCell(id) : null;
+          if (!target) {
             const clone = cell.clone();
             clone.setId(id);
             clone.setTerminal(cell.getTerminal(true), true);
@@ -1747,11 +1747,11 @@ export class mxGraphModel {
    */
   getParents(cells: mxCell[]): any {
     const parents = [];
-    if (cells != null) {
+    if (!!cells) {
       const dict = new mxDictionary();
       for (let i = 0; i < cells.length; i++) {
         const parent = this.getParent(cells[i]);
-        if (parent != null && !dict.get(parent)) {
+        if (!!parent && !dict.get(parent)) {
           dict.put(parent, true);
           parents.push(parent);
         }
@@ -1771,7 +1771,7 @@ export class mxGraphModel {
    * cell - <mxCell> to be cloned.
    */
   cloneCell(cell: mxCell): any {
-    if (cell != null) {
+    if (!!cell) {
       return this.cloneCells([cell], true)[0];
     }
     return null;
@@ -1793,17 +1793,17 @@ export class mxGraphModel {
    * mapping - Optional mapping for existing clones.
    */
   cloneCells(cells: mxCell[], includeChildren: any, mapping: any): any {
-    mapping = (mapping != null) ? mapping : {};
+    mapping = (!!mapping) ? mapping : {};
     const clones = [];
     for (let i = 0; i < cells.length; i++) {
-      if (cells[i] != null) {
+      if (cells[i]) {
         clones.push(this.cloneCellImpl(cells[i], mapping, includeChildren));
       } else {
         clones.push(null);
       }
     }
     for (let i = 0; i < clones.length; i++) {
-      if (clones[i] != null) {
+      if (clones[i]) {
         this.restoreClone(clones[i], cells[i], mapping);
       }
     }
@@ -1818,7 +1818,7 @@ export class mxGraphModel {
   cloneCellImpl(cell: mxCell, mapping: any, includeChildren: any): any {
     const ident = mxObjectIdentity.get(cell);
     let clone = mapping[ident];
-    if (clone == null) {
+    if (!clone) {
       clone = this.cellCloned(cell);
       mapping[ident] = clone;
       if (includeChildren) {
@@ -1850,16 +1850,16 @@ export class mxGraphModel {
    */
   restoreClone(clone: boolean, cell: mxCell, mapping: any): void {
     const source = this.getTerminal(cell, true);
-    if (source != null) {
+    if (!!source) {
       const tmp = mapping[mxObjectIdentity.get(source)];
-      if (tmp != null) {
+      if (!!tmp) {
         tmp.insertEdge(clone, true);
       }
     }
     const target = this.getTerminal(cell, false);
-    if (target != null) {
+    if (!!target) {
       const tmp = mapping[mxObjectIdentity.get(target)];
-      if (tmp != null) {
+      if (!!tmp) {
         tmp.insertEdge(clone, false);
       }
     }
@@ -1939,14 +1939,14 @@ export class mxChildChange {
    * connections.
    */
   execute(): void {
-    if (this.child != null) {
+    if (!!this.child) {
       let tmp = this.model.getParent(this.child);
-      const tmp2 = (tmp != null) ? tmp.getIndex(this.child) : 0;
-      if (this.previous == null) {
+      const tmp2 = (!!tmp) ? tmp.getIndex(this.child) : 0;
+      if (!this.previous) {
         this.connect(this.child, false);
       }
       tmp = this.model.parentForCellChanged(this.child, this.previous, this.previousIndex);
-      if (this.previous != null) {
+      if (!!this.previous) {
         this.connect(this.child, true);
       }
       this.parent = this.previous;
@@ -1964,17 +1964,17 @@ export class mxChildChange {
    * cell's terminals.
    */
   connect(cell: mxCell, isConnect: boolean): void {
-    isConnect = (isConnect != null) ? isConnect : true;
+    isConnect = (!!isConnect) ? isConnect : true;
     const source = cell.getTerminal(true);
     const target = cell.getTerminal(false);
-    if (source != null) {
+    if (!!source) {
       if (isConnect) {
         this.model.terminalForCellChanged(cell, source, true);
       } else {
         this.model.terminalForCellChanged(cell, null, true);
       }
     }
-    if (target != null) {
+    if (!!target) {
       if (isConnect) {
         this.model.terminalForCellChanged(cell, target, false);
       } else {
@@ -2022,7 +2022,7 @@ export class mxTerminalChange {
    * <mxGraphModel.terminalForCellChanged>.
    */
   execute(): void {
-    if (this.cell != null) {
+    if (!!this.cell) {
       this.terminal = this.previous;
       this.previous = this.model.terminalForCellChanged(this.cell, this.previous, this.source);
     }
@@ -2059,7 +2059,7 @@ export class mxValueChange {
    * <mxGraphModel.valueForCellChanged>.
    */
   execute(): void {
-    if (this.cell != null) {
+    if (!!this.cell) {
       this.value = this.previous;
       this.previous = this.model.valueForCellChanged(this.cell, this.previous);
     }
@@ -2096,7 +2096,7 @@ export class mxStyleChange {
    * <mxGraphModel.styleForCellChanged>.
    */
   execute(): void {
-    if (this.cell != null) {
+    if (!!this.cell) {
       this.style = this.previous;
       this.previous = this.model.styleForCellChanged(this.cell, this.previous);
     }
@@ -2133,7 +2133,7 @@ export class mxGeometryChange {
    * <mxGraphModel.geometryForCellChanged>.
    */
   execute(): void {
-    if (this.cell != null) {
+    if (!!this.cell) {
       this.geometry = this.previous;
       this.previous = this.model.geometryForCellChanged(this.cell, this.previous);
     }
@@ -2170,7 +2170,7 @@ export class mxCollapseChange {
    * <mxGraphModel.collapsedStateForCellChanged>.
    */
   execute(): void {
-    if (this.cell != null) {
+    if (!!this.cell) {
       this.collapsed = this.previous;
       this.previous = this.model.collapsedStateForCellChanged(this.cell, this.previous);
     }
@@ -2207,7 +2207,7 @@ export class mxVisibleChange {
    * <mxGraphModel.visibleStateForCellChanged>.
    */
   execute(): void {
-    if (this.cell != null) {
+    if (!!this.cell) {
       this.visible = this.previous;
       this.previous = this.model.visibleStateForCellChanged(this.cell, this.previous);
     }
@@ -2266,9 +2266,9 @@ export class mxCellAttributeChange {
    * using <mxCell.setAttribute>.
    */
   execute(): void {
-    if (this.cell != null) {
+    if (!!this.cell) {
       const tmp = this.cell.getAttribute(this.attribute);
-      if (this.previous == null) {
+      if (!this.previous) {
         this.cell.value.removeAttribute(this.attribute);
       } else {
         this.cell.setAttribute(this.attribute, this.previous);

@@ -157,7 +157,7 @@ export class mxGeometry extends mxRectangle {
    * <mxGraphModel.setGeometry>.
    */
   swap(): void {
-    if (this.alternateBounds != null) {
+    if (!!this.alternateBounds) {
       const old = new mxRectangle(this.x, this.y, this.width, this.height);
       this.x = this.alternateBounds.x;
       this.y = this.alternateBounds.y;
@@ -226,19 +226,19 @@ export class mxGeometry extends mxRectangle {
       this.x = Math.round(pt.x - this.width / 2);
       this.y = Math.round(pt.y - this.height / 2);
     }
-    if (this.sourcePoint != null) {
+    if (!!this.sourcePoint) {
       const pt = mxUtils.getRotatedPoint(this.sourcePoint, cos, sin, cx);
       this.sourcePoint.x = Math.round(pt.x);
       this.sourcePoint.y = Math.round(pt.y);
     }
-    if (this.targetPoint != null) {
+    if (!!this.targetPoint) {
       const pt = mxUtils.getRotatedPoint(this.targetPoint, cos, sin, cx);
       this.targetPoint.x = Math.round(pt.x);
       this.targetPoint.y = Math.round(pt.y);
     }
-    if (this.points != null) {
+    if (!!this.points) {
       for (let i = 0; i < this.points.length; i++) {
-        if (this.points[i] != null) {
+        if (this.points[i]) {
           const pt = mxUtils.getRotatedPoint(this.points[i], cos, sin, cx);
           this.points[i].x = Math.round(pt.x);
           this.points[i].y = Math.round(pt.y);
@@ -268,17 +268,17 @@ export class mxGeometry extends mxRectangle {
       this.x = parseFloat(this.x) + dx;
       this.y = parseFloat(this.y) + dy;
     }
-    if (this.sourcePoint != null) {
+    if (!!this.sourcePoint) {
       this.sourcePoint.x = parseFloat(this.sourcePoint.x) + dx;
       this.sourcePoint.y = parseFloat(this.sourcePoint.y) + dy;
     }
-    if (this.targetPoint != null) {
+    if (!!this.targetPoint) {
       this.targetPoint.x = parseFloat(this.targetPoint.x) + dx;
       this.targetPoint.y = parseFloat(this.targetPoint.y) + dy;
     }
-    if (this.TRANSLATE_CONTROL_POINTS && this.points != null) {
+    if (this.TRANSLATE_CONTROL_POINTS && !!this.points) {
       for (let i = 0; i < this.points.length; i++) {
-        if (this.points[i] != null) {
+        if (this.points[i]) {
           this.points[i].x = parseFloat(this.points[i].x) + dx;
           this.points[i].y = parseFloat(this.points[i].y) + dy;
         }
@@ -304,17 +304,17 @@ export class mxGeometry extends mxRectangle {
   scale(sx: any, sy: any, fixedAspect: any): void {
     sx = parseFloat(sx);
     sy = parseFloat(sy);
-    if (this.sourcePoint != null) {
+    if (!!this.sourcePoint) {
       this.sourcePoint.x = parseFloat(this.sourcePoint.x) * sx;
       this.sourcePoint.y = parseFloat(this.sourcePoint.y) * sy;
     }
-    if (this.targetPoint != null) {
+    if (!!this.targetPoint) {
       this.targetPoint.x = parseFloat(this.targetPoint.x) * sx;
       this.targetPoint.y = parseFloat(this.targetPoint.y) * sy;
     }
-    if (this.points != null) {
+    if (!!this.points) {
       for (let i = 0; i < this.points.length; i++) {
-        if (this.points[i] != null) {
+        if (this.points[i]) {
           this.points[i].x = parseFloat(this.points[i].x) * sx;
           this.points[i].y = parseFloat(this.points[i].y) * sy;
         }
@@ -337,6 +337,6 @@ export class mxGeometry extends mxRectangle {
    * Returns true if the given object equals this geometry.
    */
   equals(obj: any): any {
-    return mxRectangle.prototype.equals.apply(this, arguments) && this.relative == obj.relative && ((this.sourcePoint == null && obj.sourcePoint == null) || (this.sourcePoint != null && this.sourcePoint.equals(obj.sourcePoint))) && ((this.targetPoint == null && obj.targetPoint == null) || (this.targetPoint != null && this.targetPoint.equals(obj.targetPoint))) && ((this.points == null && obj.points == null) || (this.points != null && mxUtils.equalPoints(this.points, obj.points))) && ((this.alternateBounds == null && obj.alternateBounds == null) || (this.alternateBounds != null && this.alternateBounds.equals(obj.alternateBounds))) && ((this.offset == null && obj.offset == null) || (this.offset != null && this.offset.equals(obj.offset)));
+    return mxRectangle.prototype.equals.apply(this, arguments) && this.relative == obj.relative && ((!this.sourcePoint && !obj.sourcePoint) || (!!this.sourcePoint && this.sourcePoint.equals(obj.sourcePoint))) && ((!this.targetPoint && !obj.targetPoint) || (!!this.targetPoint && this.targetPoint.equals(obj.targetPoint))) && ((!this.points && !obj.points) || (!!this.points && mxUtils.equalPoints(this.points, obj.points))) && ((!this.alternateBounds && !obj.alternateBounds) || (!!this.alternateBounds && this.alternateBounds.equals(obj.alternateBounds))) && ((!this.offset && !obj.offset) || (!!this.offset && this.offset.equals(obj.offset)));
   }
 }

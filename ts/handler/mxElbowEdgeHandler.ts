@@ -100,8 +100,8 @@ export class mxElbowEdgeHandler extends mxEdgeHandler {
    * Returns the tooltip for the given node.
    */
   getTooltipForNode(node: Node): any {
-    let tip = null;
-    if (this.bends != null && this.bends[1] != null && (node == this.bends[1].node || node.parentNode == this.bends[1].node)) {
+    let tip = undefined;
+    if (!!this.bends && this.bends[1] && (node == this.bends[1].node || node.parentNode == this.bends[1].node)) {
       tip = this.doubleClickOrientationResource;
       tip = mxResources.get(tip) || tip;
     }
@@ -145,14 +145,14 @@ export class mxElbowEdgeHandler extends mxEdgeHandler {
   redrawInnerBends(p0: any, pe: any): void {
     const g = this.graph.getModel().getGeometry(this.state.cell);
     const pts = this.state.absolutePoints;
-    let pt = null;
+    let pt = undefined;
     if (pts.length > 1) {
       p0 = pts[1];
       pe = pts[pts.length - 2];
-    } else if (g.points != null && g.points.length > 0) {
+    } else if (!!g.points && g.points.length > 0) {
       pt = pts[0];
     }
-    if (pt == null) {
+    if (!pt) {
       pt = new mxPoint(p0.x + (pe.x - p0.x) / 2, p0.y + (pe.y - p0.y) / 2);
     } else {
       pt = new mxPoint(this.graph.getView().scale * (pt.x + this.graph.getView().translate.x + this.state.origin.x), this.graph.getView().scale * (pt.y + this.graph.getView().translate.y + this.state.origin.y));
@@ -163,7 +163,7 @@ export class mxElbowEdgeHandler extends mxEdgeHandler {
     let bounds = new mxRectangle(Math.round(pt.x - w / 2), Math.round(pt.y - h / 2), w, h);
     if (this.manageLabelHandle) {
       this.checkLabelHandle(bounds);
-    } else if (this.handleImage == null && this.labelShape.visible && mxUtils.intersects(bounds, this.labelShape.bounds)) {
+    } else if (!this.handleImage && this.labelShape.visible && mxUtils.intersects(bounds, this.labelShape.bounds)) {
       w = mxConstants.HANDLE_SIZE + 3;
       h = mxConstants.HANDLE_SIZE + 3;
       bounds = new mxRectangle(Math.floor(pt.x - w / 2), Math.floor(pt.y - h / 2), w, h);

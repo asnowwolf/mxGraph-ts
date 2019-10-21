@@ -42,7 +42,6 @@
 import { mxKeyHandler } from '../handler/mxKeyHandler';
 import { mxEvent } from '../util/mxEvent';
 import { mxEventObject } from '../util/mxEventObject';
-import { mxUtils } from '../util/mxUtils';
 import { mxEditor } from './mxEditor';
 
 export class mxDefaultKeyHandler {
@@ -51,13 +50,13 @@ export class mxDefaultKeyHandler {
     this.handler = new mxKeyHandler(editor.graph);
     const old = this.handler.escape;
     this.handler.escape = function (evt) {
-      old.apply(this, arguments);
+      old.apply(this, [evt]);
       editor.hideProperties();
       editor.fireEvent(new mxEventObject(mxEvent.ESCAPE, 'event', evt));
     };
   }
 
-  editor: any;
+  editor: mxEditor;
   handler: mxKeyHandler;
 
   /**
@@ -75,9 +74,7 @@ export class mxDefaultKeyHandler {
    * Default is false.
    */
   bindAction(code: any, action: any, control: any): void {
-    const keyHandler = mxUtils.bind(this, function () {
-      this.editor.execute(action);
-    });
+    const keyHandler = () => this.editor.execute(action);
     if (control) {
       this.handler.bindControlKey(code, keyHandler);
     } else {

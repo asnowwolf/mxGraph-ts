@@ -15,7 +15,7 @@
  * (code)
  * var pageCount = mxUtils.prompt('Enter page count', '1');
  *
- * if (pageCount != null)
+ * if (!!pageCount)
  * {
  *   var scale = mxUtils.getScaleForPageCount(pageCount, graph);
  *   var preview = new mxPrintPreview(graph, scale);
@@ -135,14 +135,14 @@ import { mxTemporaryCellStates } from './mxTemporaryCellStates';
 export class mxPrintPreview {
   constructor(graph: mxGraph, scale: any, pageFormat: any, border: any, x0: any, y0: any, borderColor: string, title: string, pageSelector: any) {
     this.graph = graph;
-    this.scale = (scale != null) ? scale : 1 / graph.pageScale;
-    this.border = (border != null) ? border : 0;
-    this.pageFormat = mxRectangle.fromRectangle((pageFormat != null) ? pageFormat : graph.pageFormat);
-    this.title = (title != null) ? title : 'Printer-friendly version';
-    this.x0 = (x0 != null) ? x0 : 0;
-    this.y0 = (y0 != null) ? y0 : 0;
+    this.scale = (!!scale) ? scale : 1 / graph.pageScale;
+    this.border = (!!border) ? border : 0;
+    this.pageFormat = mxRectangle.fromRectangle((!!pageFormat) ? pageFormat : graph.pageFormat);
+    this.title = (!!title) ? title : 'Printer-friendly version';
+    this.x0 = (!!x0) ? x0 : 0;
+    this.y0 = (!!y0) ? y0 : 0;
     this.borderColor = borderColor;
-    this.pageSelector = (pageSelector != null) ? pageSelector : true;
+    this.pageSelector = (!!pageSelector) ? pageSelector : true;
   }
 
   graph: mxGraph;
@@ -270,7 +270,7 @@ export class mxPrintPreview {
    */
   appendGraph(graph: mxGraph, scale: any, x0: any, y0: any, forcePageBreaks: any, keepOpen: any): void {
     this.graph = graph;
-    this.scale = (scale != null) ? scale : 1 / graph.pageScale;
+    this.scale = (!!scale) ? scale : 1 / graph.pageScale;
     this.x0 = x0;
     this.y0 = y0;
     this.open(null, null, forcePageBreaks, keepOpen);
@@ -290,7 +290,7 @@ export class mxPrintPreview {
    */
   open(css: any, targetWindow: any, forcePageBreaks: any, keepOpen: any): any {
     const previousInitializeOverlay = this.graph.cellRenderer.initializeOverlay;
-    let div = null;
+    let div = undefined;
     try {
       if (this.printOverlays) {
         this.graph.cellRenderer.initializeOverlay = function (state, overlay) {
@@ -303,16 +303,16 @@ export class mxPrintPreview {
           control.init(state.view.getDrawPane());
         };
       }
-      this.wnd = (targetWindow != null) ? targetWindow : this.wnd;
+      this.wnd = (!!targetWindow) ? targetWindow : this.wnd;
       let isNewWindow = false;
-      if (this.wnd == null) {
+      if (!this.wnd) {
         isNewWindow = true;
         this.wnd = window.open();
       }
       const doc = this.wnd.document;
       if (isNewWindow) {
         const dt = this.getDoctype();
-        if (dt != null && dt.length > 0) {
+        if (!!dt && dt.length > 0) {
           doc.writeln(dt);
         }
         if (mxClient.IS_VML) {
@@ -353,7 +353,7 @@ export class mxPrintPreview {
         if (this.pageSelector && (vpages > 1 || hpages > 1)) {
           const table = this.createPageSelector(vpages, hpages);
           doc.body.appendChild(table);
-          if (mxClient.IS_IE && doc.documentMode == null || doc.documentMode == 5 || doc.documentMode == 8 || doc.documentMode == 7) {
+          if (mxClient.IS_IE && !doc.documentMode || doc.documentMode == 5 || doc.documentMode == 8 || doc.documentMode == 7) {
             table.style.position = 'absolute';
             const update = function () {
               table.style.top = ((doc.body.scrollTop || doc.documentElement.scrollTop) + 10) + 'px';
@@ -368,7 +368,7 @@ export class mxPrintPreview {
         }
       });
       const addPage = mxUtils.bind(this, function (div, addBreak) {
-        if (this.borderColor != null) {
+        if (!!this.borderColor) {
           div.style.borderColor = this.borderColor;
           div.style.borderStyle = 'solid';
           div.style.borderWidth = '1px';
@@ -395,7 +395,7 @@ export class mxPrintPreview {
         }
       });
       const cov = this.getCoverPages(this.pageFormat.width, this.pageFormat.height);
-      if (cov != null) {
+      if (!!cov) {
         for (let i = 0; i < cov.length; i++) {
           addPage(cov[i], true);
         }
@@ -404,7 +404,7 @@ export class mxPrintPreview {
       for (let i = 0; i < vpages; i++) {
         const dy = i * availableHeight / this.scale - this.y0 / this.scale + (bounds.y - tr.y * currentScale) / currentScale;
         for (let j = 0; j < hpages; j++) {
-          if (this.wnd == null) {
+          if (!this.wnd) {
             return null;
           }
           const dx = j * availableWidth / this.scale - this.x0 / this.scale + (bounds.x - tr.x * currentScale) / currentScale;
@@ -417,10 +417,10 @@ export class mxPrintPreview {
             }
           }), pageNum);
           div.setAttribute('id', 'mxPage-' + pageNum);
-          addPage(div, apx != null || i < vpages - 1 || j < hpages - 1);
+          addPage(div, !!apx || i < vpages - 1 || j < hpages - 1);
         }
       }
-      if (apx != null) {
+      if (!!apx) {
         for (let i = 0; i < apx.length; i++) {
           addPage(apx[i], i < apx.length - 1);
         }
@@ -431,7 +431,7 @@ export class mxPrintPreview {
       }
       this.wnd.focus();
     } catch (e) {
-      if (div != null && div.parentNode != null) {
+      if (!!div && !!div.parentNode) {
         div.parentNode.removeChild(div);
       }
     } finally {
@@ -458,7 +458,7 @@ export class mxPrintPreview {
    */
   closeDocument(): void {
     try {
-      if (this.wnd != null && this.wnd.document != null) {
+      if (!!this.wnd && !!this.wnd.document) {
         const doc = this.wnd.document;
         this.writePostfix(doc);
         doc.writeln('</body>');
@@ -477,7 +477,7 @@ export class mxPrintPreview {
    * and closing HEAD tags.
    */
   writeHead(doc: any, css: any): void {
-    if (this.title != null) {
+    if (!!this.title) {
       doc.writeln('<title>' + this.title + '</title>');
     }
     if (mxClient.IS_VML) {
@@ -495,7 +495,7 @@ export class mxPrintPreview {
     doc.writeln('  table.mxPageSelector td { border: solid 1px gray; padding:4px; }');
     doc.writeln('  body.mxPage { background: gray; }');
     doc.writeln('}');
-    if (css != null) {
+    if (!!css) {
       doc.writeln(css);
     }
     doc.writeln('</style>');
@@ -561,7 +561,7 @@ export class mxPrintPreview {
   renderPage(w: number, h: number, dx: number, dy: number, content: any, pageNumber: any): any {
     const doc = this.wnd.document;
     let div = document.createElement('div');
-    let arg = null;
+    let arg = undefined;
     try {
       if (dx != 0 || dy != 0) {
         div.style.position = 'relative';
@@ -603,7 +603,7 @@ export class mxPrintPreview {
         innerDiv.style.width = (w - 2 * this.border) + 'px';
         innerDiv.style.height = (h - 2 * this.border) + 'px';
         innerDiv.style.overflow = 'hidden';
-        if (mxClient.IS_IE && (doc.documentMode == null || doc.documentMode == 5 || doc.documentMode == 8 || doc.documentMode == 7)) {
+        if (mxClient.IS_IE && (!doc.documentMode || doc.documentMode == 5 || doc.documentMode == 8 || doc.documentMode == 7)) {
           innerDiv.style.marginTop = this.border + 'px';
           innerDiv.style.marginLeft = this.border + 'px';
         } else {
@@ -619,7 +619,7 @@ export class mxPrintPreview {
       }
     } catch (e) {
       div.parentNode.removeChild(div);
-      div = null;
+      div = undefined;
       throw e;
     }
     content(arg);
@@ -633,7 +633,7 @@ export class mxPrintPreview {
    */
   getRoot(): any {
     let root = this.graph.view.currentRoot;
-    if (root == null) {
+    if (!root) {
       root = this.graph.getModel().getRoot();
     }
     return root;
@@ -689,18 +689,18 @@ export class mxPrintPreview {
     if (this.clipping) {
       const tempClip = new mxRectangle((clip.x + translate.x) * s, (clip.y + translate.y) * s, clip.width * s / scale, clip.height * s / scale);
       this.graph.cellRenderer.redraw = function (state, force, rendering) {
-        if (state != null) {
+        if (!!state) {
           const orig = states.get(state.cell);
-          if (orig != null) {
+          if (!!orig) {
             const bbox = view.getBoundingBox(orig, false);
-            if (bbox != null && !mxUtils.intersects(tempClip, bbox)) {
+            if (!!bbox && !mxUtils.intersects(tempClip, bbox)) {
             }
           }
         }
         redraw.apply(this, arguments);
       };
     }
-    let temp = null;
+    let temp = undefined;
     try {
       const cells = [this.getRoot()];
       temp = new mxTemporaryCellStates(view, scale, cells, null, mxUtils.bind(this, function (state) {
@@ -716,7 +716,7 @@ export class mxPrintPreview {
         view.canvas.style.height = clip.height + 'px';
       } else {
         let tmp = div.firstChild;
-        while (tmp != null) {
+        while (!!tmp) {
           const next = tmp.nextSibling;
           const name = tmp.nodeName.toLowerCase();
           if (name == 'svg') {
@@ -769,7 +769,7 @@ export class mxPrintPreview {
    */
   insertBackgroundImage(div: HTMLElement, dx: number, dy: number): void {
     const bg = this.graph.backgroundImage;
-    if (bg != null) {
+    if (!!bg) {
       const img = document.createElement('img');
       img.style.position = 'absolute';
       img.style.marginLeft = Math.round(dx * this.scale) + 'px';
@@ -810,7 +810,7 @@ export class mxPrintPreview {
    */
   print(css: any): void {
     const wnd = this.open(css);
-    if (wnd != null) {
+    if (!!wnd) {
       wnd.print();
     }
   }
@@ -821,9 +821,9 @@ export class mxPrintPreview {
    * Closes the print preview window.
    */
   close(): void {
-    if (this.wnd != null) {
+    if (!!this.wnd) {
       this.wnd.close();
-      this.wnd = null;
+      this.wnd = undefined;
     }
   }
 }

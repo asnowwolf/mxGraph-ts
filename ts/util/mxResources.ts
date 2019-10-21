@@ -9,7 +9,7 @@ export let mxResources = {
   loadDefaultBundle: true,
   loadSpecialBundle: true,
   isLanguageSupported(lan) {
-    if (mxClient.languages != null) {
+    if (!!mxClient.languages) {
       return mxUtils.indexOf(mxClient.languages, lan) >= 0;
     }
     return true;
@@ -22,7 +22,7 @@ export let mxResources = {
     }
   },
   getSpecialBundle(basename, lan) {
-    if (mxClient.languages == null || !this.isLanguageSupported(lan)) {
+    if (!mxClient.languages || !this.isLanguageSupported(lan)) {
       const dash = lan.indexOf('-');
       if (dash > 0) {
         lan = lan.substring(0, dash);
@@ -35,12 +35,12 @@ export let mxResources = {
     }
   },
   add(basename, lan, callback) {
-    lan = (lan != null) ? lan : ((mxClient.language != null) ? mxClient.language.toLowerCase() : mxConstants.NONE);
+    lan = (!!lan) ? lan : ((!!mxClient.language) ? mxClient.language.toLowerCase() : mxConstants.NONE);
     if (lan != mxConstants.NONE) {
       const defaultBundle = mxResources.getDefaultBundle(basename, lan);
       const specialBundle = mxResources.getSpecialBundle(basename, lan);
       const loadSpecialBundle = function () {
-        if (specialBundle != null) {
+        if (!!specialBundle) {
           if (callback) {
             mxUtils.get(specialBundle, function (req) {
               mxResources.parse(req.getText());
@@ -57,11 +57,11 @@ export let mxResources = {
             } catch (e) {
             }
           }
-        } else if (callback != null) {
+        } else if (!!callback) {
           callback();
         }
       };
-      if (defaultBundle != null) {
+      if (!!defaultBundle) {
         if (callback) {
           mxUtils.get(defaultBundle, function (req) {
             mxResources.parse(req.getText());
@@ -85,7 +85,7 @@ export let mxResources = {
     }
   },
   parse(text) {
-    if (text != null) {
+    if (!!text) {
       const lines = text.split('\n');
       for (let i = 0; i < lines.length; i++) {
         if (lines[i].charAt(0) != '#') {
@@ -108,30 +108,30 @@ export let mxResources = {
       }
     }
   },
-  get(key, params, defaultValue) {
+  get(key: string, params: any[] = [], defaultValue: string = '') {
     let value = mxResources.resources[key];
-    if (value == null) {
+    if (!value) {
       value = defaultValue;
     }
-    if (value != null && params != null) {
+    if (!!value && !!params) {
       value = mxResources.replacePlaceholders(value, params);
     }
     return value;
   },
   replacePlaceholders(value, params) {
     const result = [];
-    let index = null;
+    let index = undefined;
     for (let i = 0; i < value.length; i++) {
       const c = value.charAt(i);
       if (c == '{') {
         index = '';
-      } else if (index != null && c == '}') {
+      } else if (!!index && c == '}') {
         index = parseInt(index) - 1;
         if (index >= 0 && index < params.length) {
           result.push(params[index]);
         }
-        index = null;
-      } else if (index != null) {
+        index = undefined;
+      } else if (!!index) {
         index += c;
       } else {
         result.push(c);

@@ -33,7 +33,7 @@ import { mxUtils } from '../util/mxUtils';
 
 export class mxPanningHandler {
   constructor(graph: mxGraph) {
-    if (graph != null) {
+    if (!!graph) {
       this.graph = graph;
       this.graph.addMouseListener(this);
       this.forcePanningHandler = mxUtils.bind(this, function (sender, evt) {
@@ -52,19 +52,19 @@ export class mxPanningHandler {
           const evt = eo.getProperty('event');
           if (!mxEvent.isConsumed(evt) && evt.type == 'gesturestart') {
             this.initialScale = this.graph.view.scale;
-            if (!this.active && this.mouseDownEvent != null) {
+            if (!this.active && !!this.mouseDownEvent) {
               this.start(this.mouseDownEvent);
-              this.mouseDownEvent = null;
+              this.mouseDownEvent = undefined;
             }
-          } else if (evt.type == 'gestureend' && this.initialScale != null) {
-            this.initialScale = null;
+          } else if (evt.type == 'gestureend' && !!this.initialScale) {
+            this.initialScale = undefined;
           }
-          if (this.initialScale != null) {
+          if (!!this.initialScale) {
             let value = Math.round(this.initialScale * evt.scale * 100) / 100;
-            if (this.minScale != null) {
+            if (!!this.minScale) {
               value = Math.max(this.minScale, value);
             }
-            if (this.maxScale != null) {
+            if (!!this.maxScale) {
               value = Math.min(this.maxScale, value);
             }
             if (this.graph.view.scale != value) {
@@ -194,7 +194,7 @@ export class mxPanningHandler {
    * Returns true if the handler is currently active.
    */
   isActive(): boolean {
-    return this.active || this.initialScale != null;
+    return this.active || !!this.initialScale;
   }
 
   /**
@@ -242,7 +242,7 @@ export class mxPanningHandler {
    */
   isPanningTrigger(me: any): boolean {
     const evt = me.getEvent();
-    return (this.useLeftButtonForPanning && me.getState() == null && mxEvent.isLeftMouseButton(evt)) || (mxEvent.isControlDown(evt) && mxEvent.isShiftDown(evt)) || (this.usePopupTrigger && mxEvent.isPopupTrigger(evt));
+    return (this.useLeftButtonForPanning && !me.getState() && mxEvent.isLeftMouseButton(evt)) || (mxEvent.isControlDown(evt) && mxEvent.isShiftDown(evt)) || (this.usePopupTrigger && mxEvent.isPopupTrigger(evt));
   }
 
   /**
@@ -280,8 +280,8 @@ export class mxPanningHandler {
     this.dy0 = -this.graph.container.scrollTop;
     this.startX = me.getX();
     this.startY = me.getY();
-    this.dx = null;
-    this.dy = null;
+    this.dx = undefined;
+    this.dy = undefined;
     this.panningTrigger = true;
   }
 
@@ -354,7 +354,7 @@ export class mxPanningHandler {
    */
   mouseUp(sender: any, me: any): void {
     if (this.active) {
-      if (this.dx != null && this.dy != null) {
+      if (!!this.dx && !!this.dy) {
         if (!this.graph.useScrollbarsForPanning || !mxUtils.hasScrollbars(this.graph.container)) {
           const scale = this.graph.getView().scale;
           const t = this.graph.getView().translate;
@@ -376,10 +376,10 @@ export class mxPanningHandler {
    */
   reset(): void {
     this.panningTrigger = false;
-    this.mouseDownEvent = null;
+    this.mouseDownEvent = undefined;
     this.active = false;
-    this.dx = null;
-    this.dy = null;
+    this.dx = undefined;
+    this.dy = undefined;
   }
 
   /**

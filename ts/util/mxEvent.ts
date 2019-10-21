@@ -4,7 +4,7 @@ import { mxMouseEvent } from './mxMouseEvent';
 export let mxEvent = {
   addListener: function () {
     const updateListenerList = function (element, eventName, funct) {
-      if (element.mxListenerList == null) {
+      if (!element.mxListenerList) {
         element.mxListenerList = [];
       }
       const entry = { name: eventName, f: funct };
@@ -24,7 +24,7 @@ export let mxEvent = {
   }(),
   removeListener: function () {
     const updateListener = function (element, eventName, funct) {
-      if (element.mxListenerList != null) {
+      if (!!element.mxListenerList) {
         const listenerCount = element.mxListenerList.length;
         for (let i = 0; i < listenerCount; i++) {
           const entry = element.mxListenerList[i];
@@ -34,7 +34,7 @@ export let mxEvent = {
           }
         }
         if (element.mxListenerList.length == 0) {
-          element.mxListenerList = null;
+          element.mxListenerList = undefined;
         }
       }
     };
@@ -52,7 +52,7 @@ export let mxEvent = {
   }(),
   removeAllListeners(element) {
     const list = element.mxListenerList;
-    if (list != null) {
+    if (!!list) {
       while (list.length > 0) {
         const entry = list[0];
         mxEvent.removeListener(element, entry.name, entry.f);
@@ -60,45 +60,45 @@ export let mxEvent = {
     }
   },
   addGestureListeners(node, startListener, moveListener, endListener) {
-    if (startListener != null) {
+    if (!!startListener) {
       mxEvent.addListener(node, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown', startListener);
     }
-    if (moveListener != null) {
+    if (!!moveListener) {
       mxEvent.addListener(node, (mxClient.IS_POINTER) ? 'pointermove' : 'mousemove', moveListener);
     }
-    if (endListener != null) {
+    if (!!endListener) {
       mxEvent.addListener(node, (mxClient.IS_POINTER) ? 'pointerup' : 'mouseup', endListener);
     }
     if (!mxClient.IS_POINTER && mxClient.IS_TOUCH) {
-      if (startListener != null) {
+      if (!!startListener) {
         mxEvent.addListener(node, 'touchstart', startListener);
       }
-      if (moveListener != null) {
+      if (!!moveListener) {
         mxEvent.addListener(node, 'touchmove', moveListener);
       }
-      if (endListener != null) {
+      if (!!endListener) {
         mxEvent.addListener(node, 'touchend', endListener);
       }
     }
   },
   removeGestureListeners(node, startListener, moveListener, endListener) {
-    if (startListener != null) {
+    if (!!startListener) {
       mxEvent.removeListener(node, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown', startListener);
     }
-    if (moveListener != null) {
+    if (!!moveListener) {
       mxEvent.removeListener(node, (mxClient.IS_POINTER) ? 'pointermove' : 'mousemove', moveListener);
     }
-    if (endListener != null) {
+    if (!!endListener) {
       mxEvent.removeListener(node, (mxClient.IS_POINTER) ? 'pointerup' : 'mouseup', endListener);
     }
     if (!mxClient.IS_POINTER && mxClient.IS_TOUCH) {
-      if (startListener != null) {
+      if (!!startListener) {
         mxEvent.removeListener(node, 'touchstart', startListener);
       }
-      if (moveListener != null) {
+      if (!!moveListener) {
         mxEvent.removeListener(node, 'touchmove', moveListener);
       }
-      if (endListener != null) {
+      if (!!endListener) {
         mxEvent.removeListener(node, 'touchend', endListener);
       }
     }
@@ -108,39 +108,39 @@ export let mxEvent = {
       return (typeof (state) == 'function') ? state(evt) : state;
     };
     mxEvent.addGestureListeners(node, function (evt) {
-      if (down != null) {
+      if (!!down) {
         down(evt);
       } else if (!mxEvent.isConsumed(evt)) {
         graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt, getState(evt)));
       }
     }, function (evt) {
-      if (move != null) {
+      if (!!move) {
         move(evt);
       } else if (!mxEvent.isConsumed(evt)) {
         graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt, getState(evt)));
       }
     }, function (evt) {
-      if (up != null) {
+      if (!!up) {
         up(evt);
       } else if (!mxEvent.isConsumed(evt)) {
         graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt, getState(evt)));
       }
     });
     mxEvent.addListener(node, 'dblclick', function (evt) {
-      if (dblClick != null) {
+      if (!!dblClick) {
         dblClick(evt);
       } else if (!mxEvent.isConsumed(evt)) {
         const tmp = getState(evt);
-        graph.dblClick(evt, (tmp != null) ? tmp.cell : null);
+        graph.dblClick(evt, (!!tmp) ? tmp.cell : null);
       }
     });
   },
   release(element) {
     try {
-      if (element != null) {
+      if (!!element) {
         mxEvent.removeAllListeners(element);
         const children = element.childNodes;
-        if (children != null) {
+        if (!!children) {
           const childCount = children.length;
           for (let i = 0; i < childCount; i += 1) {
             mxEvent.release(children[i]);
@@ -151,9 +151,9 @@ export let mxEvent = {
     }
   },
   addMouseWheelListener(funct, target) {
-    if (funct != null) {
+    if (!!funct) {
       const wheelHandler = function (evt) {
-        if (evt == null) {
+        if (!evt) {
           evt = window.event;
         }
         let delta = 0;
@@ -166,9 +166,9 @@ export let mxEvent = {
           funct(evt, delta > 0);
         }
       };
-      if (mxClient.IS_NS && document.documentMode == null) {
+      if (mxClient.IS_NS && !document.documentMode) {
         const eventName = (mxClient.IS_SF || mxClient.IS_GC) ? 'mousewheel' : 'DOMMouseScroll';
-        mxEvent.addListener((mxClient.IS_GC && target != null) ? target : window, eventName, wheelHandler);
+        mxEvent.addListener((mxClient.IS_GC && !!target) ? target : window, eventName, wheelHandler);
       } else {
         mxEvent.addListener(document, 'mousewheel', wheelHandler);
       }
@@ -183,22 +183,22 @@ export let mxEvent = {
     });
   },
   getSource(evt) {
-    return (evt.srcElement != null) ? evt.srcElement : evt.target;
+    return (!!evt.srcElement) ? evt.srcElement : evt.target;
   },
   isConsumed(evt) {
-    return evt.isConsumed != null && evt.isConsumed;
+    return !!evt.isConsumed && evt.isConsumed;
   },
   isTouchEvent(evt) {
-    return (evt.pointerType != null) ? (evt.pointerType == 'touch' || evt.pointerType === evt.MSPOINTER_TYPE_TOUCH) : ((evt.mozInputSource != null) ? evt.mozInputSource == 5 : evt.type.indexOf('touch') == 0);
+    return (!!evt.pointerType) ? (evt.pointerType == 'touch' || evt.pointerType === evt.MSPOINTER_TYPE_TOUCH) : ((!!evt.mozInputSource) ? evt.mozInputSource == 5 : evt.type.indexOf('touch') == 0);
   },
   isPenEvent(evt) {
-    return (evt.pointerType != null) ? (evt.pointerType == 'pen' || evt.pointerType === evt.MSPOINTER_TYPE_PEN) : ((evt.mozInputSource != null) ? evt.mozInputSource == 2 : evt.type.indexOf('pen') == 0);
+    return (!!evt.pointerType) ? (evt.pointerType == 'pen' || evt.pointerType === evt.MSPOINTER_TYPE_PEN) : ((!!evt.mozInputSource) ? evt.mozInputSource == 2 : evt.type.indexOf('pen') == 0);
   },
   isMultiTouchEvent(evt) {
-    return (evt.type != null && evt.type.indexOf('touch') == 0 && evt.touches != null && evt.touches.length > 1);
+    return (!!evt.type && evt.type.indexOf('touch') == 0 && !!evt.touches && evt.touches.length > 1);
   },
   isMouseEvent(evt) {
-    return (evt.pointerType != null) ? (evt.pointerType == 'mouse' || evt.pointerType === evt.MSPOINTER_TYPE_MOUSE) : ((evt.mozInputSource != null) ? evt.mozInputSource == 1 : evt.type.indexOf('mouse') == 0);
+    return (!!evt.pointerType) ? (evt.pointerType == 'mouse' || evt.pointerType === evt.MSPOINTER_TYPE_MOUSE) : ((!!evt.mozInputSource) ? evt.mozInputSource == 1 : evt.type.indexOf('mouse') == 0);
   },
   isLeftMouseButton(evt) {
     if ('buttons' in evt && (evt.type == 'mousedown' || evt.type == 'mousemove')) {
@@ -227,21 +227,21 @@ export let mxEvent = {
     return mxEvent.isRightMouseButton(evt) || (mxClient.IS_MAC && mxEvent.isControlDown(evt) && !mxEvent.isShiftDown(evt) && !mxEvent.isMetaDown(evt) && !mxEvent.isAltDown(evt));
   },
   isShiftDown(evt) {
-    return (evt != null) ? evt.shiftKey : false;
+    return (!!evt) ? evt.shiftKey : false;
   },
   isAltDown(evt) {
-    return (evt != null) ? evt.altKey : false;
+    return (!!evt) ? evt.altKey : false;
   },
   isControlDown(evt) {
-    return (evt != null) ? evt.ctrlKey : false;
+    return (!!evt) ? evt.ctrlKey : false;
   },
   isMetaDown(evt) {
-    return (evt != null) ? evt.metaKey : false;
+    return (!!evt) ? evt.metaKey : false;
   },
   getMainEvent(e) {
-    if ((e.type == 'touchstart' || e.type == 'touchmove') && e.touches != null && e.touches[0] != null) {
+    if ((e.type == 'touchstart' || e.type == 'touchmove') && !!e.touches && e.touches[0]) {
       e = e.touches[0];
-    } else if (e.type == 'touchend' && e.changedTouches != null && e.changedTouches[0] != null) {
+    } else if (e.type == 'touchend' && !!e.changedTouches && e.changedTouches[0]) {
       e = e.changedTouches[0];
     }
     return e;

@@ -144,7 +144,7 @@ export let mxPerimeter = {
       return mxUtils.intersection(px, py, tx, ty, cx, y + h, x + w, cy);
     }
   }, TrianglePerimeter(bounds, vertex, next, orthogonal) {
-    const direction = (vertex != null) ? vertex.style[mxConstants.STYLE_DIRECTION] : null;
+    const direction = (!!vertex) ? vertex.style[mxConstants.STYLE_DIRECTION] : null;
     const vertical = direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH;
     const x = bounds.x;
     const y = bounds.y;
@@ -177,7 +177,7 @@ export let mxPerimeter = {
     } else {
       base = alpha < -Math.PI + t || alpha > Math.PI - t;
     }
-    let result = null;
+    let result = undefined;
     if (base) {
       if (orthogonal && ((vertical && next.x >= start.x && next.x <= end.x) || (!vertical && next.y >= start.y && next.y <= end.y))) {
         if (vertical) {
@@ -217,7 +217,7 @@ export let mxPerimeter = {
         result = mxUtils.intersection(next.x, next.y, cx, cy, corner.x, corner.y, end.x, end.y);
       }
     }
-    if (result == null) {
+    if (!result) {
       result = new mxPoint(cx, cy);
     }
     return result;
@@ -236,7 +236,7 @@ export let mxPerimeter = {
     const pi = Math.PI;
     const pi2 = Math.PI / 2;
     let result = new mxPoint(cx, cy);
-    const direction = (vertex != null) ? mxUtils.getValue(vertex.style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST) : mxConstants.DIRECTION_EAST;
+    const direction = (!!vertex) ? mxUtils.getValue(vertex.style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST) : mxConstants.DIRECTION_EAST;
     const vertical = direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH;
     let a = new mxPoint();
     let b = new mxPoint();
@@ -455,7 +455,7 @@ export let mxPerimeter = {
       }
       result = mxUtils.intersection(cx, cy, next.x, next.y, a.x, a.y, b.x, b.y);
     }
-    if (result == null) {
+    if (!result) {
       return new mxPoint(cx, cy);
     }
     return result;

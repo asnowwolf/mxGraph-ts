@@ -47,7 +47,7 @@
  * var elt = doc.documentElement.firstChild;
  * var cells = [];
  *
- * while (elt != null)
+ * while (!!elt)
  * {
  *   cells.push(codec.decode(elt));
  *   elt = elt.nextSibling;
@@ -159,14 +159,14 @@ export class mxCodec {
    * from the document is parsed using <decode>.
    */
   getObject(id: any): any {
-    let obj = null;
-    if (id != null) {
+    let obj = undefined;
+    if (!!id) {
       obj = this.objects[id];
-      if (obj == null) {
+      if (!obj) {
         obj = this.lookup(id);
-        if (obj == null) {
+        if (!obj) {
           const node = this.getElementById(id);
-          if (node != null) {
+          if (!!node) {
             obj = this.decode(node);
           }
         }
@@ -223,9 +223,9 @@ export class mxCodec {
    * id - String that contains the ID.
    */
   updateElements(): void {
-    if (this.elements == null) {
+    if (!this.elements) {
       this.elements = {};
-      if (this.document.documentElement != null) {
+      if (!!this.document.documentElement) {
         this.addElement(this.document.documentElement);
       }
     }
@@ -239,8 +239,8 @@ export class mxCodec {
   addElement(node: Node): void {
     if (node.nodeType == mxConstants.NODETYPE_ELEMENT) {
       const id = node.getAttribute('id');
-      if (id != null) {
-        if (this.elements[id] == null) {
+      if (!!id) {
+        if (!this.elements[id]) {
           this.elements[id] = node;
         } else if (this.elements[id] != node) {
           throw new Error(id + ': Duplicate ID');
@@ -248,7 +248,7 @@ export class mxCodec {
       }
     }
     node = node.firstChild;
-    while (node != null) {
+    while (!!node) {
       this.addElement(node);
       node = node.nextSibling;
     }
@@ -268,12 +268,12 @@ export class mxCodec {
    * obj - Object to return the ID for.
    */
   getId(obj: any): any {
-    let id = null;
-    if (obj != null) {
+    let id = undefined;
+    if (!!obj) {
       id = this.reference(obj);
-      if (id == null && obj instanceof mxCell) {
+      if (!id && obj instanceof mxCell) {
         id = obj.getId();
-        if (id == null) {
+        if (!id) {
           id = mxCellPath.create(obj);
           if (id.length == 0) {
             id = 'root';
@@ -320,10 +320,10 @@ export class mxCodec {
    * obj - Object to be encoded.
    */
   encode(obj: any): any {
-    let node = null;
-    if (obj != null && obj.constructor != null) {
+    let node = undefined;
+    if (!!obj && !!obj.constructor) {
       const enc = mxCodecRegistry.getCodec(obj.constructor);
-      if (enc != null) {
+      if (!!enc) {
         node = enc.encode(this, obj);
       } else {
         if (mxUtils.isNode(obj)) {
@@ -354,15 +354,15 @@ export class mxCodec {
    */
   decode(node: Node, into: any): any {
     this.updateElements();
-    let obj = null;
-    if (node != null && node.nodeType == mxConstants.NODETYPE_ELEMENT) {
-      let ctor = null;
+    let obj = undefined;
+    if (!!node && node.nodeType == mxConstants.NODETYPE_ELEMENT) {
+      let ctor = undefined;
       try {
         ctor = window[node.nodeName];
       } catch (err) {
       }
       const dec = mxCodecRegistry.getCodec(ctor);
-      if (dec != null) {
+      if (!!dec) {
         obj = dec.decode(this, node, into);
       } else {
         obj = node.cloneNode(true);
@@ -394,7 +394,7 @@ export class mxCodec {
    */
   encodeCell(cell: mxCell, node: Node, includeChildren: any): void {
     node.appendChild(this.encode(cell));
-    if (includeChildren == null || includeChildren) {
+    if (!includeChildren || includeChildren) {
       const childCount = cell.getChildCount();
       for (let i = 0; i < childCount; i++) {
         this.encodeCell(cell.getChildAt(i), node);
@@ -410,7 +410,7 @@ export class mxCodec {
    * given type.
    */
   isCellCodec(codec: any): boolean {
-    if (codec != null && typeof (codec.isCellCodec) == 'function') {
+    if (!!codec && typeof (codec.isCellCodec) == 'function') {
       return codec.isCellCodec();
     }
     return false;
@@ -434,13 +434,13 @@ export class mxCodec {
    * Default is true.
    */
   decodeCell(node: Node, restoreStructures: any): any {
-    restoreStructures = (restoreStructures != null) ? restoreStructures : true;
-    let cell = null;
-    if (node != null && node.nodeType == mxConstants.NODETYPE_ELEMENT) {
+    restoreStructures = (!!restoreStructures) ? restoreStructures : true;
+    let cell = undefined;
+    if (!!node && node.nodeType == mxConstants.NODETYPE_ELEMENT) {
       let decoder = mxCodecRegistry.getCodec(node.nodeName);
       if (!this.isCellCodec(decoder)) {
         let child = node.firstChild;
-        while (child != null && !this.isCellCodec(decoder)) {
+        while (!!child && !this.isCellCodec(decoder)) {
           decoder = mxCodecRegistry.getCodec(child.nodeName);
           child = child.nextSibling;
         }
@@ -467,18 +467,18 @@ export class mxCodec {
     const target = cell.getTerminal(false);
     cell.setTerminal(null, false);
     cell.setTerminal(null, true);
-    cell.parent = null;
-    if (parent != null) {
+    cell.parent = undefined;
+    if (!!parent) {
       if (parent == cell) {
         throw new Error(parent.id + ': Self Reference');
       } else {
         parent.insert(cell);
       }
     }
-    if (source != null) {
+    if (!!source) {
       source.insertEdge(cell, true);
     }
-    if (target != null) {
+    if (!!target) {
       target.insertEdge(cell, false);
     }
   }
@@ -497,7 +497,7 @@ export class mxCodec {
    * value - New value of the attribute.
    */
   setAttribute(node: Node, attribute: any, value: any): void {
-    if (attribute != null && value != null) {
+    if (!!attribute && !!value) {
       node.setAttribute(attribute, value);
     }
   }

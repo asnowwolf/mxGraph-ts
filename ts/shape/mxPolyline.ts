@@ -27,7 +27,7 @@ export class mxPolyline extends mxShape {
     super();
     this.points = points;
     this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
+    this.strokewidth = (!!strokewidth) ? strokewidth : 1;
   }
 
   points: any;
@@ -69,7 +69,7 @@ export class mxPolyline extends mxShape {
   paintEdgeShape(c: any, pts: any): void {
     const prev = c.pointerEventsValue;
     c.pointerEventsValue = 'stroke';
-    if (this.style == null || this.style[mxConstants.STYLE_CURVED] != 1) {
+    if (!this.style || this.style[mxConstants.STYLE_CURVED] != 1) {
       this.paintLine(c, pts, this.isRounded);
     } else {
       this.paintCurvedLine(c, pts);

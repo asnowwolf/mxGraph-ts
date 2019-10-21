@@ -104,7 +104,7 @@ export class mxUrlConverter {
    */
   convert(url: string): any {
     if (this.isEnabled() && this.isRelativeUrl(url)) {
-      if (this.getBaseUrl() == null) {
+      if (!this.getBaseUrl()) {
         this.updateBaseUrl();
       }
       if (url.charAt(0) == '/') {

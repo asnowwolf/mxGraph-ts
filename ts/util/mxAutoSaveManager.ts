@@ -122,11 +122,11 @@ export class mxAutoSaveManager {
    * Sets the graph that the layouts operate on.
    */
   setGraph(graph: mxGraph): void {
-    if (this.graph != null) {
+    if (!!this.graph) {
       this.graph.getModel().removeListener(this.changeHandler);
     }
     this.graph = graph;
-    if (this.graph != null) {
+    if (!!this.graph) {
       this.graph.getModel().addListener(mxEvent.CHANGE, this.changeHandler);
     }
   }

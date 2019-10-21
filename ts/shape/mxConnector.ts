@@ -40,7 +40,7 @@ export class mxConnector extends mxPolyline {
    * <augmentBoundingBox> and stores the result in <boundingBox>.
    */
   updateBoundingBox(): void {
-    this.useSvgBoundingBox = this.style != null && this.style[mxConstants.STYLE_CURVED] == 1;
+    this.useSvgBoundingBox = !!this.style && this.style[mxConstants.STYLE_CURVED] == 1;
     mxShape.prototype.updateBoundingBox.apply(this, arguments);
   }
 
@@ -56,10 +56,10 @@ export class mxConnector extends mxPolyline {
     c.setFillColor(this.stroke);
     c.setShadow(false);
     c.setDashed(false);
-    if (sourceMarker != null) {
+    if (!!sourceMarker) {
       sourceMarker();
     }
-    if (targetMarker != null) {
+    if (!!targetMarker) {
       targetMarker();
     }
   }
@@ -71,12 +71,12 @@ export class mxConnector extends mxPolyline {
    * paint the marker.
    */
   createMarker(c: any, pts: any, source: any): any {
-    let result = null;
+    let result = undefined;
     const n = pts.length;
     const type = mxUtils.getValue(this.style, (source) ? mxConstants.STYLE_STARTARROW : mxConstants.STYLE_ENDARROW);
     let p0 = (source) ? pts[1] : pts[n - 2];
     const pe = (source) ? pts[0] : pts[n - 1];
-    if (type != null && p0 != null && pe != null) {
+    if (!!type && !!p0 && !!pe) {
       let count = 1;
       while (count < n - 1 && Math.round(p0.x - pe.x) == 0 && Math.round(p0.y - pe.y) == 0) {
         p0 = (source) ? pts[1 + count] : pts[n - 2 - count];

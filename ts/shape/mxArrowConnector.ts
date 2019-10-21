@@ -36,9 +36,9 @@ export class mxArrowConnector extends mxShape {
     this.points = points;
     this.fill = fill;
     this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
-    this.arrowWidth = (arrowWidth != null) ? arrowWidth : mxConstants.ARROW_WIDTH;
-    this.arrowSpacing = (spacing != null) ? spacing : mxConstants.ARROW_SPACING;
+    this.strokewidth = (!!strokewidth) ? strokewidth : 1;
+    this.arrowWidth = (!!arrowWidth) ? arrowWidth : mxConstants.ARROW_WIDTH;
+    this.arrowSpacing = (!!spacing) ? spacing : mxConstants.ARROW_SPACING;
     this.startSize = mxConstants.ARROW_SIZE / 5;
     this.endSize = mxConstants.ARROW_SIZE / 5;
   }
@@ -75,7 +75,7 @@ export class mxArrowConnector extends mxShape {
    */
   apply(state: any): void {
     mxShape.prototype.apply.apply(this, arguments);
-    if (this.style != null) {
+    if (!!this.style) {
       this.startSize = mxUtils.getNumber(this.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3;
       this.endSize = mxUtils.getNumber(this.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3;
     }

@@ -3,7 +3,7 @@ import { mxObjectCodec } from './mxObjectCodec';
 
 export let mxCodecRegistry = {
   codecs: [], aliases: [], register(codec) {
-    if (codec != null) {
+    if (!!codec) {
       const name = codec.getName();
       mxCodecRegistry.codecs[name] = codec;
       const classname = mxUtils.getFunctionName(codec.template.constructor);
@@ -15,15 +15,15 @@ export let mxCodecRegistry = {
   }, addAlias(classname, codecname) {
     mxCodecRegistry.aliases[classname] = codecname;
   }, getCodec(ctor) {
-    let codec = null;
-    if (ctor != null) {
+    let codec = undefined;
+    if (!!ctor) {
       let name = mxUtils.getFunctionName(ctor);
       const tmp = mxCodecRegistry.aliases[name];
-      if (tmp != null) {
+      if (!!tmp) {
         name = tmp;
       }
       codec = mxCodecRegistry.codecs[name];
-      if (codec == null) {
+      if (!codec) {
         try {
           codec = new mxObjectCodec(new ctor());
           mxCodecRegistry.register(codec);

@@ -124,10 +124,10 @@ export class mxCellRenderer {
    * state - <mxCellState> for which the shape should be created.
    */
   createShape(state: any): any {
-    let shape = null;
-    if (state.style != null) {
+    let shape = undefined;
+    if (!!state.style) {
       const stencil = mxStencilRegistry.getStencil(state.style[mxConstants.STYLE_SHAPE]);
-      if (stencil != null) {
+      if (!!stencil) {
         shape = new mxShape(stencil);
       } else {
         const ctor = this.getShapeConstructor(state);
@@ -156,7 +156,7 @@ export class mxCellRenderer {
    * Returns the shape for the given name from <defaultShapes>.
    */
   getShape(name: string): any {
-    return (name != null) ? mxCellRenderer.defaultShapes[name] : null;
+    return (!!name) ? mxCellRenderer.defaultShapes[name] : null;
   }
 
   /**
@@ -166,7 +166,7 @@ export class mxCellRenderer {
    */
   getShapeConstructor(state: any): any {
     let ctor = this.getShape(state.style[mxConstants.STYLE_SHAPE]);
-    if (ctor == null) {
+    if (!ctor) {
       ctor = (state.view.graph.getModel().isEdge(state.cell)) ? this.defaultEdgeShape : this.defaultVertexShape;
     }
     return ctor;
@@ -201,7 +201,7 @@ export class mxCellRenderer {
    * and gradient color keys.
    */
   postConfigureShape(state: any): void {
-    if (state.shape != null) {
+    if (!!state.shape) {
       this.resolveColor(state, 'indicatorColor', mxConstants.STYLE_FILLCOLOR);
       this.resolveColor(state, 'indicatorGradientColor', mxConstants.STYLE_GRADIENTCOLOR);
       this.resolveColor(state, 'fill', mxConstants.STYLE_FILLCOLOR);
@@ -217,7 +217,7 @@ export class mxCellRenderer {
    * the respective color on the shape.
    */
   checkPlaceholderStyles(state: any): any {
-    if (state.style != null) {
+    if (!!state.style) {
       const values = ['inherit', 'swimlane', 'indicated'];
       const styles = [mxConstants.STYLE_FILLCOLOR, mxConstants.STYLE_STROKECOLOR, mxConstants.STYLE_GRADIENTCOLOR];
       for (let i = 0; i < styles.length; i++) {
@@ -238,12 +238,12 @@ export class mxCellRenderer {
   resolveColor(state: any, field: any, key: string): void {
     const value = state.shape[field];
     const graph = state.view.graph;
-    let referenced = null;
+    let referenced = undefined;
     if (value == 'inherit') {
       referenced = graph.model.getParent(state.cell);
     } else if (value == 'swimlane') {
       state.shape[field] = (key == mxConstants.STYLE_STROKECOLOR) ? '#000000' : '#ffffff';
-      if (graph.model.getTerminal(state.cell, false) != null) {
+      if (graph.model.getTerminal(state.cell, false)) {
         referenced = graph.model.getTerminal(state.cell, false);
       } else {
         referenced = state.cell;
@@ -253,11 +253,11 @@ export class mxCellRenderer {
     } else if (value == 'indicated') {
       state.shape[field] = state.shape.indicatorColor;
     }
-    if (referenced != null) {
+    if (!!referenced) {
       const rstate = graph.getView().getState(referenced);
-      state.shape[field] = null;
-      if (rstate != null) {
-        if (rstate.shape != null && field != 'indicatorColor') {
+      state.shape[field] = undefined;
+      if (!!rstate) {
+        if (!!rstate.shape && field != 'indicatorColor') {
           state.shape[field] = rstate.shape[field];
         } else {
           state.shape[field] = rstate.style[key];
@@ -291,8 +291,8 @@ export class mxCellRenderer {
   createLabel(state: any, value: any): any {
     const graph = state.view.graph;
     const isEdge = graph.getModel().isEdge(state.cell);
-    if (state.style[mxConstants.STYLE_FONTSIZE] > 0 || state.style[mxConstants.STYLE_FONTSIZE] == null) {
-      const isForceHtml = (graph.isHtmlLabel(state.cell) || (value != null && mxUtils.isNode(value)));
+    if (state.style[mxConstants.STYLE_FONTSIZE] > 0 || !state.style[mxConstants.STYLE_FONTSIZE]) {
+      const isForceHtml = (graph.isHtmlLabel(state.cell) || (!!value && mxUtils.isNode(value)));
       state.text = new this.defaultTextShape(value, new mxRectangle(), (state.style[mxConstants.STYLE_ALIGN] || mxConstants.ALIGN_CENTER), graph.getVerticalAlign(state), state.style[mxConstants.STYLE_FONTCOLOR], state.style[mxConstants.STYLE_FONTFAMILY], state.style[mxConstants.STYLE_FONTSIZE], state.style[mxConstants.STYLE_FONTSTYLE], state.style[mxConstants.STYLE_SPACING], state.style[mxConstants.STYLE_SPACING_TOP], state.style[mxConstants.STYLE_SPACING_RIGHT], state.style[mxConstants.STYLE_SPACING_BOTTOM], state.style[mxConstants.STYLE_SPACING_LEFT], state.style[mxConstants.STYLE_HORIZONTAL], state.style[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR], state.style[mxConstants.STYLE_LABEL_BORDERCOLOR], graph.isWrapping(state.cell) && graph.isHtmlLabel(state.cell), graph.isLabelClipped(state.cell), state.style[mxConstants.STYLE_OVERFLOW], state.style[mxConstants.STYLE_LABEL_PADDING], mxUtils.getValue(state.style, mxConstants.STYLE_TEXT_DIRECTION, mxConstants.DEFAULT_TEXT_DIRECTION));
       state.text.opacity = mxUtils.getValue(state.style, mxConstants.STYLE_TEXT_OPACITY, 100);
       state.text.dialect = (isForceHtml) ? mxConstants.DIALECT_STRICTHTML : state.view.graph.dialect;
@@ -365,19 +365,19 @@ export class mxCellRenderer {
   createCellOverlays(state: any): void {
     const graph = state.view.graph;
     const overlays = graph.getCellOverlays(state.cell);
-    let dict = null;
-    if (overlays != null) {
+    let dict = undefined;
+    if (!!overlays) {
       dict = new mxDictionary();
       for (let i = 0; i < overlays.length; i++) {
-        const shape = (state.overlays != null) ? state.overlays.remove(overlays[i]) : null;
-        if (shape == null) {
+        const shape = (!!state.overlays) ? state.overlays.remove(overlays[i]) : null;
+        if (!shape) {
           const tmp = new mxImageShape(new mxRectangle(), overlays[i].image.src);
           tmp.dialect = state.view.graph.dialect;
           tmp.preserveImageAspect = false;
           tmp.overlay = overlays[i];
           this.initializeOverlay(state, tmp);
           this.installCellOverlayListeners(state, overlays[i], tmp);
-          if (overlays[i].cursor != null) {
+          if (overlays[i].cursor) {
             tmp.node.style.cursor = overlays[i].cursor;
           }
           dict.put(overlays[i], tmp);
@@ -386,7 +386,7 @@ export class mxCellRenderer {
         }
       }
     }
-    if (state.overlays != null) {
+    if (!!state.overlays) {
       state.overlays.visit(function (id, shape) {
         shape.destroy();
       });
@@ -446,17 +446,17 @@ export class mxCellRenderer {
   createControl(state: any): void {
     const graph = state.view.graph;
     const image = graph.getFoldingImage(state);
-    if (graph.foldingEnabled && image != null) {
-      if (state.control == null) {
+    if (graph.foldingEnabled && !!image) {
+      if (!state.control) {
         const b = new mxRectangle(0, 0, image.width, image.height);
         state.control = new mxImageShape(b, image.src);
         state.control.preserveImageAspect = false;
         state.control.dialect = graph.dialect;
         this.initControl(state, state.control, true, this.createControlClickHandler(state));
       }
-    } else if (state.control != null) {
+    } else if (!!state.control) {
       state.control.destroy();
-      state.control = null;
+      state.control = undefined;
     }
   }
 
@@ -503,14 +503,14 @@ export class mxCellRenderer {
       control.init(state.view.getOverlayPane());
     }
     const node = control.innerNode || control.node;
-    if (clickHandler != null && !mxClient.IS_IOS) {
+    if (!!clickHandler && !mxClient.IS_IOS) {
       if (graph.isEnabled()) {
         node.style.cursor = 'pointer';
       }
       mxEvent.addListener(node, 'click', clickHandler);
     }
     if (handleEvents) {
-      let first = null;
+      let first = undefined;
       mxEvent.addGestureListeners(node, function (evt) {
         first = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
         graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt, state));
@@ -521,9 +521,9 @@ export class mxCellRenderer {
         graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt, state));
         mxEvent.consume(evt);
       });
-      if (clickHandler != null && mxClient.IS_IOS) {
+      if (!!clickHandler && mxClient.IS_IOS) {
         node.addEventListener('touchend', function (evt) {
-          if (first != null) {
+          if (!!first) {
             const tol = graph.tolerance;
             if (Math.abs(first.x - mxEvent.getClientX(evt)) < tol && Math.abs(first.y - mxEvent.getClientY(evt)) < tol) {
               clickHandler.call(clickHandler, evt);
@@ -624,23 +624,23 @@ export class mxCellRenderer {
     const value = this.getLabelValue(state);
     const wrapping = graph.isWrapping(state.cell);
     const clipping = graph.isLabelClipped(state.cell);
-    const isForceHtml = (state.view.graph.isHtmlLabel(state.cell) || (value != null && mxUtils.isNode(value)));
+    const isForceHtml = (state.view.graph.isHtmlLabel(state.cell) || (!!value && mxUtils.isNode(value)));
     const dialect = (isForceHtml) ? mxConstants.DIALECT_STRICTHTML : state.view.graph.dialect;
     const overflow = state.style[mxConstants.STYLE_OVERFLOW] || 'visible';
-    if (state.text != null && (state.text.wrap != wrapping || state.text.clipped != clipping || state.text.overflow != overflow || state.text.dialect != dialect)) {
+    if (!!state.text && (state.text.wrap != wrapping || state.text.clipped != clipping || state.text.overflow != overflow || state.text.dialect != dialect)) {
       state.text.destroy();
-      state.text = null;
+      state.text = undefined;
     }
-    if (state.text == null && value != null && (mxUtils.isNode(value) || value.length > 0)) {
+    if (!state.text && !!value && (mxUtils.isNode(value) || value.length > 0)) {
       this.createLabel(state, value);
-    } else if (state.text != null && (value == null || value.length == 0)) {
+    } else if (!!state.text && (!value || value.length == 0)) {
       state.text.destroy();
-      state.text = null;
+      state.text = undefined;
     }
-    if (state.text != null) {
+    if (!!state.text) {
       if (forced) {
-        if (state.text.lastValue != null && this.isTextShapeInvalid(state, state.text)) {
-          state.text.lastValue = null;
+        if (!!state.text.lastValue && this.isTextShapeInvalid(state, state.text)) {
+          state.text.lastValue = undefined;
         }
         state.text.resetStyles();
         state.text.apply(state);
@@ -649,8 +649,8 @@ export class mxCellRenderer {
       const bounds = this.getLabelBounds(state);
       const nextScale = this.getTextScale(state);
       if (forced || state.text.value != value || state.text.isWrapping != wrapping || state.text.overflow != overflow || state.text.isClipping != clipping || state.text.scale != nextScale || state.text.dialect != dialect || !state.text.bounds.equals(bounds)) {
-        if (state.text.bounds.width != 0 && state.unscaledWidth != null && Math.round((state.text.bounds.width / state.text.scale * nextScale) - bounds.width) != 0) {
-          state.unscaledWidth = null;
+        if (state.text.bounds.width != 0 && !!state.unscaledWidth && Math.round((state.text.bounds.width / state.text.scale * nextScale) - bounds.width) != 0) {
+          state.unscaledWidth = undefined;
         }
         state.text.dialect = dialect;
         state.text.value = value;
@@ -735,7 +735,7 @@ export class mxCellRenderer {
       bounds.x += spacing.x * scale;
       bounds.y += spacing.y * scale;
       const geo = graph.getCellGeometry(state.cell);
-      if (geo != null) {
+      if (!!geo) {
         bounds.width = Math.max(0, geo.width * scale);
         bounds.height = Math.max(0, geo.height * scale);
       }
@@ -768,7 +768,7 @@ export class mxCellRenderer {
       bounds.width = bounds.height;
       bounds.height = tmp;
     }
-    if (state.shape != null) {
+    if (!!state.shape) {
       const hpos = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_CENTER);
       const vpos = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE);
       if (hpos == mxConstants.ALIGN_CENTER && vpos == mxConstants.ALIGN_MIDDLE) {
@@ -776,7 +776,7 @@ export class mxCellRenderer {
       }
     }
     const lw = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_WIDTH, null);
-    if (lw != null) {
+    if (!!lw) {
       bounds.width = parseFloat(lw) * scale;
     }
     if (!isEdge) {
@@ -807,11 +807,11 @@ export class mxCellRenderer {
       const hpos = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_CENTER);
       const vpos = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE);
       const lw = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_WIDTH, null);
-      bounds.width = Math.max(0, bounds.width - ((hpos == mxConstants.ALIGN_CENTER && lw == null) ? (state.text.spacingLeft * s + state.text.spacingRight * s) : 0));
+      bounds.width = Math.max(0, bounds.width - ((hpos == mxConstants.ALIGN_CENTER && !lw) ? (state.text.spacingLeft * s + state.text.spacingRight * s) : 0));
       bounds.height = Math.max(0, bounds.height - ((vpos == mxConstants.ALIGN_MIDDLE) ? (state.text.spacingTop * s + state.text.spacingBottom * s) : 0));
     }
     const theta = state.text.getTextRotation();
-    if (theta != 0 && state != null && state.view.graph.model.isVertex(state.cell)) {
+    if (theta != 0 && !!state && state.view.graph.model.isVertex(state.cell)) {
       const cx = state.getCenterX();
       const cy = state.getCenterY();
       if (bounds.x != cx || bounds.y != cy) {
@@ -834,7 +834,7 @@ export class mxCellRenderer {
    */
   redrawCellOverlays(state: any, forced: any): void {
     this.createCellOverlays(state);
-    if (state.overlays != null) {
+    if (!!state.overlays) {
       const rot = mxUtils.mod(mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION, 0), 90);
       const rad = mxUtils.toRadians(rot);
       const cos = Math.cos(rad);
@@ -842,7 +842,7 @@ export class mxCellRenderer {
       state.overlays.visit(function (id, shape) {
         const bounds = shape.overlay.getBounds(state);
         if (!state.view.graph.getModel().isEdge(state.cell)) {
-          if (state.shape != null && rot != 0) {
+          if (!!state.shape && rot != 0) {
             let cx = bounds.getCenterX();
             let cy = bounds.getCenterY();
             const point = mxUtils.getRotatedPoint(new mxPoint(cx, cy), cos, sin, new mxPoint(state.getCenterX(), state.getCenterY()));
@@ -852,7 +852,7 @@ export class mxCellRenderer {
             bounds.y = Math.round(cy - bounds.height / 2);
           }
         }
-        if (forced || shape.bounds == null || shape.scale != state.view.scale || !shape.bounds.equals(bounds)) {
+        if (forced || !shape.bounds || shape.scale != state.view.scale || !shape.bounds.equals(bounds)) {
           shape.bounds = bounds;
           shape.scale = state.view.scale;
           shape.redraw();
@@ -872,7 +872,7 @@ export class mxCellRenderer {
    */
   redrawControl(state: any, forced: any): void {
     const image = state.view.graph.getFoldingImage(state);
-    if (state.control != null && image != null) {
+    if (!!state.control && !!image) {
       const bounds = this.getControlBounds(state, image.width, image.height);
       const r = (this.legacyControlPosition) ? mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION, 0) : state.shape.getTextRotation();
       const s = state.view.scale;
@@ -892,14 +892,14 @@ export class mxCellRenderer {
    * given state.
    */
   getControlBounds(state: any, w: number, h: number): any {
-    if (state.control != null) {
+    if (!!state.control) {
       const s = state.view.scale;
       let cx = state.getCenterX();
       let cy = state.getCenterY();
       if (!state.view.graph.getModel().isEdge(state.cell)) {
         cx = state.x + w * s;
         cy = state.y + h * s;
-        if (state.shape != null) {
+        if (!!state.shape) {
           let rot = state.shape.getShapeRotation();
           if (this.legacyControlPosition) {
             rot = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION, 0);
@@ -940,29 +940,29 @@ export class mxCellRenderer {
   insertStateAfter(state: any, node: Node, htmlNode: any): any {
     const shapes = this.getShapesForState(state);
     for (let i = 0; i < shapes.length; i++) {
-      if (shapes[i] != null && shapes[i].node != null) {
+      if (shapes[i] && shapes[i].node) {
         const html = shapes[i].node.parentNode != state.view.getDrawPane() && shapes[i].node.parentNode != state.view.getOverlayPane();
         const temp = (html) ? htmlNode : node;
-        if (temp != null && temp.nextSibling != shapes[i].node) {
-          if (temp.nextSibling == null) {
+        if (!!temp && temp.nextSibling != shapes[i].node) {
+          if (!temp.nextSibling) {
             temp.parentNode.appendChild(shapes[i].node);
           } else {
             temp.parentNode.insertBefore(shapes[i].node, temp.nextSibling);
           }
-        } else if (temp == null) {
+        } else if (!temp) {
           if (shapes[i].node.parentNode == state.view.graph.container) {
             let canvas = state.view.canvas;
-            while (canvas != null && canvas.parentNode != state.view.graph.container) {
+            while (!!canvas && canvas.parentNode != state.view.graph.container) {
               canvas = canvas.parentNode;
             }
-            if (canvas != null && canvas.nextSibling != null) {
+            if (!!canvas && !!canvas.nextSibling) {
               if (canvas.nextSibling != shapes[i].node) {
                 shapes[i].node.parentNode.insertBefore(shapes[i].node, canvas.nextSibling);
               }
             } else {
               shapes[i].node.parentNode.appendChild(shapes[i].node);
             }
-          } else if (shapes[i].node.parentNode.firstChild != null && shapes[i].node.parentNode.firstChild != shapes[i].node) {
+          } else if (shapes[i].node.parentNode.firstChild && shapes[i].node.parentNode.firstChild != shapes[i].node) {
             shapes[i].node.parentNode.insertBefore(shapes[i].node, shapes[i].node.parentNode.firstChild);
           }
         }
@@ -1008,7 +1008,7 @@ export class mxCellRenderer {
    */
   redraw(state: any, force: any, rendering: any): void {
     const shapeChanged = this.redrawShape(state, force, rendering);
-    if (state.shape != null && (rendering == null || rendering)) {
+    if (!!state.shape && (!rendering || rendering)) {
       this.redrawLabel(state, shapeChanged);
       this.redrawCellOverlays(state, shapeChanged);
       this.redrawControl(state, shapeChanged);
@@ -1027,13 +1027,13 @@ export class mxCellRenderer {
   redrawShape(state: any, force: any, rendering: any): any {
     const model = state.view.graph.model;
     let shapeChanged = false;
-    if (state.shape != null && state.shape.style != null && state.style != null && state.shape.style[mxConstants.STYLE_SHAPE] != state.style[mxConstants.STYLE_SHAPE]) {
+    if (!!state.shape && !!state.shape.style && !!state.style && state.shape.style[mxConstants.STYLE_SHAPE] != state.style[mxConstants.STYLE_SHAPE]) {
       state.shape.destroy();
-      state.shape = null;
+      state.shape = undefined;
     }
-    if (state.shape == null && state.view.graph.container != null && state.cell != state.view.currentRoot && (model.isVertex(state.cell) || model.isEdge(state.cell))) {
+    if (!state.shape && !!state.view.graph.container && state.cell != state.view.currentRoot && (model.isVertex(state.cell) || model.isEdge(state.cell))) {
       state.shape = this.createShape(state);
-      if (state.shape != null) {
+      if (!!state.shape) {
         state.shape.minSvgStrokeWidth = this.minSvgStrokeWidth;
         state.shape.antiAlias = this.antiAlias;
         this.createIndicatorShape(state);
@@ -1042,24 +1042,24 @@ export class mxCellRenderer {
         this.installListeners(state);
         state.view.graph.selectionCellsHandler.updateHandler(state);
       }
-    } else if (!force && state.shape != null && (!mxUtils.equalEntries(state.shape.style, state.style) || this.checkPlaceholderStyles(state))) {
+    } else if (!force && !!state.shape && (!mxUtils.equalEntries(state.shape.style, state.style) || this.checkPlaceholderStyles(state))) {
       state.shape.resetStyles();
       this.configureShape(state);
       state.view.graph.selectionCellsHandler.updateHandler(state);
       force = true;
     }
-    if (state.shape != null) {
+    if (!!state.shape) {
       this.createControl(state);
       if (force || this.isShapeInvalid(state, state.shape)) {
-        if (state.absolutePoints != null) {
+        if (!!state.absolutePoints) {
           state.shape.points = state.absolutePoints.slice();
-          state.shape.bounds = null;
+          state.shape.bounds = undefined;
         } else {
-          state.shape.points = null;
+          state.shape.points = undefined;
           state.shape.bounds = new mxRectangle(state.x, state.y, state.width, state.height);
         }
         state.shape.scale = state.view.scale;
-        if (rendering == null || rendering) {
+        if (!rendering || rendering) {
           this.doRedrawShape(state);
         } else {
           state.shape.updateBoundingBox();
@@ -1085,7 +1085,7 @@ export class mxCellRenderer {
    * Returns true if the given shape must be repainted.
    */
   isShapeInvalid(state: any, shape: any): boolean {
-    return shape.bounds == null || shape.scale != state.view.scale || (state.absolutePoints == null && !shape.bounds.equals(state)) || (state.absolutePoints != null && !mxUtils.equalPoints(shape.points, state.absolutePoints));
+    return !shape.bounds || shape.scale != state.view.scale || (!state.absolutePoints && !shape.bounds.equals(state)) || (!!state.absolutePoints && !mxUtils.equalPoints(shape.points, state.absolutePoints));
   }
 
   /**
@@ -1098,23 +1098,23 @@ export class mxCellRenderer {
    * state - <mxCellState> for which the shapes should be destroyed.
    */
   destroy(state: any): void {
-    if (state.shape != null) {
-      if (state.text != null) {
+    if (!!state.shape) {
+      if (!!state.text) {
         state.text.destroy();
-        state.text = null;
+        state.text = undefined;
       }
-      if (state.overlays != null) {
+      if (!!state.overlays) {
         state.overlays.visit(function (id, shape) {
           shape.destroy();
         });
-        state.overlays = null;
+        state.overlays = undefined;
       }
-      if (state.control != null) {
+      if (!!state.control) {
         state.control.destroy();
-        state.control = null;
+        state.control = undefined;
       }
       state.shape.destroy();
-      state.shape = null;
+      state.shape = undefined;
     }
   }
 

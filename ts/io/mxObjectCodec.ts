@@ -203,9 +203,9 @@ import { mxUtils } from '../util/mxUtils';
 export class mxObjectCodec {
   constructor(template: any, exclude: any, idrefs: any, mapping: any) {
     this.template = template;
-    this.exclude = (exclude != null) ? exclude : [];
-    this.idrefs = (idrefs != null) ? idrefs : [];
-    this.mapping = (mapping != null) ? mapping : [];
+    this.exclude = (!!exclude) ? exclude : [];
+    this.idrefs = (!!idrefs) ? idrefs : [];
+    this.mapping = (!!mapping) ? mapping : [];
     this.reverse = {};
     for (const i in this.mapping) {
       this.reverse[this.mapping[i]] = i;
@@ -249,9 +249,9 @@ export class mxObjectCodec {
    * given name.
    */
   getFieldName(attributename: any): string {
-    if (attributename != null) {
+    if (!!attributename) {
       const mapped = this.reverse[attributename];
-      if (mapped != null) {
+      if (!!mapped) {
         attributename = mapped;
       }
     }
@@ -267,9 +267,9 @@ export class mxObjectCodec {
    * given name.
    */
   getAttributeName(fieldname: any): string {
-    if (fieldname != null) {
+    if (!!fieldname) {
       const mapped = this.mapping[fieldname];
-      if (mapped != null) {
+      if (!!mapped) {
         fieldname = mapped;
       }
     }
@@ -380,9 +380,9 @@ export class mxObjectCodec {
     for (const i in obj) {
       let name = i;
       const value = obj[name];
-      if (value != null && !this.isExcluded(obj, name, value, true)) {
+      if (!!value && !this.isExcluded(obj, name, value, true)) {
         if (mxUtils.isInteger(name)) {
-          name = null;
+          name = undefined;
         }
         this.encodeValue(enc, obj, name, value, node);
       }
@@ -405,17 +405,17 @@ export class mxObjectCodec {
    * node - XML node that contains the encoded object.
    */
   encodeValue(enc: any, obj: any, name: string, value: any, node: Node): void {
-    if (value != null) {
+    if (!!value) {
       if (this.isReference(obj, name, value, true)) {
         const tmp = enc.getId(value);
-        if (tmp == null) {
+        if (!tmp) {
           mxLog.warn('mxObjectCodec.encode: No ID for ' + this.getName() + '.' + name + '=' + value);
           return;
         }
         value = tmp;
       }
       const defaultValue = this.template[name];
-      if (name == null || enc.encodeDefaults || defaultValue != value) {
+      if (!name || enc.encodeDefaults || defaultValue != value) {
         name = this.getAttributeName(name);
         this.writeAttribute(enc, obj, name, value, node);
       }
@@ -443,7 +443,7 @@ export class mxObjectCodec {
    */
   writePrimitiveAttribute(enc: any, obj: any, name: string, value: any, node: Node): void {
     value = this.convertAttributeToXml(enc, obj, name, value, node);
-    if (name == null) {
+    if (!name) {
       const child = enc.document.createElement('add');
       if (typeof (value) == 'function') {
         child.appendChild(enc.document.createTextNode(value));
@@ -463,8 +463,8 @@ export class mxObjectCodec {
    */
   writeComplexAttribute(enc: any, obj: any, name: string, value: any, node: Node): void {
     const child = enc.encode(value);
-    if (child != null) {
-      if (name != null) {
+    if (!!child) {
+      if (!!name) {
         child.setAttribute('as', name);
       }
       node.appendChild(child);
@@ -642,9 +642,9 @@ export class mxObjectCodec {
   decode(dec: any, node: Node, into: any): any {
     const id = node.getAttribute('id');
     let obj = dec.objects[id];
-    if (obj == null) {
+    if (!obj) {
       obj = into || this.cloneTemplate();
-      if (id != null) {
+      if (!!id) {
         dec.putObject(id, obj);
       }
     }
@@ -665,7 +665,7 @@ export class mxObjectCodec {
    * obj - Objec to encode the node into.
    */
   decodeNode(dec: any, node: Node, obj: any): void {
-    if (node != null) {
+    if (!!node) {
       this.decodeAttributes(dec, node, obj);
       this.decodeChildren(dec, node, obj);
     }
@@ -684,7 +684,7 @@ export class mxObjectCodec {
    */
   decodeAttributes(dec: any, node: Node, obj: any): void {
     const attrs = node.attributes;
-    if (attrs != null) {
+    if (!!attrs) {
       for (let i = 0; i < attrs.length; i++) {
         this.decodeAttribute(dec, attrs[i], obj);
       }
@@ -725,7 +725,7 @@ export class mxObjectCodec {
       const fieldname = this.getFieldName(name);
       if (this.isReference(obj, fieldname, value, false)) {
         const tmp = dec.getObject(value);
-        if (tmp == null) {
+        if (!tmp) {
           mxLog.warn('mxObjectCodec.decode: No object for ' + this.getName() + '.' + name + '=' + value);
           return;
         }
@@ -750,7 +750,7 @@ export class mxObjectCodec {
    */
   decodeChildren(dec: any, node: Node, obj: any): void {
     let child = node.firstChild;
-    while (child != null) {
+    while (!!child) {
       const tmp = child.nextSibling;
       if (child.nodeType == mxConstants.NODETYPE_ELEMENT && !this.processInclude(dec, child, obj)) {
         this.decodeChild(dec, child, obj);
@@ -772,12 +772,12 @@ export class mxObjectCodec {
    */
   decodeChild(dec: any, child: any, obj: any): void {
     const fieldname = this.getFieldName(child.getAttribute('as'));
-    if (fieldname == null || !this.isExcluded(obj, fieldname, child, false)) {
+    if (!fieldname || !this.isExcluded(obj, fieldname, child, false)) {
       const template = this.getFieldTemplate(obj, fieldname, child);
-      let value = null;
+      let value = undefined;
       if (child.nodeName == 'add') {
         value = child.getAttribute('value');
-        if (value == null && mxObjectCodec.allowEval) {
+        if (!value && mxObjectCodec.allowEval) {
           value = mxUtils.eval(mxUtils.getTextContent(child));
         }
       } else {
@@ -804,7 +804,7 @@ export class mxObjectCodec {
   getFieldTemplate(obj: any, fieldname: any, child: any): any {
     let template = obj[fieldname];
     if (template instanceof Array && template.length > 0) {
-      template = null;
+      template = undefined;
     }
     return template;
   }
@@ -820,8 +820,8 @@ export class mxObjectCodec {
    * override this with the correct code to add an entry to an object.
    */
   addObjectValue(obj: any, fieldname: any, value: any, template: any): void {
-    if (value != null && value != template) {
-      if (fieldname != null && fieldname.length > 0) {
+    if (!!value && value != template) {
+      if (!!fieldname && fieldname.length > 0) {
         obj[fieldname] = value;
       } else {
         obj.push(value);
@@ -845,10 +845,10 @@ export class mxObjectCodec {
   processInclude(dec: any, node: Node, into: any): any {
     if (node.nodeName == 'include') {
       const name = node.getAttribute('name');
-      if (name != null) {
+      if (!!name) {
         try {
           const xml = mxUtils.load(name).getDocumentElement();
-          if (xml != null) {
+          if (!!xml) {
             dec.decode(xml, into);
           }
         } catch (e) {

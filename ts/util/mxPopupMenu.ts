@@ -33,7 +33,7 @@ import { mxUtils } from './mxUtils';
 export class mxPopupMenu {
   constructor(factoryMethod: any) {
     this.factoryMethod = factoryMethod;
-    if (factoryMethod != null) {
+    if (!!factoryMethod) {
       this.init();
     }
   }
@@ -184,11 +184,11 @@ export class mxPopupMenu {
     tr.className = 'mxPopupMenuItem';
     const col1 = document.createElement('td');
     col1.className = 'mxPopupMenuIcon';
-    if (image != null) {
+    if (!!image) {
       const img = document.createElement('img');
       img.src = image;
       col1.appendChild(img);
-    } else if (iconCls != null) {
+    } else if (!!iconCls) {
       const div = document.createElement('div');
       div.className = iconCls;
       col1.appendChild(div);
@@ -196,43 +196,43 @@ export class mxPopupMenu {
     tr.appendChild(col1);
     if (this.labels) {
       const col2 = document.createElement('td');
-      col2.className = 'mxPopupMenuItem' + ((enabled != null && !enabled) ? ' mxDisabled' : '');
+      col2.className = 'mxPopupMenuItem' + ((!!enabled && !enabled) ? ' mxDisabled' : '');
       mxUtils.write(col2, title);
       col2.align = 'left';
       tr.appendChild(col2);
       const col3 = document.createElement('td');
-      col3.className = 'mxPopupMenuItem' + ((enabled != null && !enabled) ? ' mxDisabled' : '');
+      col3.className = 'mxPopupMenuItem' + ((!!enabled && !enabled) ? ' mxDisabled' : '');
       col3.style.paddingRight = '6px';
       col3.style.textAlign = 'right';
       tr.appendChild(col3);
-      if (parent.div == null) {
+      if (!parent.div) {
         this.createSubmenu(parent);
       }
     }
     parent.tbody.appendChild(tr);
     if (active != false && enabled != false) {
-      let currentSelection = null;
+      let currentSelection = undefined;
       mxEvent.addGestureListeners(tr, mxUtils.bind(this, function (evt) {
         this.eventReceiver = tr;
         if (parent.activeRow != tr && parent.activeRow != parent) {
-          if (parent.activeRow != null && parent.activeRow.div.parentNode != null) {
+          if (!!parent.activeRow && !!parent.activeRow.div.parentNode) {
             this.hideSubmenu(parent);
           }
-          if (tr.div != null) {
+          if (!!tr.div) {
             this.showSubmenu(parent, tr);
             parent.activeRow = tr;
           }
         }
-        if (document.selection != null && (mxClient.IS_QUIRKS || document.documentMode == 8)) {
+        if (!!document.selection && (mxClient.IS_QUIRKS || document.documentMode == 8)) {
           currentSelection = document.selection.createRange();
         }
         mxEvent.consume(evt);
       }), mxUtils.bind(this, function (evt) {
         if (parent.activeRow != tr && parent.activeRow != parent) {
-          if (parent.activeRow != null && parent.activeRow.div.parentNode != null) {
+          if (!!parent.activeRow && !!parent.activeRow.div.parentNode) {
             this.hideSubmenu(parent);
           }
-          if (this.autoExpand && tr.div != null) {
+          if (this.autoExpand && !!tr.div) {
             this.showSubmenu(parent, tr);
             parent.activeRow = tr;
           }
@@ -243,18 +243,18 @@ export class mxPopupMenu {
           if (parent.activeRow != tr) {
             this.hideMenu();
           }
-          if (currentSelection != null) {
+          if (!!currentSelection) {
             try {
               currentSelection.select();
             } catch (e) {
             }
-            currentSelection = null;
+            currentSelection = undefined;
           }
-          if (funct != null) {
+          if (!!funct) {
             funct(evt);
           }
         }
-        this.eventReceiver = null;
+        this.eventReceiver = undefined;
         mxEvent.consume(evt);
       }));
       mxEvent.addListener(tr, 'mouseout', mxUtils.bind(this, function (evt) {
@@ -308,7 +308,7 @@ export class mxPopupMenu {
    * Shows the submenu inside the given parent row.
    */
   showSubmenu(parent: any, row: any): void {
-    if (row.div != null) {
+    if (!!row.div) {
       row.div.style.left = (parent.div.offsetLeft + row.offsetLeft + row.offsetWidth - 1) + 'px';
       row.div.style.top = (parent.div.offsetTop + row.offsetTop) + 'px';
       document.body.appendChild(row.div);
@@ -340,7 +340,7 @@ export class mxPopupMenu {
     parent = parent || this;
     if (this.smartSeparators && !force) {
       parent.willAddSeparator = true;
-    } else if (parent.tbody != null) {
+    } else if (!!parent.tbody) {
       parent.willAddSeparator = false;
       const tr = document.createElement('tr');
       const col1 = document.createElement('td');
@@ -373,10 +373,10 @@ export class mxPopupMenu {
    * (end)
    */
   popup(x: number, y: number, cell: mxCell, evt: Event): void {
-    if (this.div != null && this.tbody != null && this.factoryMethod != null) {
+    if (!!this.div && !!this.tbody && !!this.factoryMethod) {
       this.div.style.left = x + 'px';
       this.div.style.top = y + 'px';
-      while (this.tbody.firstChild != null) {
+      while (!!this.tbody.firstChild) {
         mxEvent.release(this.tbody.firstChild);
         this.tbody.removeChild(this.tbody.firstChild);
       }
@@ -395,7 +395,7 @@ export class mxPopupMenu {
    * Returns true if the menu is showing.
    */
   isMenuShowing(): boolean {
-    return this.div != null && this.div.parentNode == document.body;
+    return !!this.div && this.div.parentNode == document.body;
   }
 
   /**
@@ -417,8 +417,8 @@ export class mxPopupMenu {
    * Removes the menu and all submenus.
    */
   hideMenu(): void {
-    if (this.div != null) {
-      if (this.div.parentNode != null) {
+    if (!!this.div) {
+      if (!!this.div.parentNode) {
         this.div.parentNode.removeChild(this.div);
       }
       this.hideSubmenu(this);
@@ -437,12 +437,12 @@ export class mxPopupMenu {
    * parent - An item returned by <addItem>.
    */
   hideSubmenu(parent: any): void {
-    if (parent.activeRow != null) {
+    if (!!parent.activeRow) {
       this.hideSubmenu(parent.activeRow);
-      if (parent.activeRow.div.parentNode != null) {
+      if (!!parent.activeRow.div.parentNode) {
         parent.activeRow.div.parentNode.removeChild(parent.activeRow.div);
       }
-      parent.activeRow = null;
+      parent.activeRow = undefined;
     }
   }
 
@@ -452,12 +452,12 @@ export class mxPopupMenu {
    * Destroys the handler and all its resources and DOM nodes.
    */
   destroy(): void {
-    if (this.div != null) {
+    if (!!this.div) {
       mxEvent.release(this.div);
-      if (this.div.parentNode != null) {
+      if (!!this.div.parentNode) {
         this.div.parentNode.removeChild(this.div);
       }
-      this.div = null;
+      this.div = undefined;
     }
   }
 }

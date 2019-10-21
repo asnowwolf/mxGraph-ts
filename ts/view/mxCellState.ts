@@ -9,7 +9,7 @@
  * of the <text> field as shown below.
  *
  * (code)
- * var bbox = (state.text != null) ? state.text.boundingBox : null;
+ * var bbox = (!!state.text) ? state.text.boundingBox : null;
  * (end)
  *
  * Constructor: mxCellState
@@ -31,7 +31,7 @@ export class mxCellState {
   constructor(view: any, cell: mxCell, style: any) {
     this.view = view;
     this.cell = cell;
-    this.style = (style != null) ? style : {};
+    this.style = (!!style) ? style : {};
     this.origin = new mxPoint();
     this.absoluteOffset = new mxPoint();
   }
@@ -132,8 +132,8 @@ export class mxCellState {
    */
   getPerimeterBounds(border: any, bounds: any): any {
     border = border || 0;
-    bounds = (bounds != null) ? bounds : new mxRectangle(this.x, this.y, this.width, this.height);
-    if (this.shape != null && this.shape.stencil != null && this.shape.stencil.aspect == 'fixed') {
+    bounds = (!!bounds) ? bounds : new mxRectangle(this.x, this.y, this.width, this.height);
+    if (!!this.shape && !!this.shape.stencil && this.shape.stencil.aspect == 'fixed') {
       const aspect = this.shape.stencil.computeAspect(this.style, bounds.x, bounds.y, bounds.width, bounds.height);
       bounds.x = aspect.x;
       bounds.y = aspect.y;
@@ -159,7 +159,7 @@ export class mxCellState {
    */
   setAbsoluteTerminalPoint(point: any, isSource: boolean): void {
     if (isSource) {
-      if (this.absolutePoints == null) {
+      if (!this.absolutePoints) {
         this.absolutePoints = [];
       }
       if (this.absolutePoints.length == 0) {
@@ -168,7 +168,7 @@ export class mxCellState {
         this.absolutePoints[0] = point;
       }
     } else {
-      if (this.absolutePoints == null) {
+      if (!this.absolutePoints) {
         this.absolutePoints = [];
         this.absolutePoints.push(null);
         this.absolutePoints.push(point);
@@ -186,10 +186,10 @@ export class mxCellState {
    * Sets the given cursor on the shape and text shape.
    */
   setCursor(cursor: any): void {
-    if (this.shape != null) {
+    if (!!this.shape) {
       this.shape.setCursor(cursor);
     }
-    if (this.text != null) {
+    if (!!this.text) {
       this.text.setCursor(cursor);
     }
   }
@@ -206,7 +206,7 @@ export class mxCellState {
    */
   getVisibleTerminal(source: any): any {
     const tmp = this.getVisibleTerminalState(source);
-    return (tmp != null) ? tmp.cell : null;
+    return (!!tmp) ? tmp.cell : null;
   }
 
   /**
@@ -271,7 +271,7 @@ export class mxCellState {
     const s = this.view.scale;
     this.cellBounds = new mxRectangle(this.x / s - tr.x, this.y / s - tr.y, this.width / s, this.height / s);
     this.paintBounds = mxRectangle.fromRectangle(this.cellBounds);
-    if (this.shape != null && this.shape.isPaintBoundsInverted()) {
+    if (!!this.shape && this.shape.isPaintBoundsInverted()) {
       this.paintBounds.rotate90();
     }
   }
@@ -306,19 +306,19 @@ export class mxCellState {
    */
   clone(): boolean {
     const clone = new mxCellState(this.view, this.cell, this.style);
-    if (this.absolutePoints != null) {
+    if (!!this.absolutePoints) {
       clone.absolutePoints = [];
       for (let i = 0; i < this.absolutePoints.length; i++) {
         clone.absolutePoints[i] = this.absolutePoints[i].clone();
       }
     }
-    if (this.origin != null) {
+    if (!!this.origin) {
       clone.origin = this.origin.clone();
     }
-    if (this.absoluteOffset != null) {
+    if (!!this.absoluteOffset) {
       clone.absoluteOffset = this.absoluteOffset.clone();
     }
-    if (this.boundingBox != null) {
+    if (!!this.boundingBox) {
       clone.boundingBox = this.boundingBox.clone();
     }
     clone.terminalDistance = this.terminalDistance;

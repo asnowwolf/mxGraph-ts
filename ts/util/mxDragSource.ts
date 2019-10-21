@@ -259,7 +259,7 @@ export class mxDragSource {
    * Returns true if this drag source is active.
    */
   isActive(): boolean {
-    return this.mouseMoveHandler != null;
+    return !!this.mouseMoveHandler;
   }
 
   /**
@@ -268,9 +268,9 @@ export class mxDragSource {
    * Stops and removes everything and restores the state of the object.
    */
   reset(): void {
-    if (this.currentGraph != null) {
+    if (!!this.currentGraph) {
       this.dragExit(this.currentGraph);
-      this.currentGraph = null;
+      this.currentGraph = undefined;
     }
     this.removeDragElement();
     this.removeListeners();
@@ -299,7 +299,7 @@ export class mxDragSource {
    * (end)
    */
   mouseDown(evt: Event): void {
-    if (this.enabled && !mxEvent.isConsumed(evt) && this.mouseMoveHandler == null) {
+    if (this.enabled && !mxEvent.isConsumed(evt) && !this.mouseMoveHandler) {
       this.startDrag(evt);
       this.mouseMoveHandler = mxUtils.bind(this, this.mouseMove);
       this.mouseUpHandler = mxUtils.bind(this, this.mouseUp);
@@ -341,11 +341,11 @@ export class mxDragSource {
    * Removes and destroys the <dragElement>.
    */
   removeDragElement(): void {
-    if (this.dragElement != null) {
-      if (this.dragElement.parentNode != null) {
+    if (!!this.dragElement) {
+      if (!!this.dragElement.parentNode) {
         this.dragElement.parentNode.removeChild(this.dragElement);
       }
-      this.dragElement = null;
+      this.dragElement = undefined;
     }
   }
 
@@ -370,11 +370,11 @@ export class mxDragSource {
     const origin = mxUtils.getScrollOrigin();
     let elt = this.getElementForEvent(evt);
     if (this.checkEventSource) {
-      while (elt != null && elt != graph.container) {
+      while (!!elt && elt != graph.container) {
         elt = elt.parentNode;
       }
     }
-    return elt != null && x >= offset.x - origin.x && y >= offset.y - origin.y && x <= offset.x - origin.x + graph.container.offsetWidth && y <= offset.y - origin.y + graph.container.offsetHeight;
+    return !!elt && x >= offset.x - origin.x && y >= offset.y - origin.y && x <= offset.x - origin.x + graph.container.offsetWidth && y <= offset.y - origin.y + graph.container.offsetHeight;
   }
 
   /**
@@ -386,36 +386,36 @@ export class mxDragSource {
    */
   mouseMove(evt: Event): void {
     let graph = this.getGraphForEvent(evt);
-    if (graph != null && !this.graphContainsEvent(graph, evt)) {
-      graph = null;
+    if (!!graph && !this.graphContainsEvent(graph, evt)) {
+      graph = undefined;
     }
     if (graph != this.currentGraph) {
-      if (this.currentGraph != null) {
+      if (!!this.currentGraph) {
         this.dragExit(this.currentGraph, evt);
       }
       this.currentGraph = graph;
-      if (this.currentGraph != null) {
+      if (!!this.currentGraph) {
         this.dragEnter(this.currentGraph, evt);
       }
     }
-    if (this.currentGraph != null) {
+    if (!!this.currentGraph) {
       this.dragOver(this.currentGraph, evt);
     }
-    if (this.dragElement != null && (this.previewElement == null || this.previewElement.style.visibility != 'visible')) {
+    if (!!this.dragElement && (!this.previewElement || this.previewElement.style.visibility != 'visible')) {
       let x = mxEvent.getClientX(evt);
       let y = mxEvent.getClientY(evt);
-      if (this.dragElement.parentNode == null) {
+      if (!this.dragElement.parentNode) {
         document.body.appendChild(this.dragElement);
       }
       this.dragElement.style.visibility = 'visible';
-      if (this.dragOffset != null) {
+      if (!!this.dragOffset) {
         x += this.dragOffset.x;
         y += this.dragOffset.y;
       }
       const offset = mxUtils.getDocumentScrollOrigin(document);
       this.dragElement.style.left = (x + offset.x) + 'px';
       this.dragElement.style.top = (y + offset.y) + 'px';
-    } else if (this.dragElement != null) {
+    } else if (!!this.dragElement) {
       this.dragElement.style.visibility = 'hidden';
     }
     mxEvent.consume(evt);
@@ -428,8 +428,8 @@ export class mxDragSource {
    * as required.
    */
   mouseUp(evt: Event): void {
-    if (this.currentGraph != null) {
-      if (this.currentPoint != null && (this.previewElement == null || this.previewElement.style.visibility != 'hidden')) {
+    if (!!this.currentGraph) {
+      if (!!this.currentPoint && (!this.previewElement || this.previewElement.style.visibility != 'hidden')) {
         const scale = this.currentGraph.view.scale;
         const tr = this.currentGraph.view.translate;
         const x = this.currentPoint.x / scale - tr.x;
@@ -437,7 +437,7 @@ export class mxDragSource {
         this.drop(this.currentGraph, evt, this.currentDropTarget, x, y);
       }
       this.dragExit(this.currentGraph);
-      this.currentGraph = null;
+      this.currentGraph = undefined;
     }
     this.stopDrag();
     this.removeListeners();
@@ -450,13 +450,13 @@ export class mxDragSource {
    * Actives the given graph as a drop target.
    */
   removeListeners(): void {
-    if (this.eventSource != null) {
+    if (!!this.eventSource) {
       mxEvent.removeGestureListeners(this.eventSource, null, this.mouseMoveHandler, this.mouseUpHandler);
-      this.eventSource = null;
+      this.eventSource = undefined;
     }
     mxEvent.removeGestureListeners(document, null, this.mouseMoveHandler, this.mouseUpHandler);
-    this.mouseMoveHandler = null;
-    this.mouseUpHandler = null;
+    this.mouseMoveHandler = undefined;
+    this.mouseUpHandler = undefined;
   }
 
   /**
@@ -468,10 +468,10 @@ export class mxDragSource {
     graph.isMouseDown = true;
     graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
     this.previewElement = this.createPreviewElement(graph);
-    if (this.previewElement != null && this.checkEventSource && mxClient.IS_SVG) {
+    if (!!this.previewElement && this.checkEventSource && mxClient.IS_SVG) {
       this.previewElement.style.pointerEvents = 'none';
     }
-    if (this.isGuidesEnabled() && this.previewElement != null) {
+    if (this.isGuidesEnabled() && !!this.previewElement) {
       this.currentGuide = new mxGuide(graph, graph.graphHandler.getGuideStates());
     }
     if (this.highlightDropTargets) {
@@ -486,23 +486,23 @@ export class mxDragSource {
    * Deactivates the given graph as a drop target.
    */
   dragExit(graph: mxGraph, evt: Event): void {
-    this.currentDropTarget = null;
-    this.currentPoint = null;
+    this.currentDropTarget = undefined;
+    this.currentPoint = undefined;
     graph.isMouseDown = false;
     graph.removeListener(this.eventConsumer);
-    if (this.previewElement != null) {
-      if (this.previewElement.parentNode != null) {
+    if (!!this.previewElement) {
+      if (!!this.previewElement.parentNode) {
         this.previewElement.parentNode.removeChild(this.previewElement);
       }
-      this.previewElement = null;
+      this.previewElement = undefined;
     }
-    if (this.currentGuide != null) {
+    if (!!this.currentGuide) {
       this.currentGuide.destroy();
-      this.currentGuide = null;
+      this.currentGuide = undefined;
     }
-    if (this.currentHighlight != null) {
+    if (!!this.currentHighlight) {
       this.currentHighlight.destroy();
-      this.currentHighlight = null;
+      this.currentHighlight = undefined;
     }
   }
 
@@ -517,23 +517,23 @@ export class mxDragSource {
     const origin = mxUtils.getScrollOrigin(graph.container);
     let x = mxEvent.getClientX(evt) - offset.x + origin.x - graph.panDx;
     let y = mxEvent.getClientY(evt) - offset.y + origin.y - graph.panDy;
-    if (graph.autoScroll && (this.autoscroll == null || this.autoscroll)) {
+    if (graph.autoScroll && (!this.autoscroll || this.autoscroll)) {
       graph.scrollPointToVisible(x, y, graph.autoExtend);
     }
-    if (this.currentHighlight != null && graph.isDropEnabled()) {
+    if (!!this.currentHighlight && graph.isDropEnabled()) {
       this.currentDropTarget = this.getDropTarget(graph, x, y, evt);
       const state = graph.getView().getState(this.currentDropTarget);
       this.currentHighlight.highlight(state);
     }
-    if (this.previewElement != null) {
-      if (this.previewElement.parentNode == null) {
+    if (!!this.previewElement) {
+      if (!this.previewElement.parentNode) {
         graph.container.appendChild(this.previewElement);
         this.previewElement.style.zIndex = '3';
         this.previewElement.style.position = 'absolute';
       }
       const gridEnabled = this.isGridEnabled() && graph.isGridEnabledEvent(evt);
       let hideGuide = true;
-      if (this.currentGuide != null && this.currentGuide.isEnabledForEvent(evt)) {
+      if (!!this.currentGuide && this.currentGuide.isEnabledForEvent(evt)) {
         const w = parseInt(this.previewElement.style.width);
         const h = parseInt(this.previewElement.style.height);
         const bounds = new mxRectangle(0, 0, w, h);
@@ -549,10 +549,10 @@ export class mxDragSource {
         x = (graph.snap(x / scale - tr.x - off) + tr.x) * scale;
         y = (graph.snap(y / scale - tr.y - off) + tr.y) * scale;
       }
-      if (this.currentGuide != null && hideGuide) {
+      if (!!this.currentGuide && hideGuide) {
         this.currentGuide.hide();
       }
-      if (this.previewOffset != null) {
+      if (!!this.previewOffset) {
         x += this.previewOffset.x;
         y += this.previewOffset.y;
       }

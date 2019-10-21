@@ -12,8 +12,8 @@
 export class mxRectangle extends mxPoint {
   constructor(x: number, y: number, width: number, height: number) {
     super(x, y);
-    this.width = (width != null) ? width : 0;
-    this.height = (height != null) ? height : 0;
+    this.width = (!!width) ? width : 0;
+    this.height = (!!height) ? height : 0;
   }
 
   width: number;
@@ -57,7 +57,7 @@ export class mxRectangle extends mxPoint {
    * Adds the given rectangle to this rectangle.
    */
   add(rect: any): void {
-    if (rect != null) {
+    if (!!rect) {
       const minX = Math.min(this.x, rect.x);
       const minY = Math.min(this.y, rect.y);
       const maxX = Math.max(this.x + this.width, rect.x + rect.width);
@@ -75,7 +75,7 @@ export class mxRectangle extends mxPoint {
    * Changes this rectangle to where it overlaps with the given rectangle.
    */
   intersect(rect: any): void {
-    if (rect != null) {
+    if (!!rect) {
       const r1 = this.x + this.width;
       const r2 = rect.x + rect.width;
       const b1 = this.y + this.height;
@@ -130,7 +130,7 @@ export class mxRectangle extends mxPoint {
    * Returns true if the given object equals this rectangle.
    */
   equals(obj: any): any {
-    return obj != null && obj.x == this.x && obj.y == this.y && obj.width == this.width && obj.height == this.height;
+    return !!obj && obj.x == this.x && obj.y == this.y && obj.width == this.width && obj.height == this.height;
   }
 
   /**

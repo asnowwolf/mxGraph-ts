@@ -47,7 +47,7 @@ export class mxCompositeLayout extends mxGraphLayout {
    * layout in <layouts>.
    */
   moveCell(cell: mxCell, x: number, y: number): void {
-    if (this.master != null) {
+    if (!!this.master) {
       this.master.moveCell.apply(this.master, arguments);
     } else {
       this.layouts[0].moveCell.apply(this.layouts[0], arguments);

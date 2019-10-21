@@ -12,8 +12,8 @@ import { mxUtils } from './mxUtils';
 
 export class mxPoint {
   constructor(x: number, y: number) {
-    this.x = (x != null) ? x : 0;
-    this.y = (y != null) ? y : 0;
+    this.x = (!!x) ? x : 0;
+    this.y = (!!y) ? y : 0;
   }
 
   x: number;
@@ -25,7 +25,7 @@ export class mxPoint {
    * Returns true if the given object equals this point.
    */
   equals(obj: any): any {
-    return obj != null && obj.x == this.x && obj.y == this.y;
+    return !!obj && obj.x == this.x && obj.y == this.y;
   }
 
   /**

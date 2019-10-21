@@ -210,7 +210,7 @@ export class mxAbstractCanvas2D {
    * Adds the given operation to the path.
    */
   addOp(): void {
-    if (this.path != null) {
+    if (!!this.path) {
       this.path.push(arguments[0]);
       if (arguments.length > 2) {
         const s = this.state;
@@ -325,10 +325,10 @@ export class mxAbstractCanvas2D {
    */
   setFillColor(value: any): void {
     if (value == mxConstants.NONE) {
-      value = null;
+      value = undefined;
     }
     this.state.fillColor = value;
-    this.state.gradientColor = null;
+    this.state.gradientColor = undefined;
   }
 
   /**
@@ -339,9 +339,9 @@ export class mxAbstractCanvas2D {
   setGradient(color1: any, color2: any, x: number, y: number, w: number, h: number, direction: any, alpha1: any, alpha2: any): void {
     const s = this.state;
     s.fillColor = color1;
-    s.gradientFillAlpha = (alpha1 != null) ? alpha1 : 1;
+    s.gradientFillAlpha = (!!alpha1) ? alpha1 : 1;
     s.gradientColor = color2;
-    s.gradientAlpha = (alpha2 != null) ? alpha2 : 1;
+    s.gradientAlpha = (!!alpha2) ? alpha2 : 1;
     s.gradientDirection = direction;
   }
 
@@ -352,7 +352,7 @@ export class mxAbstractCanvas2D {
    */
   setStrokeColor(value: any): void {
     if (value == mxConstants.NONE) {
-      value = null;
+      value = undefined;
     }
     this.state.strokeColor = value;
   }
@@ -419,7 +419,7 @@ export class mxAbstractCanvas2D {
    */
   setFontColor(value: any): void {
     if (value == mxConstants.NONE) {
-      value = null;
+      value = undefined;
     }
     this.state.fontColor = value;
   }
@@ -431,7 +431,7 @@ export class mxAbstractCanvas2D {
    */
   setFontBackgroundColor(value: any): void {
     if (value == mxConstants.NONE) {
-      value = null;
+      value = undefined;
     }
     this.state.fontBackgroundColor = value;
   }
@@ -443,7 +443,7 @@ export class mxAbstractCanvas2D {
    */
   setFontBorderColor(value: any): void {
     if (value == mxConstants.NONE) {
-      value = null;
+      value = undefined;
     }
     this.state.fontBorderColor = value;
   }
@@ -472,7 +472,7 @@ export class mxAbstractCanvas2D {
    * Sets the current font style.
    */
   setFontStyle(value: any): void {
-    if (value == null) {
+    if (!value) {
       value = 0;
     }
     this.state.fontStyle = value;
@@ -494,7 +494,7 @@ export class mxAbstractCanvas2D {
    */
   setShadowColor(value: any): void {
     if (value == mxConstants.NONE) {
-      value = null;
+      value = undefined;
     }
     this.state.shadowColor = value;
   }
@@ -573,7 +573,7 @@ export class mxAbstractCanvas2D {
    */
   arcTo(rx: any, ry: any, angle: any, largeArcFlag: any, sweepFlag: any, x: number, y: number): void {
     const curves = mxUtils.arcToCurves(this.lastX, this.lastY, rx, ry, angle, largeArcFlag, sweepFlag, x, y);
-    if (curves != null) {
+    if (!!curves) {
       for (let i = 0; i < curves.length; i += 6) {
         this.curveTo(curves[i], curves[i + 1], curves[i + 2], curves[i + 3], curves[i + 4], curves[i + 5]);
       }

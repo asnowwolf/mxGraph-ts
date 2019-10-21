@@ -106,8 +106,8 @@ export class mxGraphLayout {
    */
   getConstraint(key: string, cell: mxCell, edge: any, source: any): any {
     const state = this.graph.view.getState(cell);
-    const style = (state != null) ? state.style : this.graph.getCellStyle(cell);
-    return (style != null) ? style[key] : null;
+    const style = (!!state) ? state.style : this.graph.getCellStyle(cell);
+    return (!!style) ? style[key] : null;
   }
 
   /**
@@ -128,7 +128,7 @@ export class mxGraphLayout {
     if (child == parent) {
       return false;
     }
-    while (child != null && child != parent) {
+    while (!!child && child != parent) {
       child = this.graph.model.getParent(child);
     }
     return child == parent;
@@ -175,7 +175,7 @@ export class mxGraphLayout {
    */
   isEdgeIgnored(edge: any): boolean {
     const model = this.graph.getModel();
-    return !model.isEdge(edge) || !this.graph.isCellVisible(edge) || model.getTerminal(edge, true) == null || model.getTerminal(edge, false) == null;
+    return !model.isEdge(edge) || !this.graph.isCellVisible(edge) || !model.getTerminal(edge, true) || !model.getTerminal(edge, false);
   }
 
   /**
@@ -204,7 +204,7 @@ export class mxGraphLayout {
    */
   getParentOffset(parent: any): any {
     const result = new mxPoint();
-    if (parent != null && parent != this.parent) {
+    if (!!parent && parent != this.parent) {
       const model = this.graph.getModel();
       if (model.isAncestor(this.parent, parent)) {
         let parentGeo = model.getGeometry(parent);
@@ -227,16 +227,16 @@ export class mxGraphLayout {
    * with the given array of mxPoints.
    */
   setEdgePoints(edge: any, points: any): void {
-    if (edge != null) {
+    if (!!edge) {
       const model = this.graph.model;
       let geometry = model.getGeometry(edge);
-      if (geometry == null) {
+      if (!geometry) {
         geometry = new mxGeometry();
         geometry.setRelative(true);
       } else {
         geometry = geometry.clone();
       }
-      if (this.parent != null && points != null) {
+      if (!!this.parent && !!points) {
         const parent = model.getParent(edge);
         const parentOffset = this.getParentOffset(parent);
         for (let i = 0; i < points.length; i++) {
@@ -267,12 +267,12 @@ export class mxGraphLayout {
   setVertexLocation(cell: mxCell, x: number, y: number): any {
     const model = this.graph.getModel();
     let geometry = model.getGeometry(cell);
-    let result = null;
-    if (geometry != null) {
+    let result = undefined;
+    if (!!geometry) {
       result = new mxRectangle(x, y, geometry.width, geometry.height);
       if (this.useBoundingBox) {
         const state = this.graph.getView().getState(cell);
-        if (state != null && state.text != null && state.text.boundingBox != null) {
+        if (!!state && !!state.text && !!state.text.boundingBox) {
           const scale = this.graph.getView().scale;
           const box = state.text.boundingBox;
           if (state.text.boundingBox.x < state.x) {
@@ -285,9 +285,9 @@ export class mxGraphLayout {
           }
         }
       }
-      if (this.parent != null) {
+      if (!!this.parent) {
         const parent = model.getParent(cell);
-        if (parent != null && parent != this.parent) {
+        if (!!parent && parent != this.parent) {
           const parentOffset = this.getParentOffset(parent);
           x = x - parentOffset.x;
           y = y - parentOffset.y;
@@ -313,7 +313,7 @@ export class mxGraphLayout {
     let geo = this.graph.getModel().getGeometry(cell);
     if (this.useBoundingBox) {
       const state = this.graph.getView().getState(cell);
-      if (state != null && state.text != null && state.text.boundingBox != null) {
+      if (!!state && !!state.text && !!state.text.boundingBox) {
         const scale = this.graph.getView().scale;
         const tmp = state.text.boundingBox;
         const dx0 = Math.max(state.x - tmp.x, 0) / scale;
@@ -323,10 +323,10 @@ export class mxGraphLayout {
         geo = new mxRectangle(geo.x - dx0, geo.y - dy0, geo.width + dx0 + dx1, geo.height + dy0 + dy1);
       }
     }
-    if (this.parent != null) {
+    if (!!this.parent) {
       const parent = this.graph.getModel().getParent(cell);
       geo = geo.clone();
-      if (parent != null && parent != this.parent) {
+      if (!!parent && parent != this.parent) {
         const parentOffset = this.getParentOffset(parent);
         geo.x = geo.x + parentOffset.x;
         geo.y = geo.y + parentOffset.y;
@@ -376,13 +376,13 @@ export class mxGraphLayout {
    * visited - Optional <mxDictionary> of cell paths for the visited cells.
    */
   static traverse(vertex: any, directed: any, func: any, edge: any, visited: any): void {
-    if (func != null && vertex != null) {
-      directed = (directed != null) ? directed : true;
+    if (!!func && !!vertex) {
+      directed = (!!directed) ? directed : true;
       visited = visited || new mxDictionary();
       if (!visited.get(vertex)) {
         visited.put(vertex, true);
         const result = func(vertex, edge);
-        if (result == null || result) {
+        if (!result || result) {
           const edgeCount = this.graph.model.getEdgeCount(vertex);
           if (edgeCount > 0) {
             for (let i = 0; i < edgeCount; i++) {
@@ -444,7 +444,7 @@ export class WeightedCellSorter {
    * Compares two WeightedCellSorters.
    */
   compare(a: any, b: any): any {
-    if (a != null && b != null) {
+    if (!!a && !!b) {
       if (b.weightedValue > a.weightedValue) {
         return -1;
       } else if (b.weightedValue < a.weightedValue) {

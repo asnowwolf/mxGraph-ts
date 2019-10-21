@@ -89,7 +89,7 @@ export class mxXmlRequest {
     this.url = url;
     this.params = params;
     this.method = method || 'POST';
-    this.async = (async != null) ? async : true;
+    this.async = (!!async) ? async : true;
     this.username = username;
     this.password = password;
   }
@@ -179,7 +179,7 @@ export class mxXmlRequest {
    */
   getDocumentElement(): any {
     const doc = this.getXml();
-    if (doc != null) {
+    if (!!doc) {
       return doc.documentElement;
     }
     return null;
@@ -193,7 +193,7 @@ export class mxXmlRequest {
    */
   getXml(): string {
     let xml = this.request.responseXML;
-    if (document.documentMode >= 9 || xml == null || xml.documentElement == null) {
+    if (document.documentMode >= 9 || !xml || !xml.documentElement) {
       xml = mxUtils.parseXml(this.request.responseText);
     }
     return xml;
@@ -226,12 +226,12 @@ export class mxXmlRequest {
    */
   send(onload: any, onerror: any, timeout: any, ontimeout: any): void {
     this.request = this.create();
-    if (this.request != null) {
-      if (onload != null) {
+    if (!!this.request) {
+      if (!!onload) {
         this.request.onreadystatechange = mxUtils.bind(this, function () {
           if (this.isReady()) {
             onload(this);
-            this.request.onreadystatechaange = null;
+            this.request.onreadystatechaange = undefined;
           }
         });
       }
@@ -240,7 +240,7 @@ export class mxXmlRequest {
       if (window.XMLHttpRequest && this.withCredentials) {
         this.request.withCredentials = 'true';
       }
-      if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 9) && window.XMLHttpRequest && timeout != null && ontimeout != null) {
+      if (!mxClient.IS_QUIRKS && (!document.documentMode || document.documentMode > 9) && window.XMLHttpRequest && !!timeout && !!ontimeout) {
         this.request.timeout = timeout;
         this.request.ontimeout = ontimeout;
       }
@@ -259,7 +259,7 @@ export class mxXmlRequest {
    * (code)
    * request.setRequestHeaders = function(request, params)
    * {
-   *   if (params != null)
+   *   if (!!params)
    *   {
    *     request.setRequestHeader('Content-Type',
    *             'multipart/form-data');
@@ -273,7 +273,7 @@ export class mxXmlRequest {
    * multipart/form-data request.
    */
   setRequestHeaders(request: any, params: any): void {
-    if (params != null) {
+    if (!!params) {
       request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     }
   }
@@ -291,15 +291,15 @@ export class mxXmlRequest {
    */
   simulate(doc: any, target: string): void {
     doc = doc || document;
-    let old = null;
+    let old = undefined;
     if (doc == document) {
       old = window.onbeforeunload;
-      window.onbeforeunload = null;
+      window.onbeforeunload = undefined;
     }
     const form = doc.createElement('form');
     form.setAttribute('method', this.method);
     form.setAttribute('action', this.url);
-    if (target != null) {
+    if (!!target) {
       form.setAttribute('target', target);
     }
     form.style.display = 'none';
@@ -322,10 +322,10 @@ export class mxXmlRequest {
     }
     doc.body.appendChild(form);
     form.submit();
-    if (form.parentNode != null) {
+    if (!!form.parentNode) {
       form.parentNode.removeChild(form);
     }
-    if (old != null) {
+    if (!!old) {
       window.onbeforeunload = old;
     }
   }

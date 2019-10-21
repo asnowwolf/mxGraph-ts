@@ -43,8 +43,8 @@ export class mxMorphing extends mxAnimation {
   constructor(graph: mxGraph, steps: any, ease: any, delay: any) {
     super(delay);
     this.graph = graph;
-    this.steps = (steps != null) ? steps : 6;
-    this.ease = (ease != null) ? ease : 1.5;
+    this.steps = (!!steps) ? steps : 6;
+    this.ease = (!!ease) ? ease : 1.5;
   }
 
   graph: mxGraph;
@@ -73,7 +73,7 @@ export class mxMorphing extends mxAnimation {
   updateAnimation(): void {
     mxAnimation.prototype.updateAnimation.apply(this, arguments);
     const move = new mxCellStatePreview(this.graph);
-    if (this.cells != null) {
+    if (!!this.cells) {
       for (let i = 0; i < this.cells.length; i++) {
         this.animateCell(this.cells[i], move, false);
       }
@@ -102,8 +102,8 @@ export class mxMorphing extends mxAnimation {
    */
   animateCell(cell: mxCell, move: any, recurse: any): void {
     const state = this.graph.getView().getState(cell);
-    let delta = null;
-    if (state != null) {
+    let delta = undefined;
+    if (!!state) {
       delta = this.getDelta(state);
       if (this.graph.getModel().isVertex(cell) && (delta.x != 0 || delta.y != 0)) {
         const translate = this.graph.view.getTranslate();
@@ -128,7 +128,7 @@ export class mxMorphing extends mxAnimation {
    * deltas for children if the given parent state has been animated.
    */
   stopRecursion(state: any, delta: any): any {
-    return delta != null && (delta.x != 0 || delta.y != 0);
+    return !!delta && (delta.x != 0 || delta.y != 0);
   }
 
   /**
@@ -154,15 +154,15 @@ export class mxMorphing extends mxAnimation {
    * during the lifecycle of this object.
    */
   getOriginForCell(cell: mxCell): any {
-    let result = null;
-    if (cell != null) {
+    let result = undefined;
+    if (!!cell) {
       const parent = this.graph.getModel().getParent(cell);
       const geo = this.graph.getCellGeometry(cell);
       result = this.getOriginForCell(parent);
-      if (geo != null) {
+      if (!!geo) {
         if (geo.relative) {
           const pgeo = this.graph.getCellGeometry(parent);
-          if (pgeo != null) {
+          if (!!pgeo) {
             result.x += geo.x * pgeo.width;
             result.y += geo.y * pgeo.height;
           }
@@ -172,7 +172,7 @@ export class mxMorphing extends mxAnimation {
         }
       }
     }
-    if (result == null) {
+    if (!result) {
       const t = this.graph.view.getTranslate();
       result = new mxPoint(-t.x, -t.y);
     }

@@ -71,7 +71,7 @@ import { mxEventObject } from './mxEventObject';
 
 export class mxUndoManager {
   constructor(size: any) {
-    this.size = (size != null) ? size : 100;
+    this.size = (!!size) ? size : 100;
     this.clear();
   }
 

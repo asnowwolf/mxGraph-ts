@@ -38,7 +38,7 @@
  * (code)
  * keyHandler.getFunction = function(evt)
  * {
- *   if (evt != null)
+ *   if (!!evt)
  *   {
  *     return (mxEvent.isControlDown(evt) || (mxClient.IS_MAC && evt.metaKey)) ? this.controlKeys[evt.keyCode] : this.normalKeys[evt.keyCode];
  *   }
@@ -201,7 +201,7 @@ export class mxKeyHandler {
    * evt - Key event whose associated function should be returned.
    */
   getFunction(evt: KeyboardEvent): any {
-    if (evt != null && !mxEvent.isAltDown(evt)) {
+    if (!!evt && !mxEvent.isAltDown(evt)) {
       if (this.isControlDown(evt)) {
         if (mxEvent.isShiftDown(evt)) {
           return this.controlShiftKeys[evt.keyCode];
@@ -233,7 +233,7 @@ export class mxKeyHandler {
    */
   isGraphEvent(evt: Event): boolean {
     const source = mxEvent.getSource(evt);
-    if ((source == this.target || source.parentNode == this.target) || (this.graph.cellEditor != null && this.graph.cellEditor.isEventSource(evt))) {
+    if ((source == this.target || source.parentNode == this.target) || (!!this.graph.cellEditor && this.graph.cellEditor.isEventSource(evt))) {
       return true;
     }
     return mxUtils.isAncestorNode(this.graph.container, source);
@@ -257,7 +257,7 @@ export class mxKeyHandler {
         this.escape(evt);
       } else if (!this.isEventIgnored(evt)) {
         const boundFunction = this.getFunction(evt);
-        if (boundFunction != null) {
+        if (!!boundFunction) {
           boundFunction(evt);
           mxEvent.consume(evt);
         }
@@ -322,10 +322,10 @@ export class mxKeyHandler {
    * window unloads (in IE).
    */
   destroy(): void {
-    if (this.target != null && this.keydownHandler != null) {
+    if (!!this.target && !!this.keydownHandler) {
       mxEvent.removeListener(this.target, 'keydown', this.keydownHandler);
-      this.keydownHandler = null;
+      this.keydownHandler = undefined;
     }
-    this.target = null;
+    this.target = undefined;
   }
 }

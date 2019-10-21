@@ -27,7 +27,7 @@ import { mxGraphLayout } from './mxGraphLayout';
 export class mxPartitionLayout extends mxGraphLayout {
   constructor(graph: mxGraph, horizontal: any, spacing: any, border: any) {
     super(graph);
-    this.horizontal = (horizontal != null) ? horizontal : true;
+    this.horizontal = (!!horizontal) ? horizontal : true;
     this.spacing = spacing || 0;
     this.border = border || 0;
   }
@@ -60,14 +60,14 @@ export class mxPartitionLayout extends mxGraphLayout {
   moveCell(cell: mxCell, x: number, y: number): void {
     const model = this.graph.getModel();
     const parent = model.getParent(cell);
-    if (cell != null && parent != null) {
+    if (!!cell && !!parent) {
       let i = 0;
       let last = 0;
       const childCount = model.getChildCount(parent);
       for (i = 0; i < childCount; i++) {
         const child = model.getChildAt(parent, i);
         const bounds = this.getVertexBounds(child);
-        if (bounds != null) {
+        if (!!bounds) {
           const tmp = bounds.x + bounds.width / 2;
           if (last < x && tmp > x) {
             break;
@@ -91,12 +91,12 @@ export class mxPartitionLayout extends mxGraphLayout {
     const horizontal = this.isHorizontal();
     const model = this.graph.getModel();
     let pgeo = model.getGeometry(parent);
-    if (this.graph.container != null && ((pgeo == null && model.isLayer(parent)) || parent == this.graph.getView().currentRoot)) {
+    if (!!this.graph.container && ((!pgeo && model.isLayer(parent)) || parent == this.graph.getView().currentRoot)) {
       const width = this.graph.container.offsetWidth - 1;
       const height = this.graph.container.offsetHeight - 1;
       pgeo = new mxRectangle(0, 0, width, height);
     }
-    if (pgeo != null) {
+    if (!!pgeo) {
       const children = [];
       const childCount = model.getChildCount(parent);
       for (let i = 0; i < childCount; i++) {
@@ -123,7 +123,7 @@ export class mxPartitionLayout extends mxGraphLayout {
             for (let i = 0; i < n; i++) {
               const child = children[i];
               let geo = model.getGeometry(child);
-              if (geo != null) {
+              if (!!geo) {
                 geo = geo.clone();
                 geo.x = x0;
                 geo.y = y0;

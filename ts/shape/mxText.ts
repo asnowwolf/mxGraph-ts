@@ -65,24 +65,24 @@ export class mxText extends mxShape {
     super();
     this.value = value;
     this.bounds = bounds;
-    this.color = (color != null) ? color : 'black';
-    this.align = (align != null) ? align : mxConstants.ALIGN_CENTER;
-    this.valign = (valign != null) ? valign : mxConstants.ALIGN_MIDDLE;
-    this.family = (family != null) ? family : mxConstants.DEFAULT_FONTFAMILY;
-    this.size = (size != null) ? size : mxConstants.DEFAULT_FONTSIZE;
-    this.fontStyle = (fontStyle != null) ? fontStyle : mxConstants.DEFAULT_FONTSTYLE;
+    this.color = (!!color) ? color : 'black';
+    this.align = (!!align) ? align : mxConstants.ALIGN_CENTER;
+    this.valign = (!!valign) ? valign : mxConstants.ALIGN_MIDDLE;
+    this.family = (!!family) ? family : mxConstants.DEFAULT_FONTFAMILY;
+    this.size = (!!size) ? size : mxConstants.DEFAULT_FONTSIZE;
+    this.fontStyle = (!!fontStyle) ? fontStyle : mxConstants.DEFAULT_FONTSTYLE;
     this.spacing = parseInt(spacing || 2);
     this.spacingTop = this.spacing + parseInt(spacingTop || 0);
     this.spacingRight = this.spacing + parseInt(spacingRight || 0);
     this.spacingBottom = this.spacing + parseInt(spacingBottom || 0);
     this.spacingLeft = this.spacing + parseInt(spacingLeft || 0);
-    this.horizontal = (horizontal != null) ? horizontal : true;
+    this.horizontal = (!!horizontal) ? horizontal : true;
     this.background = background;
     this.border = border;
-    this.wrap = (wrap != null) ? wrap : false;
-    this.clipped = (clipped != null) ? clipped : false;
-    this.overflow = (overflow != null) ? overflow : 'visible';
-    this.labelPadding = (labelPadding != null) ? labelPadding : 0;
+    this.wrap = (!!wrap) ? wrap : false;
+    this.clipped = (!!clipped) ? clipped : false;
+    this.overflow = (!!overflow) ? overflow : 'visible';
+    this.labelPadding = (!!labelPadding) ? labelPadding : 0;
     this.textDirection = textDirection;
     this.rotation = 0;
     this.updateMargin();
@@ -234,7 +234,7 @@ export class mxText extends mxShape {
    * Returns true if the bounds are not null and all of its variables are numeric.
    */
   checkBounds(): any {
-    return (!isNaN(this.scale) && isFinite(this.scale) && this.scale > 0 && this.bounds != null && !isNaN(this.bounds.x) && !isNaN(this.bounds.y) && !isNaN(this.bounds.width) && !isNaN(this.bounds.height));
+    return (!isNaN(this.scale) && isFinite(this.scale) && this.scale > 0 && !!this.bounds && !isNaN(this.bounds.x) && !isNaN(this.bounds.y) && !isNaN(this.bounds.width) && !isNaN(this.bounds.height));
   }
 
   /**
@@ -250,9 +250,9 @@ export class mxText extends mxShape {
     const h = this.bounds.height / s;
     this.updateTransform(c, x, y, w, h);
     this.configureCanvas(c, x, y, w, h);
-    const unscaledWidth = (this.state != null) ? this.state.unscaledWidth : null;
+    const unscaledWidth = (!!this.state) ? this.state.unscaledWidth : null;
     if (update) {
-      if (this.node.firstChild != null && (unscaledWidth == null || this.lastUnscaledWidth != unscaledWidth)) {
+      if (!!this.node.firstChild && (!unscaledWidth || this.lastUnscaledWidth != unscaledWidth)) {
         c.invalidateCachedOffsetSize(this.node);
       }
       c.updateText(x, y, w, h, this.align, this.valign, this.wrap, this.overflow, this.clipped, this.getTextRotation(), this.node);
@@ -272,7 +272,7 @@ export class mxText extends mxShape {
         dir = this.getAutoDirection();
       }
       if (dir != mxConstants.TEXT_DIRECTION_LTR && dir != mxConstants.TEXT_DIRECTION_RTL) {
-        dir = null;
+        dir = undefined;
       }
       c.text(x, y, w, h, val, this.align, this.valign, this.wrap, fmt, this.overflow, this.clipped, this.getTextRotation(), dir);
     }
@@ -287,8 +287,8 @@ export class mxText extends mxShape {
   redraw(): void {
     if (this.visible && this.checkBounds() && this.cacheEnabled && this.lastValue == this.value && (mxUtils.isNode(this.value) || this.dialect == mxConstants.DIALECT_STRICTHTML)) {
       if (this.node.nodeName == 'DIV' && (this.isHtmlAllowed() || !mxClient.IS_VML)) {
-        this.updateSize(this.node, (this.state == null || this.state.view.textDiv == null));
-        if (mxClient.IS_IE && (document.documentMode == null || document.documentMode <= 8)) {
+        this.updateSize(this.node, (!this.state || !this.state.view.textDiv));
+        if (mxClient.IS_IE && (!document.documentMode || document.documentMode <= 8)) {
           this.updateHtmlFilter();
         } else {
           this.updateHtmlTransform();
@@ -296,7 +296,7 @@ export class mxText extends mxShape {
         this.updateBoundingBox();
       } else {
         const canvas = this.createCanvas();
-        if (canvas != null && canvas.updateText != null && canvas.invalidateCachedOffsetSize != null) {
+        if (!!canvas && !!canvas.updateText && !!canvas.invalidateCachedOffsetSize) {
           this.paint(canvas, true);
           this.destroyCanvas(canvas);
           this.updateBoundingBox();
@@ -309,7 +309,7 @@ export class mxText extends mxShape {
       if (mxUtils.isNode(this.value) || this.dialect == mxConstants.DIALECT_STRICTHTML) {
         this.lastValue = this.value;
       } else {
-        this.lastValue = null;
+        this.lastValue = undefined;
       }
     }
   }
@@ -351,7 +351,7 @@ export class mxText extends mxShape {
   apply(state: any): void {
     const old = this.spacing;
     mxShape.prototype.apply.apply(this, arguments);
-    if (this.style != null) {
+    if (!!this.style) {
       this.fontStyle = mxUtils.getValue(this.style, mxConstants.STYLE_FONTSTYLE, this.fontStyle);
       this.family = mxUtils.getValue(this.style, mxConstants.STYLE_FONTFAMILY, this.family);
       this.size = mxUtils.getValue(this.style, mxConstants.STYLE_FONTSIZE, this.size);
@@ -370,8 +370,8 @@ export class mxText extends mxShape {
       this.opacity = mxUtils.getValue(this.style, mxConstants.STYLE_TEXT_OPACITY, 100);
       this.updateMargin();
     }
-    this.flipV = null;
-    this.flipH = null;
+    this.flipV = undefined;
+    this.flipH = undefined;
   }
 
   /**
@@ -384,7 +384,7 @@ export class mxText extends mxShape {
    */
   getAutoDirection(): any {
     const tmp = /[A-Za-z\u05d0-\u065f\u066a-\u06ef\u06fa-\u07ff\ufb1d-\ufdff\ufe70-\ufefc]/.exec(this.value);
-    return (tmp != null && tmp.length > 0 && tmp[0] > 'z') ? mxConstants.TEXT_DIRECTION_RTL : mxConstants.TEXT_DIRECTION_LTR;
+    return (!!tmp && tmp.length > 0 && tmp[0] > 'z') ? mxConstants.TEXT_DIRECTION_RTL : mxConstants.TEXT_DIRECTION_LTR;
   }
 
   /**
@@ -396,13 +396,13 @@ export class mxText extends mxShape {
     let node = this.node;
     this.boundingBox = this.bounds.clone();
     const rot = this.getTextRotation();
-    const h = (this.style != null) ? mxUtils.getValue(this.style, mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_CENTER) : null;
-    const v = (this.style != null) ? mxUtils.getValue(this.style, mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE) : null;
-    if (!this.ignoreStringSize && node != null && this.overflow != 'fill' && (!this.clipped || !this.ignoreClippedStringSize || h != mxConstants.ALIGN_CENTER || v != mxConstants.ALIGN_MIDDLE)) {
-      let ow = null;
-      let oh = null;
-      if (node.ownerSVGElement != null) {
-        if (node.firstChild != null && node.firstChild.firstChild != null && node.firstChild.firstChild.nodeName == 'foreignObject') {
+    const h = (!!this.style) ? mxUtils.getValue(this.style, mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_CENTER) : null;
+    const v = (!!this.style) ? mxUtils.getValue(this.style, mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE) : null;
+    if (!this.ignoreStringSize && !!node && this.overflow != 'fill' && (!this.clipped || !this.ignoreClippedStringSize || h != mxConstants.ALIGN_CENTER || v != mxConstants.ALIGN_MIDDLE)) {
+      let ow = undefined;
+      let oh = undefined;
+      if (!!node.ownerSVGElement) {
+        if (!!node.firstChild && !!node.firstChild.firstChild && node.firstChild.firstChild.nodeName == 'foreignObject') {
           node = node.firstChild.firstChild;
           ow = parseInt(node.getAttribute('width')) * this.scale;
           oh = parseInt(node.getAttribute('height')) * this.scale;
@@ -410,9 +410,9 @@ export class mxText extends mxShape {
           try {
             const b = node.getBBox();
             if (typeof (this.value) == 'string' && mxUtils.trim(this.value) == 0) {
-              this.boundingBox = null;
+              this.boundingBox = undefined;
             } else if (b.width == 0 && b.height == 0) {
-              this.boundingBox = null;
+              this.boundingBox = undefined;
             } else {
               this.boundingBox = new mxRectangle(b.x, b.y, b.width, b.height);
             }
@@ -421,12 +421,12 @@ export class mxText extends mxShape {
           }
         }
       } else {
-        const td = (this.state != null) ? this.state.view.textDiv : null;
-        if (this.offsetWidth != null && this.offsetHeight != null) {
+        const td = (!!this.state) ? this.state.view.textDiv : null;
+        if (!!this.offsetWidth && !!this.offsetHeight) {
           ow = this.offsetWidth * this.scale;
           oh = this.offsetHeight * this.scale;
         } else {
-          if (td != null) {
+          if (!!td) {
             this.updateFont(td);
             this.updateSize(td, false);
             this.updateInnerHtml(td);
@@ -455,7 +455,7 @@ export class mxText extends mxShape {
             } else {
               node.style.whiteSpace = 'nowrap';
             }
-          } else if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV') {
+          } else if (!!sizeDiv.firstChild && sizeDiv.firstChild.nodeName == 'DIV') {
             sizeDiv = sizeDiv.firstChild;
           }
           this.offsetWidth = sizeDiv.offsetWidth + this.textWidthPadding;
@@ -464,11 +464,11 @@ export class mxText extends mxShape {
           oh = this.offsetHeight * this.scale;
         }
       }
-      if (ow != null && oh != null) {
+      if (!!ow && !!oh) {
         this.boundingBox = new mxRectangle(this.bounds.x, this.bounds.y, ow, oh);
       }
     }
-    if (this.boundingBox != null) {
+    if (!!this.boundingBox) {
       if (rot != 0) {
         const bbox = mxUtils.getBoundingBox(new mxRectangle(this.margin.x * this.boundingBox.width, this.margin.y * this.boundingBox.height, this.boundingBox.width, this.boundingBox.height), rot, new mxPoint(0, 0));
         this.unrotatedBoundingBox = mxRectangle.fromRectangle(this.boundingBox);
@@ -481,7 +481,7 @@ export class mxText extends mxShape {
       } else {
         this.boundingBox.x += this.margin.x * this.boundingBox.width;
         this.boundingBox.y += this.margin.y * this.boundingBox.height;
-        this.unrotatedBoundingBox = null;
+        this.unrotatedBoundingBox = undefined;
       }
     }
   }
@@ -501,7 +501,7 @@ export class mxText extends mxShape {
    * Returns the rotation for the text label of the corresponding shape.
    */
   getTextRotation(): any {
-    return (this.state != null && this.state.shape != null) ? this.state.shape.getTextRotation() : 0;
+    return (!!this.state && !!this.state.shape) ? this.state.shape.getTextRotation() : 0;
   }
 
   /**
@@ -511,7 +511,7 @@ export class mxText extends mxShape {
    * horizontal style is false.
    */
   isPaintBoundsInverted(): boolean {
-    return !this.horizontal && this.state != null && this.state.view.graph.model.isVertex(this.state.cell);
+    return !this.horizontal && !!this.state && this.state.view.graph.model.isVertex(this.state.cell);
   }
 
   /**
@@ -555,10 +555,10 @@ export class mxText extends mxShape {
     style.height = '';
     this.updateValue();
     this.updateFont(this.node);
-    this.updateSize(this.node, (this.state == null || this.state.view.textDiv == null));
-    this.offsetWidth = null;
-    this.offsetHeight = null;
-    if (mxClient.IS_IE && (document.documentMode == null || document.documentMode <= 8)) {
+    this.updateSize(this.node, (!this.state || !this.state.view.textDiv));
+    this.offsetWidth = undefined;
+    this.offsetHeight = undefined;
+    if (mxClient.IS_IE && (!document.documentMode || document.documentMode <= 8)) {
       this.updateHtmlFilter();
     } else {
       this.updateHtmlTransform();
@@ -624,9 +624,9 @@ export class mxText extends mxShape {
     mxUtils.setOpacity(this.node, this.opacity);
     let ow = 0;
     let oh = 0;
-    const td = (this.state != null) ? this.state.view.textDiv : null;
+    const td = (!!this.state) ? this.state.view.textDiv : null;
     let sizeDiv = this.node;
-    if (td != null) {
+    if (!!td) {
       td.style.overflow = '';
       td.style.height = '';
       td.style.width = '';
@@ -646,7 +646,7 @@ export class mxText extends mxShape {
         td.style.whiteSpace = 'nowrap';
       }
       sizeDiv = td;
-      if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV') {
+      if (!!sizeDiv.firstChild && sizeDiv.firstChild.nodeName == 'DIV') {
         sizeDiv = sizeDiv.firstChild;
         if (this.wrap && td.style.wordWrap == 'break-word') {
           sizeDiv.style.width = '100%';
@@ -657,10 +657,10 @@ export class mxText extends mxShape {
         td.style.width = ow + 'px';
       }
       oh = sizeDiv.offsetHeight + 2;
-      if (mxClient.IS_QUIRKS && this.border != null && this.border != mxConstants.NONE) {
+      if (mxClient.IS_QUIRKS && !!this.border && this.border != mxConstants.NONE) {
         oh += 3;
       }
-    } else if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV') {
+    } else if (!!sizeDiv.firstChild && sizeDiv.firstChild.nodeName == 'DIV') {
       sizeDiv = sizeDiv.firstChild;
       oh = sizeDiv.offsetHeight;
     }
@@ -715,7 +715,7 @@ export class mxText extends mxShape {
     const left_fix = (w - w * cos + h * sin) / 2 - real_cos * tx - real_sin * ty;
     if (rad != 0) {
       const f = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + real_cos + ', M12=' + real_sin + ', M21=' + (-real_sin) + ', M22=' + real_cos + ', sizingMethod=\'auto expand\')';
-      if (style.filter != null && style.filter.length > 0) {
+      if (!!style.filter && style.filter.length > 0) {
         style.filter += ' ' + f;
       } else {
         style.filter = f;
@@ -752,21 +752,21 @@ export class mxText extends mxShape {
       }
       val = mxUtils.replaceTrailingNewlines(val, '<div><br></div>');
       val = (this.replaceLinefeeds) ? val.replace(/\n/g, '<br/>') : val;
-      const bg = (this.background != null && this.background != mxConstants.NONE) ? this.background : null;
-      const bd = (this.border != null && this.border != mxConstants.NONE) ? this.border : null;
+      const bg = (!!this.background && this.background != mxConstants.NONE) ? this.background : null;
+      const bd = (!!this.border && this.border != mxConstants.NONE) ? this.border : null;
       if (this.overflow == 'fill' || this.overflow == 'width') {
-        if (bg != null) {
+        if (!!bg) {
           this.node.style.backgroundColor = bg;
         }
-        if (bd != null) {
+        if (!!bd) {
           this.node.style.border = '1px solid ' + bd;
         }
       } else {
         let css = '';
-        if (bg != null) {
+        if (!!bg) {
           css += 'background-color:' + mxUtils.htmlEntities(bg) + ';';
         }
-        if (bd != null) {
+        if (!!bd) {
           css += 'border:1px solid ' + mxUtils.htmlEntities(bd) + ';';
         }
         const lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (this.size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
@@ -856,7 +856,7 @@ export class mxText extends mxShape {
       style.width = w + 'px';
       if (enableWrap && this.overflow != 'fill' && this.overflow != 'width') {
         let sizeDiv = node;
-        if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV') {
+        if (!!sizeDiv.firstChild && sizeDiv.firstChild.nodeName == 'DIV') {
           sizeDiv = sizeDiv.firstChild;
           if (node.style.wordWrap == 'break-word') {
             sizeDiv.style.width = '100%';

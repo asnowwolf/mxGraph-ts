@@ -182,9 +182,9 @@ export class mxStylesheet {
    */
   getCellStyle(name: string, defaultStyle: any): any {
     let style = defaultStyle;
-    if (name != null && name.length > 0) {
+    if (!!name && name.length > 0) {
       const pairs = name.split(';');
-      if (style != null && name.charAt(0) != ';') {
+      if (!!style && name.charAt(0) != ';') {
         style = mxUtils.clone(style);
       } else {
         style = {};
@@ -204,7 +204,7 @@ export class mxStylesheet {
           }
         } else {
           const tmpStyle = this.styles[tmp];
-          if (tmpStyle != null) {
+          if (!!tmpStyle) {
             for (const key in tmpStyle) {
               style[key] = tmpStyle[key];
             }

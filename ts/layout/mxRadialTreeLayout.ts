@@ -145,13 +145,13 @@ export class mxRadialTreeLayout extends mxCompactTreeLayout {
     this.useBoundingBox = false;
     this.edgeRouting = false;
     mxCompactTreeLayout.prototype.execute.apply(this, arguments);
-    let bounds = null;
+    let bounds = undefined;
     const rootBounds = this.getVertexBounds(this.root);
     this.centerX = rootBounds.x + rootBounds.width / 2;
     this.centerY = rootBounds.y + rootBounds.height / 2;
     for (const vertex in this.visited) {
       const vertexBounds = this.getVertexBounds(this.visited[vertex]);
-      bounds = (bounds != null) ? bounds : vertexBounds.clone();
+      bounds = (!!bounds) ? bounds : vertexBounds.clone();
       bounds.add(vertexBounds);
     }
     this.calcRowDims([this.node], 0);
@@ -183,7 +183,7 @@ export class mxRadialTreeLayout extends mxCompactTreeLayout {
         let child = node.child;
         let counter = 0;
         let totalTheta = 0;
-        while (child != null) {
+        while (!!child) {
           totalTheta += child.theta;
           counter++;
           child = child.next;
@@ -221,7 +221,7 @@ export class mxRadialTreeLayout extends mxCompactTreeLayout {
    * rowNum - Integer indicating which row is being processed.
    */
   calcRowDims(row: any, rowNum: any): void {
-    if (row == null || row.length == 0) {
+    if (!row || row.length == 0) {
       return;
     }
     this.rowMinX[rowNum] = this.centerX;
@@ -231,8 +231,8 @@ export class mxRadialTreeLayout extends mxCompactTreeLayout {
     this.row[rowNum] = [];
     let rowHasChildren = false;
     for (let i = 0; i < row.length; i++) {
-      let child = row[i] != null ? row[i].child : null;
-      while (child != null) {
+      let child = row[i] ? row[i].child : null;
+      while (!!child) {
         const cell = child.cell;
         const vertexBounds = this.getVertexBounds(cell);
         this.rowMinX[rowNum] = Math.min(vertexBounds.x, this.rowMinX[rowNum]);
@@ -240,7 +240,7 @@ export class mxRadialTreeLayout extends mxCompactTreeLayout {
         this.rowMinCenX[rowNum] = Math.min(vertexBounds.x + vertexBounds.width / 2, this.rowMinCenX[rowNum]);
         this.rowMaxCenX[rowNum] = Math.max(vertexBounds.x + vertexBounds.width / 2, this.rowMaxCenX[rowNum]);
         this.rowRadi[rowNum] = vertexBounds.y - this.getVertexBounds(this.root).y;
-        if (child.child != null) {
+        if (!!child.child) {
           rowHasChildren = true;
         }
         this.row[rowNum].push(child);

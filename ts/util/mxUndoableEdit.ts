@@ -49,7 +49,7 @@ export class mxUndoableEdit {
   constructor(source: any, significant: any) {
     this.source = source;
     this.changes = [];
-    this.significant = (significant != null) ? significant : true;
+    this.significant = (!!significant) ? significant : true;
   }
 
   source: any;
@@ -125,9 +125,9 @@ export class mxUndoableEdit {
       const count = this.changes.length;
       for (let i = count - 1; i >= 0; i--) {
         const change = this.changes[i];
-        if (change.execute != null) {
+        if (!!change.execute) {
           change.execute();
-        } else if (change.undo != null) {
+        } else if (!!change.undo) {
           change.undo();
         }
         this.source.fireEvent(new mxEventObject(mxEvent.EXECUTED, 'change', change));
@@ -150,9 +150,9 @@ export class mxUndoableEdit {
       const count = this.changes.length;
       for (let i = 0; i < count; i++) {
         const change = this.changes[i];
-        if (change.execute != null) {
+        if (!!change.execute) {
           change.execute();
-        } else if (change.redo != null) {
+        } else if (!!change.redo) {
           change.redo();
         }
         this.source.fireEvent(new mxEventObject(mxEvent.EXECUTED, 'change', change));

@@ -145,13 +145,13 @@ export class mxLayoutManager {
    * Sets the graph that the layouts operate on.
    */
   setGraph(graph: mxGraph): void {
-    if (this.graph != null) {
+    if (!!this.graph) {
       const model = this.graph.getModel();
       model.removeListener(this.undoHandler);
       this.graph.removeListener(this.moveHandler);
     }
     this.graph = graph;
-    if (this.graph != null) {
+    if (!!this.graph) {
       const model = this.graph.getModel();
       model.addListener(mxEvent.BEFORE_UNDO, this.undoHandler);
       this.graph.addListener(mxEvent.MOVE_CELLS, this.moveHandler);
@@ -217,14 +217,14 @@ export class mxLayoutManager {
    * evt - Mouse event that represents the mousedown.
    */
   cellsMoved(cells: mxCell[], evt: Event): void {
-    if (cells != null && evt != null) {
+    if (!!cells && !!evt) {
       const point = mxUtils.convertPoint(this.getGraph().container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
       const model = this.getGraph().getModel();
       for (let i = 0; i < cells.length; i++) {
         const parent = model.getParent(cells[i]);
         if (mxUtils.indexOf(cells, parent) < 0) {
           const layout = this.getLayout(parent);
-          if (layout != null) {
+          if (!!layout) {
             layout.moveCell(cells[i], point.x, point.y);
           }
         }
@@ -247,7 +247,7 @@ export class mxLayoutManager {
       } else {
         const cells = this.getCellsForChange(change);
         for (let j = 0; j < cells.length; j++) {
-          if (cells[j] != null && !dict.get(cells[j])) {
+          if (cells[j] && !dict.get(cells[j])) {
             dict.put(cells[j], true);
             result.push(cells[j]);
           }
@@ -286,7 +286,7 @@ export class mxLayoutManager {
       const model = this.getGraph().getModel();
       model.beginUpdate();
       try {
-        let last = null;
+        let last = undefined;
         for (let i = 0; i < cells.length; i++) {
           if (cells[i] != model.getRoot() && cells[i] != last) {
             if (this.executeLayout(this.getLayout(cells[i]), cells[i])) {
@@ -308,7 +308,7 @@ export class mxLayoutManager {
    */
   executeLayout(layout: any, parent: any): any {
     let result = false;
-    if (layout != null && parent != null) {
+    if (!!layout && !!parent) {
       layout.execute(parent);
       result = true;
     }

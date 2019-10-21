@@ -22,11 +22,11 @@
  * (end)
  */
 export class mxEventObject {
-  constructor(name: string) {
+  constructor(name: string, ...args: any[]) {
     this.name = name;
     this.properties = [];
-    for (let i = 1; i < arguments.length; i += 2) {
-      if (arguments[i + 1] != null) {
+    for (let i = 0; i < args.length; i += 2) {
+      if (arguments[i + 1]) {
         this.properties[arguments[i]] = arguments[i + 1];
       }
     }
@@ -39,7 +39,7 @@ export class mxEventObject {
    *
    * Holds the consumed state. Default is false.
    */
-  consumed: boolean;
+  consumed: boolean = false;
 
   /**
    * Function: getName

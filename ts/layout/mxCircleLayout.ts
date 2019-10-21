@@ -27,7 +27,7 @@ import { mxGraphLayout } from './mxGraphLayout';
 export class mxCircleLayout extends mxGraphLayout {
   constructor(graph: mxGraph, radius: any) {
     super(graph);
-    this.radius = (radius != null) ? radius : 100;
+    this.radius = (!!radius) ? radius : 100;
   }
 
   radius: any;
@@ -79,8 +79,8 @@ export class mxCircleLayout extends mxGraphLayout {
     model.beginUpdate();
     try {
       let max = 0;
-      let top = null;
-      let left = null;
+      let top = undefined;
+      let left = undefined;
       const vertices = [];
       const childCount = model.getChildCount(parent);
       for (let i = 0; i < childCount; i++) {
@@ -88,12 +88,12 @@ export class mxCircleLayout extends mxGraphLayout {
         if (!this.isVertexIgnored(cell)) {
           vertices.push(cell);
           const bounds = this.getVertexBounds(cell);
-          if (top == null) {
+          if (!top) {
             top = bounds.y;
           } else {
             top = Math.min(top, bounds.y);
           }
-          if (left == null) {
+          if (!left) {
             left = bounds.x;
           } else {
             left = Math.min(left, bounds.x);

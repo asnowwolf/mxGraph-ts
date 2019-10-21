@@ -108,7 +108,7 @@ export class mxForm {
    */
   addCombo(name: string, isMultiSelect: boolean, size: any): any {
     const select = document.createElement('select');
-    if (size != null) {
+    if (!!size) {
       select.setAttribute('size', size);
     }
     if (isMultiSelect) {

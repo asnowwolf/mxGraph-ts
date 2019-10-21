@@ -60,10 +60,10 @@ export class mxCellOverlay {
   constructor(image: any, tooltip: any, align: any, verticalAlign: any, offset: any, cursor: any) {
     this.image = image;
     this.tooltip = tooltip;
-    this.align = (align != null) ? align : this.align;
-    this.verticalAlign = (verticalAlign != null) ? verticalAlign : this.verticalAlign;
-    this.offset = (offset != null) ? offset : new mxPoint();
-    this.cursor = (cursor != null) ? cursor : 'help';
+    this.align = (!!align) ? align : this.align;
+    this.verticalAlign = (!!verticalAlign) ? verticalAlign : this.verticalAlign;
+    this.offset = (!!offset) ? offset : new mxPoint();
+    this.cursor = (!!cursor) ? cursor : 'help';
   }
 
   image: any;
@@ -117,7 +117,7 @@ export class mxCellOverlay {
   getBounds(state: any): any {
     const isEdge = state.view.graph.getModel().isEdge(state.cell);
     const s = state.view.scale;
-    let pt = null;
+    let pt = undefined;
     const w = this.image.width;
     const h = this.image.height;
     if (isEdge) {

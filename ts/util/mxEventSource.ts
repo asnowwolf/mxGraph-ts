@@ -94,7 +94,7 @@ export class mxEventSource {
    * The parameters of the listener are the sender and an <mxEventObject>.
    */
   addListener(name: string, funct: () => any): void {
-    if (this.eventListeners == null) {
+    if (!this.eventListeners) {
       this.eventListeners = [];
     }
     this.eventListeners.push(name);
@@ -107,7 +107,7 @@ export class mxEventSource {
    * Removes all occurrences of the given listener from <eventListeners>.
    */
   removeListener(funct: () => any): void {
-    if (this.eventListeners != null) {
+    if (!!this.eventListeners) {
       let i = 0;
       while (i < this.eventListeners.length) {
         if (this.eventListeners[i + 1] == funct) {
@@ -138,21 +138,21 @@ export class mxEventSource {
    * sender - Optional sender to be passed to the listener. Default value is
    * the return value of <getEventSource>.
    */
-  fireEvent(evt: Event, sender: any): void {
-    if (this.eventListeners != null && this.isEventsEnabled()) {
-      if (evt == null) {
-        evt = new mxEventObject();
+  fireEvent(evt: mxEventObject, sender: mxEventSource | null = null): void {
+    if (!!this.eventListeners && this.isEventsEnabled()) {
+      if (!evt) {
+        return;
       }
-      if (sender == null) {
+      if (!sender) {
         sender = this.getEventSource();
       }
-      if (sender == null) {
+      if (!sender) {
         sender = this;
       }
       const args = [sender, evt];
       for (let i = 0; i < this.eventListeners.length; i += 2) {
         const listen = this.eventListeners[i];
-        if (listen == null || listen == evt.getName()) {
+        if (!listen || listen == evt.getName()) {
           this.eventListeners[i + 1].apply(this, args);
         }
       }

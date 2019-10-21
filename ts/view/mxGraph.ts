@@ -676,7 +676,7 @@ import { mxStylesheet } from './mxStylesheet';
 
 export class mxGraph {
   constructor(container: HTMLElement, model: any, renderHint: any, stylesheet: any) {
-    this.mouseListeners = null;
+    this.mouseListeners = undefined;
     this.renderHint = renderHint;
     if (mxClient.IS_SVG) {
       this.dialect = mxConstants.DIALECT_SVG;
@@ -689,19 +689,19 @@ export class mxGraph {
     } else {
       this.dialect = mxConstants.DIALECT_MIXEDHTML;
     }
-    this.model = (model != null) ? model : new mxGraphModel();
+    this.model = (!!model) ? model : new mxGraphModel();
     this.multiplicities = [];
     this.imageBundles = [];
     this.cellRenderer = this.createCellRenderer();
     this.setSelectionModel(this.createSelectionModel());
-    this.setStylesheet((stylesheet != null) ? stylesheet : this.createStylesheet());
+    this.setStylesheet((!!stylesheet) ? stylesheet : this.createStylesheet());
     this.view = this.createGraphView();
     this.graphModelChangeListener = mxUtils.bind(this, function (sender, evt) {
       this.graphModelChanged(evt.getProperty('edit').changes);
     });
     this.model.addListener(mxEvent.CHANGE, this.graphModelChangeListener);
     this.createHandlers();
-    if (container != null) {
+    if (!!container) {
       this.init(container);
     }
     this.view.revalidate();
@@ -1581,7 +1581,7 @@ export class mxGraph {
     this.view.init();
     this.sizeDidChange();
     mxEvent.addListener(container, 'mouseleave', mxUtils.bind(this, function () {
-      if (this.tooltipHandler != null) {
+      if (!!this.tooltipHandler) {
         this.tooltipHandler.hide();
       }
     }));
@@ -1793,13 +1793,13 @@ export class mxGraph {
     for (let i = 0; i < changes.length; i++) {
       const change = changes[i];
       if (change.constructor != mxRootChange) {
-        let cell = null;
+        let cell = undefined;
         if (change instanceof mxChildChange) {
           cell = change.child;
-        } else if (change.cell != null && change.cell instanceof mxCell) {
+        } else if (!!change.cell && change.cell instanceof mxCell) {
           cell = change.cell;
         }
-        if (cell != null) {
+        if (!!cell) {
           addCell(cell);
         }
       }
@@ -1839,7 +1839,7 @@ export class mxGraph {
         removed.push(cells[i]);
       } else {
         let par = this.model.getParent(cells[i]);
-        while (par != null && par != this.view.currentRoot) {
+        while (!!par && par != this.view.currentRoot) {
           if (this.isCellCollapsed(par) || !this.isCellVisible(par)) {
             removed.push(cells[i]);
             break;
@@ -1884,15 +1884,15 @@ export class mxGraph {
         }
       }
       if (newParent != change.previous) {
-        if (newParent != null) {
+        if (!!newParent) {
           this.view.invalidate(newParent, false, false);
         }
-        if (change.previous != null) {
+        if (!!change.previous) {
           this.view.invalidate(change.previous, false, false);
         }
       }
     } else if (change instanceof mxTerminalChange || change instanceof mxGeometryChange) {
-      if (change instanceof mxTerminalChange || ((change.previous == null && change.geometry != null) || (change.previous != null && !change.previous.equals(change.geometry)))) {
+      if (change instanceof mxTerminalChange || ((!change.previous && !!change.geometry) || (!!change.previous && !change.previous.equals(change.geometry)))) {
         this.view.invalidate(change.cell);
       }
     } else if (change instanceof mxValueChange) {
@@ -1900,10 +1900,10 @@ export class mxGraph {
     } else if (change instanceof mxStyleChange) {
       this.view.invalidate(change.cell, true, true);
       const state = this.view.getState(change.cell);
-      if (state != null) {
+      if (!!state) {
         state.invalidStyle = true;
       }
-    } else if (change.cell != null && change.cell instanceof mxCell) {
+    } else if (!!change.cell && change.cell instanceof mxCell) {
       this.removeStateForCell(change.cell);
     }
   }
@@ -1939,12 +1939,12 @@ export class mxGraph {
    * overlay - <mxCellOverlay> to be added for the cell.
    */
   addCellOverlay(cell: mxCell, overlay: any): any {
-    if (cell.overlays == null) {
+    if (!cell.overlays) {
       cell.overlays = [];
     }
     cell.overlays.push(overlay);
     const state = this.view.getState(cell);
-    if (state != null) {
+    if (!!state) {
       this.cellRenderer.redraw(state);
     }
     this.fireEvent(new mxEventObject(mxEvent.ADD_OVERLAY, 'cell', cell, 'overlay', overlay));
@@ -1978,22 +1978,22 @@ export class mxGraph {
    * overlay - Optional <mxCellOverlay> to be removed.
    */
   removeCellOverlay(cell: mxCell, overlay: any): any {
-    if (overlay == null) {
+    if (!overlay) {
       this.removeCellOverlays(cell);
     } else {
       const index = mxUtils.indexOf(cell.overlays, overlay);
       if (index >= 0) {
         cell.overlays.splice(index, 1);
         if (cell.overlays.length == 0) {
-          cell.overlays = null;
+          cell.overlays = undefined;
         }
         const state = this.view.getState(cell);
-        if (state != null) {
+        if (!!state) {
           this.cellRenderer.redraw(state);
         }
         this.fireEvent(new mxEventObject(mxEvent.REMOVE_OVERLAY, 'cell', cell, 'overlay', overlay));
       } else {
-        overlay = null;
+        overlay = undefined;
       }
     }
     return overlay;
@@ -2012,10 +2012,10 @@ export class mxGraph {
    */
   removeCellOverlays(cell: mxCell): any {
     const overlays = cell.overlays;
-    if (overlays != null) {
-      cell.overlays = null;
+    if (!!overlays) {
+      cell.overlays = undefined;
       const state = this.view.getState(cell);
-      if (state != null) {
+      if (!!state) {
         this.cellRenderer.redraw(state);
       }
       for (let i = 0; i < overlays.length; i++) {
@@ -2039,7 +2039,7 @@ export class mxGraph {
    * remove the overlays from. Default is the root in the model.
    */
   clearCellOverlays(cell: mxCell): void {
-    cell = (cell != null) ? cell : this.model.getRoot();
+    cell = (!!cell) ? cell : this.model.getRoot();
     this.removeCellOverlays(cell);
     const childCount = this.model.getChildCount(cell);
     for (let i = 0; i < childCount; i++) {
@@ -2073,8 +2073,8 @@ export class mxGraph {
    * should select the corresponding cell. Default is false.
    */
   setCellWarning(cell: mxCell, warning: any, img: any, isSelect: boolean): any {
-    if (warning != null && warning.length > 0) {
-      img = (img != null) ? img : this.warningImage;
+    if (!!warning && warning.length > 0) {
+      img = (!!img) ? img : this.warningImage;
       const overlay = new mxCellOverlay(img, '<font color=red>' + warning + '</font>');
       if (isSelect) {
         overlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function (sender, evt) {
@@ -2117,14 +2117,14 @@ export class mxGraph {
    * evt - Optional mouse event that triggered the editing.
    */
   startEditingAtCell(cell: mxCell, evt: Event): void {
-    if (evt == null || !mxEvent.isMultiTouchEvent(evt)) {
-      if (cell == null) {
+    if (!evt || !mxEvent.isMultiTouchEvent(evt)) {
+      if (!cell) {
         cell = this.getSelectionCell();
-        if (cell != null && !this.isCellEditable(cell)) {
-          cell = null;
+        if (!!cell && !this.isCellEditable(cell)) {
+          cell = undefined;
         }
       }
-      if (cell != null) {
+      if (!!cell) {
         this.fireEvent(new mxEventObject(mxEvent.START_EDITING, 'cell', cell, 'event', evt));
         this.cellEditor.startEditing(cell, evt);
         this.fireEvent(new mxEventObject(mxEvent.EDITING_STARTED, 'cell', cell, 'event', evt));
@@ -2263,7 +2263,7 @@ export class mxGraph {
    *   var e = evt.getProperty('event'); // mouse event
    *   var cell = evt.getProperty('cell'); // cell may be null
    *
-   *   if (cell != null)
+   *   if (!!cell)
    *   {
    *     // Do something useful with cell and consume the event
    *     evt.consume();
@@ -2284,7 +2284,7 @@ export class mxGraph {
     }
     this.fireEvent(mxe);
     if (this.isEnabled() && !mxEvent.isConsumed(evt) && !mxe.isConsumed()) {
-      if (cell != null) {
+      if (!!cell) {
         if (this.isTransparentClickEvent(evt)) {
           let active = false;
           const tmp = this.getCellAt(me.graphX, me.graphY, null, null, null, mxUtils.bind(this, function (state) {
@@ -2292,17 +2292,17 @@ export class mxGraph {
             active = active || selected;
             return !active || selected;
           }));
-          if (tmp != null) {
+          if (!!tmp) {
             cell = tmp;
           }
         }
         this.selectCellForEvent(cell, evt);
       } else {
-        let swimlane = null;
+        let swimlane = undefined;
         if (this.isSwimlaneSelectionEnabled()) {
           swimlane = this.getSwimlaneAt(me.getGraphX(), me.getGraphY());
         }
-        if (swimlane != null) {
+        if (!!swimlane) {
           this.selectCellForEvent(swimlane, evt);
         } else if (!this.isToggleEvent(evt)) {
           this.clearSelection();
@@ -2354,7 +2354,7 @@ export class mxGraph {
   dblClick(evt: Event, cell: mxCell): void {
     const mxe = new mxEventObject(mxEvent.DOUBLE_CLICK, 'event', evt, 'cell', cell);
     this.fireEvent(mxe);
-    if (this.isEnabled() && !mxEvent.isConsumed(evt) && !mxe.isConsumed() && cell != null && this.isCellEditable(cell) && !this.isEditing(cell)) {
+    if (this.isEnabled() && !mxEvent.isConsumed(evt) && !mxe.isConsumed() && !!cell && this.isCellEditable(cell) && !this.isEditing(cell)) {
       this.startEditingAtCell(cell, evt);
       mxEvent.consume(evt);
     }
@@ -2379,7 +2379,7 @@ export class mxGraph {
     }
     if (this.isEnabled() && !mxEvent.isConsumed(evt) && !mxe.isConsumed() && this.connectionHandler.isEnabled()) {
       const state = this.view.getState(this.connectionHandler.marker.getCell(me));
-      if (state != null) {
+      if (!!state) {
         this.connectionHandler.marker.currentColor = this.connectionHandler.marker.validColor;
         this.connectionHandler.marker.markedState = state;
         this.connectionHandler.marker.mark();
@@ -2400,7 +2400,7 @@ export class mxGraph {
   scrollPointToVisible(x: number, y: number, extend: any, border: any): void {
     if (!this.timerAutoScroll && (this.ignoreScrollbars || mxUtils.hasScrollbars(this.container))) {
       const c = this.container;
-      border = (border != null) ? border : 20;
+      border = (!!border) ? border : 20;
       if (x >= c.scrollLeft && y >= c.scrollTop && x <= c.scrollLeft + c.clientWidth && y <= c.scrollTop + c.clientHeight) {
         let dx = c.scrollLeft + c.clientWidth - x;
         if (dx < border) {
@@ -2448,7 +2448,7 @@ export class mxGraph {
         }
       }
     } else if (this.allowAutoPanning && !this.panningHandler.isActive()) {
-      if (this.panningManager == null) {
+      if (!this.panningManager) {
         this.panningManager = this.createPanningManager();
       }
       this.panningManager.panTo(x + this.panDx, y + this.panDy);
@@ -2539,19 +2539,19 @@ export class mxGraph {
    * maxHeight - Optional maximum height.
    */
   fit(border: any, keepOrigin: any, margin: any, enabled: boolean, ignoreWidth: any, ignoreHeight: any, maxHeight: any): any {
-    if (this.container != null) {
-      border = (border != null) ? border : this.getBorder();
-      keepOrigin = (keepOrigin != null) ? keepOrigin : false;
-      margin = (margin != null) ? margin : 0;
-      enabled = (enabled != null) ? enabled : true;
-      ignoreWidth = (ignoreWidth != null) ? ignoreWidth : false;
-      ignoreHeight = (ignoreHeight != null) ? ignoreHeight : false;
+    if (!!this.container) {
+      border = (!!border) ? border : this.getBorder();
+      keepOrigin = (!!keepOrigin) ? keepOrigin : false;
+      margin = (!!margin) ? margin : 0;
+      enabled = (!!enabled) ? enabled : true;
+      ignoreWidth = (!!ignoreWidth) ? ignoreWidth : false;
+      ignoreHeight = (!!ignoreHeight) ? ignoreHeight : false;
       const cssBorder = this.getBorderSizes();
       let w1 = this.container.offsetWidth - cssBorder.x - cssBorder.width - 1;
-      let h1 = (maxHeight != null) ? maxHeight : this.container.offsetHeight - cssBorder.y - cssBorder.height - 1;
+      let h1 = (!!maxHeight) ? maxHeight : this.container.offsetHeight - cssBorder.y - cssBorder.height - 1;
       let bounds = this.view.getGraphBounds();
       if (bounds.width > 0 && bounds.height > 0) {
-        if (keepOrigin && bounds.x != null && bounds.y != null) {
+        if (keepOrigin && !!bounds.x && !!bounds.y) {
           bounds = bounds.clone();
           bounds.width += bounds.x;
           bounds.height += bounds.y;
@@ -2561,7 +2561,7 @@ export class mxGraph {
         const s = this.view.scale;
         let w2 = bounds.width / s;
         let h2 = bounds.height / s;
-        if (this.backgroundImage != null) {
+        if (!!this.backgroundImage) {
           w2 = Math.max(w2, this.backgroundImage.width - bounds.x / s);
           h2 = Math.max(h2, this.backgroundImage.height - bounds.y / s);
         }
@@ -2569,25 +2569,25 @@ export class mxGraph {
         w1 -= b;
         h1 -= b;
         let s2 = (((ignoreWidth) ? h1 / h2 : (ignoreHeight) ? w1 / w2 : Math.min(w1 / w2, h1 / h2)));
-        if (this.minFitScale != null) {
+        if (!!this.minFitScale) {
           s2 = Math.max(s2, this.minFitScale);
         }
-        if (this.maxFitScale != null) {
+        if (!!this.maxFitScale) {
           s2 = Math.min(s2, this.maxFitScale);
         }
         if (enabled) {
           if (!keepOrigin) {
             if (!mxUtils.hasScrollbars(this.container)) {
-              const x0 = (bounds.x != null) ? Math.floor(this.view.translate.x - bounds.x / s + border / s2 + margin / 2) : border;
-              const y0 = (bounds.y != null) ? Math.floor(this.view.translate.y - bounds.y / s + border / s2 + margin / 2) : border;
+              const x0 = (!!bounds.x) ? Math.floor(this.view.translate.x - bounds.x / s + border / s2 + margin / 2) : border;
+              const y0 = (!!bounds.y) ? Math.floor(this.view.translate.y - bounds.y / s + border / s2 + margin / 2) : border;
               this.view.scaleAndTranslate(s2, x0, y0);
             } else {
               this.view.setScale(s2);
               const b2 = this.getGraphBounds();
-              if (b2.x != null) {
+              if (!!b2.x) {
                 this.container.scrollLeft = b2.x;
               }
-              if (b2.y != null) {
+              if (!!b2.y) {
                 this.container.scrollTop = b2.y;
               }
             }
@@ -2611,11 +2611,11 @@ export class mxGraph {
    */
   sizeDidChange(): void {
     const bounds = this.getGraphBounds();
-    if (this.container != null) {
+    if (!!this.container) {
       const border = this.getBorder();
       let width = Math.max(0, bounds.x + bounds.width + 2 * border * this.view.scale);
       let height = Math.max(0, bounds.y + bounds.height + 2 * border * this.view.scale);
-      if (this.minimumContainerSize != null) {
+      if (!!this.minimumContainerSize) {
         width = Math.max(width, this.minimumContainerSize.width);
         height = Math.max(height, this.minimumContainerSize.height);
       }
@@ -2624,12 +2624,12 @@ export class mxGraph {
       }
       if (this.preferPageSize || (!mxClient.IS_IE && this.pageVisible)) {
         const size = this.getPreferredPageSize(bounds, Math.max(1, width), Math.max(1, height));
-        if (size != null) {
+        if (!!size) {
           width = size.width * this.view.scale;
           height = size.height * this.view.scale;
         }
       }
-      if (this.minimumGraphSize != null) {
+      if (!!this.minimumGraphSize) {
         width = Math.max(width, this.minimumGraphSize.width * this.view.scale);
         height = Math.max(height, this.minimumGraphSize.height * this.view.scale);
       }
@@ -2637,7 +2637,7 @@ export class mxGraph {
       height = Math.ceil(height);
       if (this.dialect == mxConstants.DIALECT_SVG) {
         const root = this.view.getDrawPane().ownerSVGElement;
-        if (root != null) {
+        if (!!root) {
           root.style.minWidth = Math.max(1, width) + 'px';
           root.style.minHeight = Math.max(1, height) + 'px';
           root.style.width = '100%';
@@ -2662,7 +2662,7 @@ export class mxGraph {
    * Resizes the container for the given graph width and height.
    */
   doResizeContainer(width: number, height: number): void {
-    if (this.maximumContainerSize != null) {
+    if (!!this.maximumContainerSize) {
       width = Math.min(this.maximumContainerSize.width, width);
       height = Math.min(this.maximumContainerSize.height, height);
     }
@@ -2699,18 +2699,18 @@ export class mxGraph {
     const verticalCount = (visible) ? Math.ceil(gb.width / bounds.width) + 1 : 0;
     const right = (verticalCount - 1) * bounds.width;
     const bottom = (horizontalCount - 1) * bounds.height;
-    if (this.horizontalPageBreaks == null && horizontalCount > 0) {
+    if (!this.horizontalPageBreaks && horizontalCount > 0) {
       this.horizontalPageBreaks = [];
     }
-    if (this.verticalPageBreaks == null && verticalCount > 0) {
+    if (!this.verticalPageBreaks && verticalCount > 0) {
       this.verticalPageBreaks = [];
     }
     const drawPageBreaks = mxUtils.bind(this, function (breaks) {
-      if (breaks != null) {
+      if (!!breaks) {
         const count = (breaks == this.horizontalPageBreaks) ? horizontalCount : verticalCount;
         for (let i = 0; i <= count; i++) {
           const pts = (breaks == this.horizontalPageBreaks) ? [new mxPoint(Math.round(bounds.x), Math.round(bounds.y + i * bounds.height)), new mxPoint(Math.round(bounds.x + right), Math.round(bounds.y + i * bounds.height))] : [new mxPoint(Math.round(bounds.x + i * bounds.width), Math.round(bounds.y)), new mxPoint(Math.round(bounds.x + i * bounds.width), Math.round(bounds.y + bottom))];
-          if (breaks[i] != null) {
+          if (breaks[i]) {
             breaks[i].points = pts;
             breaks[i].redraw();
           } else {
@@ -2749,16 +2749,16 @@ export class mxGraph {
    */
   getCellStyle(cell: mxCell): any {
     const stylename = this.model.getStyle(cell);
-    let style = null;
+    let style = undefined;
     if (this.model.isEdge(cell)) {
       style = this.stylesheet.getDefaultEdgeStyle();
     } else {
       style = this.stylesheet.getDefaultVertexStyle();
     }
-    if (stylename != null) {
+    if (!!stylename) {
       style = this.postProcessCellStyle(this.stylesheet.getCellStyle(stylename, style));
     }
-    if (style == null) {
+    if (!style) {
       style = {};
     }
     return style;
@@ -2772,15 +2772,15 @@ export class mxGraph {
    * defined in RFC 2397 of the IETF.
    */
   postProcessCellStyle(style: any): any {
-    if (style != null) {
+    if (!!style) {
       const key = style[mxConstants.STYLE_IMAGE];
       let image = this.getImageFromBundles(key);
-      if (image != null) {
+      if (!!image) {
         style[mxConstants.STYLE_IMAGE] = image;
       } else {
         image = key;
       }
-      if (image != null && image.substring(0, 11) == 'data:image/') {
+      if (!!image && image.substring(0, 11) == 'data:image/') {
         if (image.substring(0, 20) == 'data:image/svg+xml,<') {
           image = image.substring(0, 19) + encodeURIComponent(image.substring(19));
         } else if (image.substring(0, 22) != 'data:image/svg+xml,%3C') {
@@ -2809,7 +2809,7 @@ export class mxGraph {
    */
   setCellStyle(style: any, cells: mxCell[]): void {
     cells = cells || this.getSelectionCells();
-    if (cells != null) {
+    if (!!cells) {
       this.model.beginUpdate();
       try {
         for (let i = 0; i < cells.length; i++) {
@@ -2858,13 +2858,13 @@ export class mxGraph {
    * Default is the selection cells.
    */
   toggleCellStyles(key: string, defaultValue: any, cells: mxCell[]): any {
-    defaultValue = (defaultValue != null) ? defaultValue : false;
+    defaultValue = (!!defaultValue) ? defaultValue : false;
     cells = cells || this.getSelectionCells();
-    let value = null;
-    if (cells != null && cells.length > 0) {
+    let value = undefined;
+    if (!!cells && cells.length > 0) {
       const state = this.view.getState(cells[0]);
-      const style = (state != null) ? state.style : this.getCellStyle(cells[0]);
-      if (style != null) {
+      const style = (!!state) ? state.style : this.getCellStyle(cells[0]);
+      if (!!style) {
         value = (mxUtils.getValue(style, key, defaultValue)) ? 0 : 1;
         this.setCellStyles(key, value, cells);
       }
@@ -2926,11 +2926,11 @@ export class mxGraph {
    */
   setCellStyleFlags(key: string, flag: any, value: any, cells: mxCell[]): void {
     cells = cells || this.getSelectionCells();
-    if (cells != null && cells.length > 0) {
-      if (value == null) {
+    if (!!cells && cells.length > 0) {
+      if (!value) {
         const state = this.view.getState(cells[0]);
-        const style = (state != null) ? state.style : this.getCellStyle(cells[0]);
-        if (style != null) {
+        const style = (!!state) ? state.style : this.getCellStyle(cells[0]);
+        if (!!style) {
           const current = parseInt(style[key] || 0);
           value = !((current & flag) == flag);
         }
@@ -2953,15 +2953,15 @@ export class mxGraph {
    * param - Optional coordinate for the alignment.
    */
   alignCells(align: any, cells: mxCell[], param: any): any {
-    if (cells == null) {
+    if (!cells) {
       cells = this.getSelectionCells();
     }
-    if (cells != null && cells.length > 1) {
-      if (param == null) {
+    if (!!cells && cells.length > 1) {
+      if (!param) {
         for (let i = 0; i < cells.length; i++) {
           const state = this.view.getState(cells[i]);
-          if (state != null && !this.model.isEdge(cells[i])) {
-            if (param == null) {
+          if (!!state && !this.model.isEdge(cells[i])) {
+            if (!param) {
               if (align == mxConstants.ALIGN_CENTER) {
                 param = state.x + state.width / 2;
                 break;
@@ -2991,15 +2991,15 @@ export class mxGraph {
           }
         }
       }
-      if (param != null) {
+      if (!!param) {
         const s = this.view.scale;
         this.model.beginUpdate();
         try {
           for (let i = 0; i < cells.length; i++) {
             const state = this.view.getState(cells[i]);
-            if (state != null) {
+            if (!!state) {
               let geo = this.getCellGeometry(cells[i]);
-              if (geo != null && !this.model.isEdge(cells[i])) {
+              if (!!geo && !this.model.isEdge(cells[i])) {
                 geo = geo.clone();
                 if (align == mxConstants.ALIGN_CENTER) {
                   geo.x += (param - state.x - state.width / 2) / s;
@@ -3040,12 +3040,12 @@ export class mxGraph {
    * (code)
    * graph.flipEdge = function(edge)
    * {
-   *   if (edge != null)
+   *   if (!!edge)
    *   {
    *     var state = this.view.getState(edge);
-   *     var style = (state != null) ? state.style : this.getCellStyle(edge);
+   *     var style = (!!state) ? state.style : this.getCellStyle(edge);
    *
-   *     if (style != null)
+   *     if (!!style)
    *     {
    *       var elbow = mxUtils.getValue(style, mxConstants.STYLE_ELBOW,
    *           mxConstants.ELBOW_HORIZONTAL);
@@ -3062,11 +3062,11 @@ export class mxGraph {
    * edge - <mxCell> whose style should be changed.
    */
   flipEdge(edge: any): any {
-    if (edge != null && this.alternateEdgeStyle != null) {
+    if (!!edge && !!this.alternateEdgeStyle) {
       this.model.beginUpdate();
       try {
         const style = this.model.getStyle(edge);
-        if (style == null || style.length == 0) {
+        if (!style || style.length == 0) {
           this.model.setStyle(edge, this.alternateEdgeStyle);
         } else {
           this.model.setStyle(edge, null);
@@ -3111,10 +3111,10 @@ export class mxGraph {
    * for the first match or null if the key is not found.
    */
   getImageFromBundles(key: string): any {
-    if (key != null) {
+    if (!!key) {
       for (let i = 0; i < this.imageBundles.length; i++) {
         const image = this.imageBundles[i].getImage(key);
-        if (image != null) {
+        if (!!image) {
           return image;
         }
       }
@@ -3136,7 +3136,7 @@ export class mxGraph {
    * specified then the selection cells are used.
    */
   orderCells(back: any, cells: mxCell[]): any {
-    if (cells == null) {
+    if (!cells) {
       cells = mxUtils.sortCells(this.getSelectionCells(), true);
     }
     this.model.beginUpdate();
@@ -3161,7 +3161,7 @@ export class mxGraph {
    * back - Boolean that specifies if the cells should be moved to back.
    */
   cellsOrdered(cells: mxCell[], back: any): void {
-    if (cells != null) {
+    if (!!cells) {
       this.model.beginUpdate();
       try {
         for (let i = 0; i < cells.length; i++) {
@@ -3198,22 +3198,22 @@ export class mxGraph {
    * then the selection cells are used.
    */
   groupCells(group: any, border: any, cells: mxCell[]): any {
-    if (cells == null) {
+    if (!cells) {
       cells = mxUtils.sortCells(this.getSelectionCells(), true);
     }
     cells = this.getCellsForGroup(cells);
-    if (group == null) {
+    if (!group) {
       group = this.createGroupCell(cells);
     }
     const bounds = this.getBoundsForGroup(group, cells, border);
-    if (cells.length > 0 && bounds != null) {
+    if (cells.length > 0 && !!bounds) {
       let parent = this.model.getParent(group);
-      if (parent == null) {
+      if (!parent) {
         parent = this.model.getParent(cells[0]);
       }
       this.model.beginUpdate();
       try {
-        if (this.getCellGeometry(group) == null) {
+        if (!this.getCellGeometry(group)) {
           this.model.setGeometry(group, new mxGeometry());
         }
         let index = this.model.getChildCount(parent);
@@ -3238,7 +3238,7 @@ export class mxGraph {
    */
   getCellsForGroup(cells: mxCell[]): any {
     const result = [];
-    if (cells != null && cells.length > 0) {
+    if (!!cells && cells.length > 0) {
       const parent = this.model.getParent(cells[0]);
       result.push(cells[0]);
       for (let i = 1; i < cells.length; i++) {
@@ -3257,7 +3257,7 @@ export class mxGraph {
    */
   getBoundsForGroup(group: any, children: any, border: any): any {
     const result = this.getBoundingBoxFromGeometry(children, true);
-    if (result != null) {
+    if (!!result) {
       if (this.isSwimlane(group)) {
         const size = this.getStartSize(group);
         result.x -= size.width;
@@ -3265,7 +3265,7 @@ export class mxGraph {
         result.width += size.width;
         result.height += size.height;
       }
-      if (border != null) {
+      if (!!border) {
         result.x -= border;
         result.y -= border;
         result.width += 2 * border;
@@ -3314,7 +3314,7 @@ export class mxGraph {
    */
   ungroupCells(cells: mxCell[]): any {
     let result = [];
-    if (cells == null) {
+    if (!cells) {
       cells = this.getSelectionCells();
       const tmp = [];
       for (let i = 0; i < cells.length; i++) {
@@ -3324,12 +3324,12 @@ export class mxGraph {
       }
       cells = tmp;
     }
-    if (cells != null && cells.length > 0) {
+    if (!!cells && cells.length > 0) {
       this.model.beginUpdate();
       try {
         for (let i = 0; i < cells.length; i++) {
           let children = this.model.getChildren(cells[i]);
-          if (children != null && children.length > 0) {
+          if (!!children && children.length > 0) {
             children = children.slice();
             const parent = this.model.getParent(cells[i]);
             const index = this.model.getChildCount(parent);
@@ -3370,7 +3370,7 @@ export class mxGraph {
    * cells - Array of <mxCells> to be removed from their parents.
    */
   removeCellsFromParent(cells: mxCell[]): any {
-    if (cells == null) {
+    if (!cells) {
       cells = this.getSelectionCells();
     }
     this.model.beginUpdate();
@@ -3406,24 +3406,24 @@ export class mxGraph {
    * leftBorder - Optional top border to be added in the group. Default is 0.
    */
   updateGroupBounds(cells: mxCell[], border: any, moveGroup: any, topBorder: any, rightBorder: any, bottomBorder: any, leftBorder: any): any {
-    if (cells == null) {
+    if (!cells) {
       cells = this.getSelectionCells();
     }
-    border = (border != null) ? border : 0;
-    moveGroup = (moveGroup != null) ? moveGroup : false;
-    topBorder = (topBorder != null) ? topBorder : 0;
-    rightBorder = (rightBorder != null) ? rightBorder : 0;
-    bottomBorder = (bottomBorder != null) ? bottomBorder : 0;
-    leftBorder = (leftBorder != null) ? leftBorder : 0;
+    border = (!!border) ? border : 0;
+    moveGroup = (!!moveGroup) ? moveGroup : false;
+    topBorder = (!!topBorder) ? topBorder : 0;
+    rightBorder = (!!rightBorder) ? rightBorder : 0;
+    bottomBorder = (!!bottomBorder) ? bottomBorder : 0;
+    leftBorder = (!!leftBorder) ? leftBorder : 0;
     this.model.beginUpdate();
     try {
       for (let i = cells.length - 1; i >= 0; i--) {
         let geo = this.getCellGeometry(cells[i]);
-        if (geo != null) {
+        if (!!geo) {
           const children = this.getChildCells(cells[i]);
-          if (children != null && children.length > 0) {
+          if (!!children && children.length > 0) {
             const bounds = this.getBoundingBoxFromGeometry(children, true);
-            if (bounds != null && bounds.width > 0 && bounds.height > 0) {
+            if (!!bounds && bounds.width > 0 && bounds.height > 0) {
               let left = 0;
               let top = 0;
               if (this.isSwimlane(cells[i])) {
@@ -3461,13 +3461,13 @@ export class mxGraph {
    * cells - Array of <mxCells> whose bounding box should be returned.
    */
   getBoundingBox(cells: mxCell[]): any {
-    let result = null;
-    if (cells != null && cells.length > 0) {
+    let result = undefined;
+    if (!!cells && cells.length > 0) {
       for (let i = 0; i < cells.length; i++) {
         if (this.model.isVertex(cells[i]) || this.model.isEdge(cells[i])) {
           const bbox = this.view.getBoundingBox(this.view.getState(cells[i]), true);
-          if (bbox != null) {
-            if (result == null) {
+          if (!!bbox) {
+            if (!result) {
               result = mxRectangle.fromRectangle(bbox);
             } else {
               result.add(bbox);
@@ -3515,9 +3515,9 @@ export class mxGraph {
    * be updated to reflect the lost parent cell. Default is false.
    */
   cloneCells(cells: mxCell[], allowInvalidEdges: any, mapping: any, keepPosition: any): any {
-    allowInvalidEdges = (allowInvalidEdges != null) ? allowInvalidEdges : true;
-    let clones = null;
-    if (cells != null) {
+    allowInvalidEdges = (!!allowInvalidEdges) ? allowInvalidEdges : true;
+    let clones = undefined;
+    if (!!cells) {
       const dict = new mxDictionary();
       const tmp = [];
       for (let i = 0; i < cells.length; i++) {
@@ -3529,36 +3529,36 @@ export class mxGraph {
         const trans = this.view.translate;
         clones = this.model.cloneCells(cells, true, mapping);
         for (let i = 0; i < cells.length; i++) {
-          if (!allowInvalidEdges && this.model.isEdge(clones[i]) && this.getEdgeValidationError(clones[i], this.model.getTerminal(clones[i], true), this.model.getTerminal(clones[i], false)) != null) {
-            clones[i] = null;
+          if (!allowInvalidEdges && this.model.isEdge(clones[i]) && this.getEdgeValidationError(clones[i], this.model.getTerminal(clones[i], true), this.model.getTerminal(clones[i], false))) {
+            clones[i] = undefined;
           } else {
             const g = this.model.getGeometry(clones[i]);
-            if (g != null) {
+            if (!!g) {
               const state = this.view.getState(cells[i]);
               const pstate = this.view.getState(this.model.getParent(cells[i]));
-              if (state != null && pstate != null) {
+              if (!!state && !!pstate) {
                 const dx = (keepPosition) ? 0 : pstate.origin.x;
                 const dy = (keepPosition) ? 0 : pstate.origin.y;
                 if (this.model.isEdge(clones[i])) {
                   const pts = state.absolutePoints;
-                  if (pts != null) {
+                  if (!!pts) {
                     let src = this.model.getTerminal(cells[i], true);
-                    while (src != null && !dict.get(src)) {
+                    while (!!src && !dict.get(src)) {
                       src = this.model.getParent(src);
                     }
-                    if (src == null && pts[0] != null) {
+                    if (!src && pts[0]) {
                       g.setTerminalPoint(new mxPoint(pts[0].x / scale - trans.x, pts[0].y / scale - trans.y), true);
                     }
                     let trg = this.model.getTerminal(cells[i], false);
-                    while (trg != null && !dict.get(trg)) {
+                    while (!!trg && !dict.get(trg)) {
                       trg = this.model.getParent(trg);
                     }
                     const n = pts.length - 1;
-                    if (trg == null && pts[n] != null) {
+                    if (!trg && pts[n]) {
                       g.setTerminalPoint(new mxPoint(pts[n].x / scale - trans.x, pts[n].y / scale - trans.y), false);
                     }
                     const points = g.points;
-                    if (points != null) {
+                    if (!!points) {
                       for (let j = 0; j < points.length; j++) {
                         points[j].x += dx;
                         points[j].y += dy;
@@ -3632,7 +3632,7 @@ export class mxGraph {
    */
   createVertex(parent: any, id: any, value: any, x: number, y: number, width: number, height: number, style: any, relative: any): any {
     const geometry = new mxGeometry(x, y, width, height);
-    geometry.relative = (relative != null) ? relative : false;
+    geometry.relative = (!!relative) ? relative : false;
     const vertex = new mxCell(value, geometry, style);
     vertex.setId(id);
     vertex.setVertex(true);
@@ -3735,10 +3735,10 @@ export class mxGraph {
    * target - Optional target <mxCell> for all inserted cells.
    */
   addCells(cells: mxCell[], parent: any, index: number, source: any, target: string): any {
-    if (parent == null) {
+    if (!parent) {
       parent = this.getDefaultParent();
     }
-    if (index == null) {
+    if (!index) {
       index = this.model.getChildCount(parent);
     }
     this.model.beginUpdate();
@@ -3758,22 +3758,22 @@ export class mxGraph {
    * <mxEvent.CELLS_ADDED> while the transaction is in progress.
    */
   cellsAdded(cells: mxCell[], parent: any, index: number, source: any, target: string, absolute: any, constrain: any, extend: any): void {
-    if (cells != null && parent != null && index != null) {
+    if (!!cells && !!parent && !!index) {
       this.model.beginUpdate();
       try {
         const parentState = (absolute) ? this.view.getState(parent) : null;
-        const o1 = (parentState != null) ? parentState.origin : null;
+        const o1 = (!!parentState) ? parentState.origin : null;
         const zero = new mxPoint(0, 0);
         for (let i = 0; i < cells.length; i++) {
-          if (cells[i] == null) {
+          if (!cells[i]) {
             index--;
           } else {
             const previous = this.model.getParent(cells[i]);
-            if (o1 != null && cells[i] != parent && parent != previous) {
+            if (!!o1 && cells[i] != parent && parent != previous) {
               const oldState = this.view.getState(previous);
-              const o2 = (oldState != null) ? oldState.origin : zero;
+              const o2 = (!!oldState) ? oldState.origin : zero;
               let geo = this.model.getGeometry(cells[i]);
-              if (geo != null) {
+              if (!!geo) {
                 const dx = o2.x - o1.x;
                 const dy = o2.y - o1.y;
                 geo = geo.clone();
@@ -3792,16 +3792,16 @@ export class mxGraph {
             if (this.autoSizeCellsOnAdd) {
               this.autoSizeCell(cells[i], true);
             }
-            if ((extend == null || extend) && this.isExtendParentsOnAdd(cells[i]) && this.isExtendParent(cells[i])) {
+            if ((!extend || extend) && this.isExtendParentsOnAdd(cells[i]) && this.isExtendParent(cells[i])) {
               this.extendParent(cells[i]);
             }
-            if (constrain == null || constrain) {
+            if (!constrain || constrain) {
               this.constrainChild(cells[i]);
             }
-            if (source != null) {
+            if (!!source) {
               this.cellConnected(cells[i], source, true);
             }
-            if (target != null) {
+            if (!!target) {
               this.cellConnected(cells[i], target, false);
             }
           }
@@ -3825,7 +3825,7 @@ export class mxGraph {
    * autosized. Default is true.
    */
   autoSizeCell(cell: mxCell, recurse: any): void {
-    recurse = (recurse != null) ? recurse : true;
+    recurse = (!!recurse) ? recurse : true;
     if (recurse) {
       const childCount = this.model.getChildCount(cell);
       for (let i = 0; i < childCount; i++) {
@@ -3853,8 +3853,8 @@ export class mxGraph {
    * should be removed as well. Default is true.
    */
   removeCells(cells: mxCell[], includeEdges: any): any {
-    includeEdges = (includeEdges != null) ? includeEdges : true;
-    if (cells == null) {
+    includeEdges = (!!includeEdges) ? includeEdges : true;
+    if (!cells) {
       cells = this.getDeletableCells(this.getSelectionCells());
     }
     if (includeEdges) {
@@ -3867,7 +3867,7 @@ export class mxGraph {
         dict.put(cells[i], true);
       }
       for (let i = 0; i < edges.length; i++) {
-        if (this.view.getState(edges[i]) == null && !dict.get(edges[i])) {
+        if (!this.view.getState(edges[i]) && !dict.get(edges[i])) {
           dict.put(edges[i], true);
           cells.push(edges[i]);
         }
@@ -3894,7 +3894,7 @@ export class mxGraph {
    * cells - Array of <mxCells> to remove.
    */
   cellsRemoved(cells: mxCell[]): void {
-    if (cells != null && cells.length > 0) {
+    if (!!cells && cells.length > 0) {
       const scale = this.view.scale;
       const tr = this.view.translate;
       this.model.beginUpdate();
@@ -3907,11 +3907,11 @@ export class mxGraph {
           const edges = this.getAllEdges([cells[i]]);
           const disconnectTerminal = mxUtils.bind(this, function (edge, source) {
             let geo = this.model.getGeometry(edge);
-            if (geo != null) {
+            if (!!geo) {
               const terminal = this.model.getTerminal(edge, source);
               let connected = false;
               let tmp = terminal;
-              while (tmp != null) {
+              while (!!tmp) {
                 if (cells[i] == tmp) {
                   connected = true;
                   break;
@@ -3921,13 +3921,13 @@ export class mxGraph {
               if (connected) {
                 geo = geo.clone();
                 const state = this.view.getState(edge);
-                if (state != null && state.absolutePoints != null) {
+                if (!!state && !!state.absolutePoints) {
                   const pts = state.absolutePoints;
                   const n = (source) ? 0 : pts.length - 1;
                   geo.setTerminalPoint(new mxPoint(pts[n].x / scale - tr.x - state.origin.x, pts[n].y / scale - tr.y - state.origin.y), source);
                 } else {
                   const tstate = this.view.getState(terminal);
-                  if (tstate != null) {
+                  if (!!tstate) {
                     geo.setTerminalPoint(new mxPoint(tstate.getCenterX() / scale - tr.x, tstate.getCenterY() / scale - tr.y), source);
                   }
                 }
@@ -3975,17 +3975,17 @@ export class mxGraph {
     const source = this.model.getTerminal(edge, true);
     this.model.beginUpdate();
     try {
-      if (newEdge == null) {
+      if (!newEdge) {
         newEdge = this.cloneCell(edge);
         const state = this.view.getState(edge);
         let geo = this.getCellGeometry(newEdge);
-        if (geo != null && geo.points != null && state != null) {
+        if (!!geo && !!geo.points && !!state) {
           const t = this.view.translate;
           const s = this.view.scale;
           const idx = mxUtils.findNearestSegment(state, (dx + t.x) * s, (dy + t.y) * s);
           geo.points = geo.points.slice(0, idx);
           geo = this.getCellGeometry(edge);
-          if (geo != null && geo.points != null) {
+          if (!!geo && !!geo.points) {
             geo = geo.clone();
             geo.points = geo.points.slice(idx);
             this.model.setGeometry(edge, geo);
@@ -4020,7 +4020,7 @@ export class mxGraph {
    * connected edges should be changed as well. Default is true.
    */
   toggleCells(show: any, cells: mxCell[], includeEdges: any): any {
-    if (cells == null) {
+    if (!cells) {
       cells = this.getSelectionCells();
     }
     if (includeEdges) {
@@ -4047,7 +4047,7 @@ export class mxGraph {
    * show - Boolean that specifies the visible state to be assigned.
    */
   cellsToggled(cells: mxCell[], show: any): void {
-    if (cells != null && cells.length > 0) {
+    if (!!cells && cells.length > 0) {
       this.model.beginUpdate();
       try {
         for (let i = 0; i < cells.length; i++) {
@@ -4079,8 +4079,8 @@ export class mxGraph {
    * evt - Optional native event that triggered the invocation.
    */
   foldCells(collapse: any, recurse: any, cells: mxCell[], checkFoldable: boolean, evt: Event): any {
-    recurse = (recurse != null) ? recurse : false;
-    if (cells == null) {
+    recurse = (!!recurse) ? recurse : false;
+    if (!cells) {
       cells = this.getFoldableCells(this.getSelectionCells(), collapse);
     }
     this.stopEditing(false);
@@ -4111,7 +4111,7 @@ export class mxGraph {
    * checked. Default is false.
    */
   cellsFolded(cells: mxCell[], collapse: any, recurse: any, checkFoldable: boolean): void {
-    if (cells != null && cells.length > 0) {
+    if (!!cells && cells.length > 0) {
       this.model.beginUpdate();
       try {
         for (let i = 0; i < cells.length; i++) {
@@ -4147,9 +4147,9 @@ export class mxGraph {
    * willCollapse - Boolean indicating if the cell is going to be collapsed.
    */
   swapBounds(cell: mxCell, willCollapse: any): void {
-    if (cell != null) {
+    if (!!cell) {
       let geo = this.model.getGeometry(cell);
-      if (geo != null) {
+      if (!!geo) {
         geo = geo.clone();
         this.updateAlternateBounds(cell, geo, willCollapse);
         geo.swap();
@@ -4175,14 +4175,14 @@ export class mxGraph {
    * willCollapse - Boolean indicating if the cell is going to be collapsed.
    */
   updateAlternateBounds(cell: mxCell, geo: any, willCollapse: any): void {
-    if (cell != null && geo != null) {
+    if (!!cell && !!geo) {
       const state = this.view.getState(cell);
-      const style = (state != null) ? state.style : this.getCellStyle(cell);
-      if (geo.alternateBounds == null) {
+      const style = (!!state) ? state.style : this.getCellStyle(cell);
+      if (!geo.alternateBounds) {
         let bounds = geo;
         if (this.collapseToPreferredSize) {
           const tmp = this.getPreferredSizeForCell(cell);
-          if (tmp != null) {
+          if (!!tmp) {
             bounds = tmp;
             const startSize = mxUtils.getValue(style, mxConstants.STYLE_STARTSIZE);
             if (startSize > 0) {
@@ -4192,7 +4192,7 @@ export class mxGraph {
         }
         geo.alternateBounds = new mxRectangle(0, 0, bounds.width, bounds.height);
       }
-      if (geo.alternateBounds != null) {
+      if (!!geo.alternateBounds) {
         geo.alternateBounds.x = geo.x;
         geo.alternateBounds.y = geo.y;
         const alpha = mxUtils.toRadians(style[mxConstants.STYLE_ROTATION] || 0);
@@ -4228,7 +4228,7 @@ export class mxGraph {
    */
   getAllEdges(cells: mxCell[]): any {
     let edges = [];
-    if (cells != null) {
+    if (!!cells) {
       for (let i = 0; i < cells.length; i++) {
         const edgeCount = this.model.getEdgeCount(cells[i]);
         for (let j = 0; j < edgeCount; j++) {
@@ -4253,7 +4253,7 @@ export class mxGraph {
    * cell - <mxCell> whose size should be updated.
    */
   updateCellSize(cell: mxCell, ignoreChildren: any): any {
-    ignoreChildren = (ignoreChildren != null) ? ignoreChildren : false;
+    ignoreChildren = (!!ignoreChildren) ? ignoreChildren : false;
     this.model.beginUpdate();
     try {
       this.cellSizeUpdated(cell, ignoreChildren);
@@ -4275,19 +4275,19 @@ export class mxGraph {
    * cell - <mxCell> for which the size should be changed.
    */
   cellSizeUpdated(cell: mxCell, ignoreChildren: any): void {
-    if (cell != null) {
+    if (!!cell) {
       this.model.beginUpdate();
       try {
         const size = this.getPreferredSizeForCell(cell);
         let geo = this.model.getGeometry(cell);
-        if (size != null && geo != null) {
+        if (!!size && !!geo) {
           const collapsed = this.isCellCollapsed(cell);
           geo = geo.clone();
           if (this.isSwimlane(cell)) {
             const state = this.view.getState(cell);
-            const style = (state != null) ? state.style : this.getCellStyle(cell);
+            const style = (!!state) ? state.style : this.getCellStyle(cell);
             let cellStyle = this.model.getStyle(cell);
-            if (cellStyle == null) {
+            if (!cellStyle) {
               cellStyle = '';
             }
             if (mxUtils.getValue(style, mxConstants.STYLE_HORIZONTAL, true)) {
@@ -4310,7 +4310,7 @@ export class mxGraph {
           }
           if (!ignoreChildren && !collapsed) {
             const bounds = this.view.getBounds(this.model.getChildren(cell));
-            if (bounds != null) {
+            if (!!bounds) {
               const tr = this.view.translate;
               const scale = this.view.scale;
               const width = (bounds.x + bounds.width) / scale - geo.x - tr.x;
@@ -4355,15 +4355,15 @@ export class mxGraph {
    * cell - <mxCell> for which the preferred size should be returned.
    */
   getPreferredSizeForCell(cell: mxCell): any {
-    let result = null;
-    if (cell != null) {
+    let result = undefined;
+    if (!!cell) {
       const state = this.view.getState(cell) || this.view.createState(cell);
       const style = state.style;
       if (!this.model.isEdge(cell)) {
         const fontSize = style[mxConstants.STYLE_FONTSIZE] || mxConstants.DEFAULT_FONTSIZE;
         let dx = 0;
         let dy = 0;
-        if (this.getImage(state) != null || style[mxConstants.STYLE_IMAGE] != null) {
+        if (this.getImage(state) || style[mxConstants.STYLE_IMAGE]) {
           if (style[mxConstants.STYLE_SHAPE] == mxConstants.SHAPE_LABEL) {
             if (style[mxConstants.STYLE_VERTICAL_ALIGN] == mxConstants.ALIGN_MIDDLE) {
               dx += parseFloat(style[mxConstants.STYLE_IMAGE_WIDTH]) || mxLabel.prototype.imageSize;
@@ -4380,11 +4380,11 @@ export class mxGraph {
         dy += style[mxConstants.STYLE_SPACING_TOP] || 0;
         dy += style[mxConstants.STYLE_SPACING_BOTTOM] || 0;
         const image = this.getFoldingImage(state);
-        if (image != null) {
+        if (!!image) {
           dx += image.width + 8;
         }
         let value = this.cellRenderer.getLabelValue(state);
-        if (value != null && value.length > 0) {
+        if (!!value && value.length > 0) {
           if (!this.isHtmlLabel(state.cell)) {
             value = mxUtils.htmlEntities(value);
           }
@@ -4439,7 +4439,7 @@ export class mxGraph {
    * bounds - Array of <mxRectangles> that represent the new bounds.
    */
   resizeCells(cells: mxCell[], bounds: any, recurse: any): any {
-    recurse = (recurse != null) ? recurse : this.isRecursiveResize();
+    recurse = (!!recurse) ? recurse : this.isRecursiveResize();
     this.model.beginUpdate();
     try {
       this.cellsResized(cells, bounds, recurse);
@@ -4465,7 +4465,7 @@ export class mxGraph {
    * {
    *   var cells = evt.getProperty('cells');
    *
-   *   if (cells != null)
+   *   if (!!cells)
    *   {
    *     for (var i = 0; i < cells.length; i++)
    *     {
@@ -4473,7 +4473,7 @@ export class mxGraph {
    *       {
    *         var geo = graph.getCellGeometry(cells[i]);
    *
-   *         if (geo != null)
+   *         if (!!geo)
    *         {
    *           var children = graph.getChildCells(cells[i], true, true);
    *           var bounds = graph.getBoundingBoxFromGeometry(children, true);
@@ -4497,8 +4497,8 @@ export class mxGraph {
    * recurse - Optional boolean that specifies if the children should be resized.
    */
   cellsResized(cells: mxCell[], bounds: any, recurse: any): void {
-    recurse = (recurse != null) ? recurse : false;
-    if (cells != null && bounds != null && cells.length == bounds.length) {
+    recurse = (!!recurse) ? recurse : false;
+    if (!!cells && !!bounds && cells.length == bounds.length) {
       this.model.beginUpdate();
       try {
         for (let i = 0; i < cells.length; i++) {
@@ -4533,11 +4533,11 @@ export class mxGraph {
    */
   cellResized(cell: mxCell, bounds: any, ignoreRelative: any, recurse: any): void {
     let geo = this.model.getGeometry(cell);
-    if (geo != null && (geo.x != bounds.x || geo.y != bounds.y || geo.width != bounds.width || geo.height != bounds.height)) {
+    if (!!geo && (geo.x != bounds.x || geo.y != bounds.y || geo.width != bounds.width || geo.height != bounds.height)) {
       geo = geo.clone();
       if (!ignoreRelative && geo.relative) {
         const offset = geo.offset;
-        if (offset != null) {
+        if (!!offset) {
           offset.x += bounds.x - geo.x;
           offset.y += bounds.y - geo.y;
         }
@@ -4616,9 +4616,9 @@ export class mxGraph {
    */
   scaleCell(cell: mxCell, dx: number, dy: number, recurse: any): void {
     let geo = this.model.getGeometry(cell);
-    if (geo != null) {
+    if (!!geo) {
       const state = this.view.getState(cell);
-      const style = (state != null) ? state.style : this.getCellStyle(cell);
+      const style = (!!state) ? state.style : this.getCellStyle(cell);
       geo = geo.clone();
       const x = geo.x;
       const y = geo.y;
@@ -4662,12 +4662,12 @@ export class mxGraph {
    * cell - <mxCell> that has been resized.
    */
   extendParent(cell: mxCell): void {
-    if (cell != null) {
+    if (!!cell) {
       const parent = this.model.getParent(cell);
       let p = this.getCellGeometry(parent);
-      if (parent != null && p != null && !this.isCellCollapsed(parent)) {
+      if (!!parent && !!p && !this.isCellCollapsed(parent)) {
         const geo = this.getCellGeometry(cell);
-        if (geo != null && !geo.relative && (p.width < geo.x + geo.width || p.height < geo.y + geo.height)) {
+        if (!!geo && !geo.relative && (p.width < geo.x + geo.width || p.height < geo.y + geo.height)) {
           p = p.clone();
           p.width = Math.max(p.width, geo.x + geo.width);
           p.height = Math.max(p.height, geo.y + geo.height);
@@ -4723,10 +4723,10 @@ export class mxGraph {
    * mapping - Optional mapping for existing clones.
    */
   moveCells(cells: mxCell[], dx: number, dy: number, clone: boolean, target: string, evt: Event, mapping: any): any {
-    dx = (dx != null) ? dx : 0;
-    dy = (dy != null) ? dy : 0;
-    clone = (clone != null) ? clone : false;
-    if (cells != null && (dx != 0 || dy != 0 || clone || target != null)) {
+    dx = (!!dx) ? dx : 0;
+    dy = (!!dy) ? dy : 0;
+    clone = (!!clone) ? clone : false;
+    if (!!cells && (dx != 0 || dy != 0 || clone || !!target)) {
       cells = this.model.getTopmostCells(cells);
       this.model.beginUpdate();
       try {
@@ -4735,7 +4735,7 @@ export class mxGraph {
           dict.put(cells[i], true);
         }
         const isSelected = mxUtils.bind(this, function (cell) {
-          while (cell != null) {
+          while (!!cell) {
             if (dict.get(cell)) {
               return true;
             }
@@ -4747,24 +4747,24 @@ export class mxGraph {
         for (let i = 0; i < cells.length; i++) {
           const geo = this.getCellGeometry(cells[i]);
           const parent = this.model.getParent(cells[i]);
-          if ((geo == null || !geo.relative) || !this.model.isEdge(parent) || (!isSelected(this.model.getTerminal(parent, true)) && !isSelected(this.model.getTerminal(parent, false)))) {
+          if ((!geo || !geo.relative) || !this.model.isEdge(parent) || (!isSelected(this.model.getTerminal(parent, true)) && !isSelected(this.model.getTerminal(parent, false)))) {
             checked.push(cells[i]);
           }
         }
         cells = checked;
         if (clone) {
           cells = this.cloneCells(cells, this.isCloneInvalidEdges(), mapping);
-          if (target == null) {
+          if (!target) {
             target = this.getDefaultParent();
           }
         }
         const previous = this.isAllowNegativeCoordinates();
-        if (target != null) {
+        if (!!target) {
           this.setAllowNegativeCoordinates(true);
         }
-        this.cellsMoved(cells, dx, dy, !clone && this.isDisconnectOnMove() && this.isAllowDanglingEdges(), target == null, this.isExtendParentsOnMove() && target == null);
+        this.cellsMoved(cells, dx, dy, !clone && this.isDisconnectOnMove() && this.isAllowDanglingEdges(), !target, this.isExtendParentsOnMove() && !target);
         this.setAllowNegativeCoordinates(previous);
-        if (target != null) {
+        if (!!target) {
           const index = this.model.getChildCount(target);
           this.cellsAdded(cells, target, index, null, null, true);
         }
@@ -4784,8 +4784,8 @@ export class mxGraph {
    * <mxEvent.CELLS_MOVED> while the transaction is in progress.
    */
   cellsMoved(cells: mxCell[], dx: number, dy: number, disconnect: any, constrain: any, extend: any): void {
-    if (cells != null && (dx != 0 || dy != 0)) {
-      extend = (extend != null) ? extend : false;
+    if (!!cells && (dx != 0 || dy != 0)) {
+      extend = (!!extend) ? extend : false;
       this.model.beginUpdate();
       try {
         if (disconnect) {
@@ -4817,7 +4817,7 @@ export class mxGraph {
    */
   translateCell(cell: mxCell, dx: number, dy: number): void {
     let geo = this.model.getGeometry(cell);
-    if (geo != null) {
+    if (!!geo) {
       dx = parseFloat(dx);
       dy = parseFloat(dy);
       geo = geo.clone();
@@ -4831,7 +4831,7 @@ export class mxGraph {
         let angle = 0;
         if (this.model.isVertex(parent)) {
           const state = this.view.getState(parent);
-          const style = (state != null) ? state.style : this.getCellStyle(parent);
+          const style = (!!state) ? state.style : this.getCellStyle(parent);
           angle = mxUtils.getValue(style, mxConstants.STYLE_ROTATION, 0);
         }
         if (angle != 0) {
@@ -4842,7 +4842,7 @@ export class mxGraph {
           dx = pt.x;
           dy = pt.y;
         }
-        if (geo.offset == null) {
+        if (!geo.offset) {
           geo.offset = new mxPoint(dx, dy);
         } else {
           geo.offset.x = parseFloat(geo.offset.x) + dx;
@@ -4863,11 +4863,11 @@ export class mxGraph {
    * cell - <mxCell> for which the area should be returned.
    */
   getCellContainmentArea(cell: mxCell): any {
-    if (cell != null && !this.model.isEdge(cell)) {
+    if (!!cell && !this.model.isEdge(cell)) {
       const parent = this.model.getParent(cell);
-      if (parent != null && parent != this.getDefaultParent()) {
+      if (!!parent && parent != this.getDefaultParent()) {
         const g = this.model.getGeometry(parent);
-        if (g != null) {
+        if (!!g) {
           let x = 0;
           let y = 0;
           let w = g.width;
@@ -4875,7 +4875,7 @@ export class mxGraph {
           if (this.isSwimlane(parent)) {
             const size = this.getStartSize(parent);
             const state = this.view.getState(parent);
-            const style = (state != null) ? state.style : this.getCellStyle(parent);
+            const style = (!!state) ? state.style : this.getCellStyle(parent);
             const dir = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
             const flipH = mxUtils.getValue(style, mxConstants.STYLE_FLIPH, 0) == 1;
             const flipV = mxUtils.getValue(style, mxConstants.STYLE_FLIPV, 0) == 1;
@@ -4922,16 +4922,16 @@ export class mxGraph {
    * sizeFirst - Specifies if the size should be changed first. Default is true.
    */
   constrainChild(cell: mxCell, sizeFirst: any): void {
-    sizeFirst = (sizeFirst != null) ? sizeFirst : true;
-    if (cell != null) {
+    sizeFirst = (!!sizeFirst) ? sizeFirst : true;
+    if (!!cell) {
       let geo = this.getCellGeometry(cell);
-      if (geo != null && (this.isConstrainRelativeChildren() || !geo.relative)) {
+      if (!!geo && (this.isConstrainRelativeChildren() || !geo.relative)) {
         const parent = this.model.getParent(cell);
         const pgeo = this.getCellGeometry(parent);
         let max = this.getMaximumGraphBounds();
-        if (max != null) {
+        if (!!max) {
           const off = this.getBoundingBoxFromGeometry([parent], false);
-          if (off != null) {
+          if (!!off) {
             max = mxRectangle.fromRectangle(max);
             max.x -= off.x;
             max.y -= off.y;
@@ -4939,7 +4939,7 @@ export class mxGraph {
         }
         if (this.isConstrainChild(cell)) {
           let tmp = this.getCellContainmentArea(cell);
-          if (tmp != null) {
+          if (!!tmp) {
             const overlap = this.getOverlap(cell);
             if (overlap > 0) {
               tmp = mxRectangle.fromRectangle(tmp);
@@ -4948,7 +4948,7 @@ export class mxGraph {
               tmp.width += 2 * tmp.width * overlap;
               tmp.height += 2 * tmp.height * overlap;
             }
-            if (max == null) {
+            if (!max) {
               max = tmp;
             } else {
               max = mxRectangle.fromRectangle(max);
@@ -4956,7 +4956,7 @@ export class mxGraph {
             }
           }
         }
-        if (max != null) {
+        if (!!max) {
           const cells = [cell];
           if (!this.isCellCollapsed(cell)) {
             const desc = this.model.getDescendants(cell);
@@ -4967,7 +4967,7 @@ export class mxGraph {
             }
           }
           const bbox = this.getBoundingBoxFromGeometry(cells, false);
-          if (bbox != null) {
+          if (!!bbox) {
             geo = geo.clone();
             let dx = 0;
             if (geo.width > max.width) {
@@ -4993,7 +4993,7 @@ export class mxGraph {
             }
             if (dx != 0 || dy != 0) {
               if (geo.relative) {
-                if (geo.offset == null) {
+                if (!geo.offset) {
                   geo.offset = new mxPoint();
                 }
                 geo.offset.x += dx;
@@ -5022,7 +5022,7 @@ export class mxGraph {
    * reset.
    */
   resetEdges(cells: mxCell[]): void {
-    if (cells != null) {
+    if (!!cells) {
       const dict = new mxDictionary();
       for (let i = 0; i < cells.length; i++) {
         dict.put(cells[i], true);
@@ -5031,11 +5031,11 @@ export class mxGraph {
       try {
         for (let i = 0; i < cells.length; i++) {
           const edges = this.model.getEdges(cells[i]);
-          if (edges != null) {
+          if (!!edges) {
             for (let j = 0; j < edges.length; j++) {
               const state = this.view.getState(edges[j]);
-              const source = (state != null) ? state.getVisibleTerminal(true) : this.view.getVisibleTerminal(edges[j], true);
-              const target = (state != null) ? state.getVisibleTerminal(false) : this.view.getVisibleTerminal(edges[j], false);
+              const source = (!!state) ? state.getVisibleTerminal(true) : this.view.getVisibleTerminal(edges[j], true);
+              const target = (!!state) ? state.getVisibleTerminal(false) : this.view.getVisibleTerminal(edges[j], false);
               if (!dict.get(source) || !dict.get(target)) {
                 this.resetEdge(edges[j]);
               }
@@ -5060,7 +5060,7 @@ export class mxGraph {
    */
   resetEdge(edge: any): any {
     let geo = this.model.getGeometry(edge);
-    if (geo != null && geo.points != null && geo.points.length > 0) {
+    if (!!geo && !!geo.points && geo.points.length > 0) {
       geo = geo.clone();
       geo.points = [];
       this.model.setGeometry(edge, geo);
@@ -5074,7 +5074,7 @@ export class mxGraph {
    * Returns the constraint used to connect to the outline of the given state.
    */
   getOutlineConstraint(point: any, terminalState: any, me: any): any {
-    if (terminalState.shape != null) {
+    if (!!terminalState.shape) {
       const bounds = this.view.getPerimeterBounds(terminalState);
       const direction = terminalState.style[mxConstants.STYLE_DIRECTION];
       if (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) {
@@ -5098,7 +5098,7 @@ export class mxGraph {
       if (this.getModel().isVertex(terminalState.cell)) {
         let flipH = terminalState.style[mxConstants.STYLE_FLIPH];
         let flipV = terminalState.style[mxConstants.STYLE_FLIPV];
-        if (terminalState.shape != null && terminalState.shape.stencil != null) {
+        if (!!terminalState.shape && !!terminalState.shape.stencil) {
           flipH = mxUtils.getValue(terminalState.style, 'stencilFlipH', 0) == 1 || flipH;
           flipV = mxUtils.getValue(terminalState.style, 'stencilFlipV', 0) == 1 || flipV;
         }
@@ -5137,7 +5137,7 @@ export class mxGraph {
    * source - Boolean that specifies if the terminal is the source or target.
    */
   getAllConnectionConstraints(terminal: any, source: any): any {
-    if (terminal != null && terminal.shape != null && terminal.shape.stencil != null) {
+    if (!!terminal && !!terminal.shape && !!terminal.shape.stencil) {
       return terminal.shape.stencil.constraints;
     }
     return null;
@@ -5156,17 +5156,17 @@ export class mxGraph {
    * source - Boolean indicating if the terminal is the source or target.
    */
   getConnectionConstraint(edge: any, terminal: any, source: any): any {
-    let point = null;
+    let point = undefined;
     const x = edge.style[(source) ? mxConstants.STYLE_EXIT_X : mxConstants.STYLE_ENTRY_X];
-    if (x != null) {
+    if (!!x) {
       const y = edge.style[(source) ? mxConstants.STYLE_EXIT_Y : mxConstants.STYLE_ENTRY_Y];
-      if (y != null) {
+      if (!!y) {
         point = new mxPoint(parseFloat(x), parseFloat(y));
       }
     }
     let perimeter = false;
     let dx = 0, dy = 0;
-    if (point != null) {
+    if (!!point) {
       perimeter = mxUtils.getValue(edge.style, (source) ? mxConstants.STYLE_EXIT_PERIMETER : mxConstants.STYLE_ENTRY_PERIMETER, true);
       dx = parseFloat(edge.style[(source) ? mxConstants.STYLE_EXIT_DX : mxConstants.STYLE_ENTRY_DX]);
       dy = parseFloat(edge.style[(source) ? mxConstants.STYLE_EXIT_DY : mxConstants.STYLE_ENTRY_DY]);
@@ -5192,16 +5192,16 @@ export class mxGraph {
    * connection.
    */
   setConnectionConstraint(edge: any, terminal: any, source: any, constraint: any): void {
-    if (constraint != null) {
+    if (!!constraint) {
       this.model.beginUpdate();
       try {
-        if (constraint == null || constraint.point == null) {
+        if (!constraint || !constraint.point) {
           this.setCellStyles((source) ? mxConstants.STYLE_EXIT_X : mxConstants.STYLE_ENTRY_X, null, [edge]);
           this.setCellStyles((source) ? mxConstants.STYLE_EXIT_Y : mxConstants.STYLE_ENTRY_Y, null, [edge]);
           this.setCellStyles((source) ? mxConstants.STYLE_EXIT_DX : mxConstants.STYLE_ENTRY_DX, null, [edge]);
           this.setCellStyles((source) ? mxConstants.STYLE_EXIT_DY : mxConstants.STYLE_ENTRY_DY, null, [edge]);
           this.setCellStyles((source) ? mxConstants.STYLE_EXIT_PERIMETER : mxConstants.STYLE_ENTRY_PERIMETER, null, [edge]);
-        } else if (constraint.point != null) {
+        } else if (!!constraint.point) {
           this.setCellStyles((source) ? mxConstants.STYLE_EXIT_X : mxConstants.STYLE_ENTRY_X, constraint.point.x, [edge]);
           this.setCellStyles((source) ? mxConstants.STYLE_EXIT_Y : mxConstants.STYLE_ENTRY_Y, constraint.point.y, [edge]);
           this.setCellStyles((source) ? mxConstants.STYLE_EXIT_DX : mxConstants.STYLE_ENTRY_DX, constraint.dx, [edge]);
@@ -5231,14 +5231,14 @@ export class mxGraph {
    * constraint as returned by <getConnectionConstraint>.
    */
   getConnectionPoint(vertex: any, constraint: any, round: any): any {
-    round = (round != null) ? round : true;
-    let point = null;
-    if (vertex != null && constraint.point != null) {
+    round = (!!round) ? round : true;
+    let point = undefined;
+    if (!!vertex && !!constraint.point) {
       const bounds = this.view.getPerimeterBounds(vertex);
       const cx = new mxPoint(bounds.getCenterX(), bounds.getCenterY());
       const direction = vertex.style[mxConstants.STYLE_DIRECTION];
       let r1 = 0;
-      if (direction != null && mxUtils.getValue(vertex.style, mxConstants.STYLE_ANCHOR_POINT_DIRECTION, 1) == 1) {
+      if (!!direction && mxUtils.getValue(vertex.style, mxConstants.STYLE_ANCHOR_POINT_DIRECTION, 1) == 1) {
         if (direction == mxConstants.DIRECTION_NORTH) {
           r1 += 270;
         } else if (direction == mxConstants.DIRECTION_WEST) {
@@ -5272,7 +5272,7 @@ export class mxGraph {
         if (this.getModel().isVertex(vertex.cell)) {
           let flipH = vertex.style[mxConstants.STYLE_FLIPH] == 1;
           let flipV = vertex.style[mxConstants.STYLE_FLIPV] == 1;
-          if (vertex.shape != null && vertex.shape.stencil != null) {
+          if (!!vertex.shape && !!vertex.shape.stencil) {
             flipH = (mxUtils.getValue(vertex.style, 'stencilFlipH', 0) == 1) || flipH;
             flipV = (mxUtils.getValue(vertex.style, 'stencilFlipV', 0) == 1) || flipV;
           }
@@ -5284,14 +5284,14 @@ export class mxGraph {
           }
         }
       }
-      if (r2 != 0 && point != null) {
+      if (r2 != 0 && !!point) {
         const rad = mxUtils.toRadians(r2);
         const cos = Math.cos(rad);
         const sin = Math.sin(rad);
         point = mxUtils.getRotatedPoint(point, cos, sin, cx);
       }
     }
-    if (round && point != null) {
+    if (round && !!point) {
       point.x = Math.round(point.x);
       point.y = Math.round(point.y);
     }
@@ -5340,13 +5340,13 @@ export class mxGraph {
    * constraint - <mxConnectionConstraint> to be used for this connection.
    */
   cellConnected(edge: any, terminal: any, source: any, constraint: any): void {
-    if (edge != null) {
+    if (!!edge) {
       this.model.beginUpdate();
       try {
         const previous = this.model.getTerminal(edge, source);
         this.setConnectionConstraint(edge, terminal, source, constraint);
         if (this.isPortsEnabled()) {
-          let id = null;
+          let id = undefined;
           if (this.isPort(terminal)) {
             id = terminal.getId();
             terminal = this.getTerminalForPort(terminal, source);
@@ -5376,7 +5376,7 @@ export class mxGraph {
    * cells - Array of <mxCells> to be disconnected.
    */
   disconnectGraph(cells: mxCell[]): void {
-    if (cells != null) {
+    if (!!cells) {
       this.model.beginUpdate();
       try {
         const scale = this.view.scale;
@@ -5388,30 +5388,30 @@ export class mxGraph {
         for (let i = 0; i < cells.length; i++) {
           if (this.model.isEdge(cells[i])) {
             let geo = this.model.getGeometry(cells[i]);
-            if (geo != null) {
+            if (!!geo) {
               const state = this.view.getState(cells[i]);
               const pstate = this.view.getState(this.model.getParent(cells[i]));
-              if (state != null && pstate != null) {
+              if (!!state && !!pstate) {
                 geo = geo.clone();
                 const dx = -pstate.origin.x;
                 const dy = -pstate.origin.y;
                 const pts = state.absolutePoints;
                 let src = this.model.getTerminal(cells[i], true);
-                if (src != null && this.isCellDisconnectable(cells[i], src, true)) {
-                  while (src != null && !dict.get(src)) {
+                if (!!src && this.isCellDisconnectable(cells[i], src, true)) {
+                  while (!!src && !dict.get(src)) {
                     src = this.model.getParent(src);
                   }
-                  if (src == null) {
+                  if (!src) {
                     geo.setTerminalPoint(new mxPoint(pts[0].x / scale - tr.x + dx, pts[0].y / scale - tr.y + dy), true);
                     this.model.setTerminal(cells[i], null, true);
                   }
                 }
                 let trg = this.model.getTerminal(cells[i], false);
-                if (trg != null && this.isCellDisconnectable(cells[i], trg, false)) {
-                  while (trg != null && !dict.get(trg)) {
+                if (!!trg && this.isCellDisconnectable(cells[i], trg, false)) {
+                  while (!!trg && !dict.get(trg)) {
                     trg = this.model.getParent(trg);
                   }
-                  if (trg == null) {
+                  if (!trg) {
                     const n = pts.length - 1;
                     geo.setTerminalPoint(new mxPoint(pts[n].x / scale - tr.x + dx, pts[n].y / scale - tr.y + dy), false);
                     this.model.setTerminal(cells[i], null, false);
@@ -5452,11 +5452,11 @@ export class mxGraph {
    * (code)
    * var offset = new mxPoint(0, 0);
    *
-   * while (cell != null)
+   * while (!!cell)
    * {
    *   var geo = this.model.getGeometry(cell);
    *
-   *   if (geo != null)
+   *   if (!!geo)
    *   {
    *     offset.x -= geo.x;
    *     offset.y -= geo.y;
@@ -5493,7 +5493,7 @@ export class mxGraph {
    * {
    *   var geo = this.getCellGeometry(cell);
    *
-   *   return (geo != null) ? geo.relative : false;
+   *   return (!!geo) ? geo.relative : false;
    * };
    * (end)
    *
@@ -5552,7 +5552,7 @@ export class mxGraph {
    */
   enterGroup(cell: mxCell): void {
     cell = cell || this.getSelectionCell();
-    if (cell != null && this.isValidRoot(cell)) {
+    if (!!cell && this.isValidRoot(cell)) {
       this.view.setCurrentRoot(cell);
       this.clearSelection();
     }
@@ -5567,7 +5567,7 @@ export class mxGraph {
   exitGroup(): void {
     const root = this.model.getRoot();
     const current = this.getCurrentRoot();
-    if (current != null) {
+    if (!!current) {
       let next = this.model.getParent(current);
       while (next != root && !this.isValidRoot(next) && this.model.getParent(next) != root) {
         next = this.model.getParent(next);
@@ -5578,7 +5578,7 @@ export class mxGraph {
         this.view.setCurrentRoot(next);
       }
       const state = this.view.getState(current);
-      if (state != null) {
+      if (!!state) {
         this.setSelectionCell(current);
       }
     }
@@ -5592,10 +5592,10 @@ export class mxGraph {
    */
   home(): void {
     const current = this.getCurrentRoot();
-    if (current != null) {
+    if (!!current) {
       this.view.setCurrentRoot(null);
       const state = this.view.getState(current);
-      if (state != null) {
+      if (!!state) {
         this.setSelectionCell(current);
       }
     }
@@ -5612,7 +5612,7 @@ export class mxGraph {
    * cell - <mxCell> which should be checked as a possible root.
    */
   isValidRoot(cell: mxCell): boolean {
-    return (cell != null);
+    return (!!cell);
   }
 
   /**
@@ -5649,7 +5649,7 @@ export class mxGraph {
       const childCount = this.model.getChildCount(cell);
       for (let i = 0; i < childCount; i++) {
         const tmp = this.getCellBounds(this.model.getChildAt(cell, i), includeEdges, true);
-        if (result != null) {
+        if (!!result) {
           result.add(tmp);
         } else {
           result = tmp;
@@ -5696,32 +5696,32 @@ export class mxGraph {
    * the bounding box for all points in geometry. Default is false.
    */
   getBoundingBoxFromGeometry(cells: mxCell[], includeEdges: any): any {
-    includeEdges = (includeEdges != null) ? includeEdges : false;
-    let result = null;
-    if (cells != null) {
+    includeEdges = (!!includeEdges) ? includeEdges : false;
+    let result = undefined;
+    if (!!cells) {
       for (let i = 0; i < cells.length; i++) {
         if (includeEdges || this.model.isVertex(cells[i])) {
           const geo = this.getCellGeometry(cells[i]);
-          if (geo != null) {
-            let bbox = null;
+          if (!!geo) {
+            let bbox = undefined;
             if (this.model.isEdge(cells[i])) {
               const addPoint = function (pt) {
-                if (pt != null) {
-                  if (tmp == null) {
+                if (!!pt) {
+                  if (!tmp) {
                     tmp = new mxRectangle(pt.x, pt.y, 0, 0);
                   } else {
                     tmp.add(new mxRectangle(pt.x, pt.y, 0, 0));
                   }
                 }
               };
-              if (this.model.getTerminal(cells[i], true) == null) {
+              if (!this.model.getTerminal(cells[i], true)) {
                 addPoint(geo.getTerminalPoint(true));
               }
-              if (this.model.getTerminal(cells[i], false) == null) {
+              if (!this.model.getTerminal(cells[i], false)) {
                 addPoint(geo.getTerminalPoint(false));
               }
               const pts = geo.points;
-              if (pts != null && pts.length > 0) {
+              if (!!pts && pts.length > 0) {
                 const tmp = new mxRectangle(pts[0].x, pts[0].y, 0, 0);
                 for (let j = 1; j < pts.length; j++) {
                   addPoint(pts[j]);
@@ -5733,7 +5733,7 @@ export class mxGraph {
               if (geo.relative) {
                 if (this.model.isVertex(parent) && parent != this.view.currentRoot) {
                   const tmp = this.getBoundingBoxFromGeometry([parent], false);
-                  if (tmp != null) {
+                  if (!!tmp) {
                     bbox = new mxRectangle(geo.x * tmp.width, geo.y * tmp.height, geo.width, geo.height);
                     if (mxUtils.indexOf(cells, parent) >= 0) {
                       bbox.x += tmp.x;
@@ -5745,19 +5745,19 @@ export class mxGraph {
                 bbox = mxRectangle.fromRectangle(geo);
                 if (this.model.isVertex(parent) && mxUtils.indexOf(cells, parent) >= 0) {
                   const tmp = this.getBoundingBoxFromGeometry([parent], false);
-                  if (tmp != null) {
+                  if (!!tmp) {
                     bbox.x += tmp.x;
                     bbox.y += tmp.y;
                   }
                 }
               }
-              if (bbox != null && geo.offset != null) {
+              if (!!bbox && !!geo.offset) {
                 bbox.x += geo.offset.x;
                 bbox.y += geo.offset.y;
               }
             }
-            if (bbox != null) {
-              if (result == null) {
+            if (!!bbox) {
+              if (!result) {
                 result = mxRectangle.fromRectangle(bbox);
               } else {
                 result.add(bbox);
@@ -5782,7 +5782,7 @@ export class mxGraph {
    * cell - Optional <mxCell> for which the cell states should be cleared.
    */
   refresh(cell: mxCell): void {
-    this.view.clear(cell, cell == null);
+    this.view.clear(cell, !cell);
     this.view.validate();
     this.sizeDidChange();
     this.fireEvent(new mxEventObject(mxEvent.REFRESH));
@@ -5829,32 +5829,32 @@ export class mxGraph {
           } else {
             canvas.removeAttribute('transform');
           }
-          if (this.shiftPreview1 != null) {
+          if (!!this.shiftPreview1) {
             let child = this.shiftPreview1.firstChild;
-            while (child != null) {
+            while (!!child) {
               const next = child.nextSibling;
               this.container.appendChild(child);
               child = next;
             }
-            if (this.shiftPreview1.parentNode != null) {
+            if (!!this.shiftPreview1.parentNode) {
               this.shiftPreview1.parentNode.removeChild(this.shiftPreview1);
             }
-            this.shiftPreview1 = null;
+            this.shiftPreview1 = undefined;
             this.container.appendChild(canvas.parentNode);
             child = this.shiftPreview2.firstChild;
-            while (child != null) {
+            while (!!child) {
               const next = child.nextSibling;
               this.container.appendChild(child);
               child = next;
             }
-            if (this.shiftPreview2.parentNode != null) {
+            if (!!this.shiftPreview2.parentNode) {
               this.shiftPreview2.parentNode.removeChild(this.shiftPreview2);
             }
-            this.shiftPreview2 = null;
+            this.shiftPreview2 = undefined;
           }
         } else {
           canvas.setAttribute('transform', 'translate(' + dx + ',' + dy + ')');
-          if (this.shiftPreview1 == null) {
+          if (!this.shiftPreview1) {
             this.shiftPreview1 = document.createElement('div');
             this.shiftPreview1.style.position = 'absolute';
             this.shiftPreview1.style.overflow = 'visible';
@@ -5863,7 +5863,7 @@ export class mxGraph {
             this.shiftPreview2.style.overflow = 'visible';
             let current = this.shiftPreview1;
             let child = this.container.firstChild;
-            while (child != null) {
+            while (!!child) {
               const next = child.nextSibling;
               if (child != canvas.parentNode) {
                 current.appendChild(child);
@@ -5872,10 +5872,10 @@ export class mxGraph {
               }
               child = next;
             }
-            if (this.shiftPreview1.firstChild != null) {
+            if (!!this.shiftPreview1.firstChild) {
               this.container.insertBefore(this.shiftPreview1, canvas.parentNode);
             }
-            if (this.shiftPreview2.firstChild != null) {
+            if (!!this.shiftPreview2.firstChild) {
               this.container.appendChild(this.shiftPreview2);
             }
           }
@@ -5952,10 +5952,10 @@ export class mxGraph {
    * cy - Optional float that specifies the vertical center. Default is 0.5.
    */
   center(horizontal: any, vertical: any, cx: any, cy: any): void {
-    horizontal = (horizontal != null) ? horizontal : true;
-    vertical = (vertical != null) ? vertical : true;
-    cx = (cx != null) ? cx : 0.5;
-    cy = (cy != null) ? cy : 0.5;
+    horizontal = (!!horizontal) ? horizontal : true;
+    vertical = (!!vertical) ? vertical : true;
+    cx = (!!cx) ? cx : 0.5;
+    cy = (!!cy) ? cy : 0.5;
     const hasScrollbars = mxUtils.hasScrollbars(this.container);
     const cw = this.container.clientWidth;
     const ch = this.container.clientHeight;
@@ -5991,11 +5991,11 @@ export class mxGraph {
    * is omitted, then <centerZoom> will be used as its value.
    */
   zoom(factor: any, center: any): void {
-    center = (center != null) ? center : this.centerZoom;
+    center = (!!center) ? center : this.centerZoom;
     const scale = Math.round(this.view.scale * factor * 100) / 100;
     const state = this.view.getState(this.getSelectionCell());
     factor = scale / this.view.scale;
-    if (this.keepSelectionVisibleOnZoom && state != null) {
+    if (this.keepSelectionVisibleOnZoom && !!state) {
       const rect = new mxRectangle(state.x * factor, state.y * factor, state.width * factor, state.height * factor);
       this.view.scale = scale;
       if (!this.scrollRectToVisible(rect)) {
@@ -6112,9 +6112,9 @@ export class mxGraph {
     const x = -this.view.translate.x;
     const y = -this.view.translate.y;
     const state = this.view.getState(cell);
-    if (state != null) {
+    if (!!state) {
       const bounds = new mxRectangle(x + state.x, y + state.y, state.width, state.height);
-      if (center && this.container != null) {
+      if (center && !!this.container) {
         const w = this.container.clientWidth;
         const h = this.container.clientHeight;
         bounds.x = bounds.getCenterX() - w / 2;
@@ -6143,7 +6143,7 @@ export class mxGraph {
    */
   scrollRectToVisible(rect: any): any {
     let isChanged = false;
-    if (rect != null) {
+    if (!!rect) {
       const w = this.container.offsetWidth;
       const h = this.container.offsetHeight;
       const widthLimit = Math.min(w, rect.width);
@@ -6197,7 +6197,7 @@ export class mxGraph {
         }
         if (isChanged) {
           this.view.refresh();
-          if (this.selectionCellsHandler != null) {
+          if (!!this.selectionCellsHandler) {
             this.selectionCellsHandler.refresh();
           }
         }
@@ -6288,7 +6288,7 @@ export class mxGraph {
    */
   isOrthogonal(edge: any): boolean {
     const orthogonal = edge.style[mxConstants.STYLE_ORTHOGONAL];
-    if (orthogonal != null) {
+    if (!!orthogonal) {
       return orthogonal;
     }
     const tmp = this.view.getEdgeStyle(edge);
@@ -6307,7 +6307,7 @@ export class mxGraph {
   isLoop(state: any): boolean {
     const src = state.getVisibleTerminalState(true);
     const trg = state.getVisibleTerminalState(false);
-    return (src != null && src == trg);
+    return (!!src && src == trg);
   }
 
   /**
@@ -6348,7 +6348,7 @@ export class mxGraph {
    * Returns true if the given mouse event should be aligned to the grid.
    */
   isGridEnabledEvent(evt: Event): boolean {
-    return evt != null && !mxEvent.isAltDown(evt);
+    return !!evt && !mxEvent.isAltDown(evt);
   }
 
   /**
@@ -6393,7 +6393,7 @@ export class mxGraph {
    * target - <mxCell> that represents the target terminal.
    */
   isEdgeValid(edge: any, source: any, target: string): boolean {
-    return this.getEdgeValidationError(edge, source, target) == null;
+    return !this.getEdgeValidationError(edge, source, target);
   }
 
   /**
@@ -6416,9 +6416,9 @@ export class mxGraph {
    * (code)
    * graph.getEdgeValidationError = function(edge, source, target)
    * {
-   *   if (source != null && target != null &&
-   *     this.model.getValue(source) != null &&
-   *     this.model.getValue(target) != null)
+   *   if (!!source && !!target &&
+   *     this.model.getValue(source) &&
+   *     this.model.getValue(target))
    *   {
    *     if (target is not valid for source)
    *     {
@@ -6438,19 +6438,19 @@ export class mxGraph {
    * target - <mxCell> that represents the target terminal.
    */
   getEdgeValidationError(edge: any, source: any, target: string): any {
-    if (edge != null && !this.isAllowDanglingEdges() && (source == null || target == null)) {
+    if (!!edge && !this.isAllowDanglingEdges() && (!source || !target)) {
       return '';
     }
-    if (edge != null && this.model.getTerminal(edge, true) == null && this.model.getTerminal(edge, false) == null) {
+    if (!!edge && !this.model.getTerminal(edge, true) && !this.model.getTerminal(edge, false)) {
       return null;
     }
-    if (!this.allowLoops && source == target && source != null) {
+    if (!this.allowLoops && source == target && !!source) {
       return '';
     }
     if (!this.isValidConnection(source, target)) {
       return '';
     }
-    if (source != null && target != null) {
+    if (!!source && !!target) {
       let error = '';
       if (!this.multigraph) {
         const tmp = this.model.getEdgesBetween(source, target, true);
@@ -6460,16 +6460,16 @@ export class mxGraph {
       }
       const sourceOut = this.model.getDirectedEdgeCount(source, true, edge);
       const targetIn = this.model.getDirectedEdgeCount(target, false, edge);
-      if (this.multiplicities != null) {
+      if (!!this.multiplicities) {
         for (let i = 0; i < this.multiplicities.length; i++) {
           const err = this.multiplicities[i].check(this, edge, source, target, sourceOut, targetIn);
-          if (err != null) {
+          if (!!err) {
             error += err;
           }
         }
       }
       const err = this.validateEdge(edge, source, target);
-      if (err != null) {
+      if (!!err) {
         error += err;
       }
       return (error.length > 0) ? error : null;
@@ -6510,8 +6510,8 @@ export class mxGraph {
    * context - Object that represents the global validation state.
    */
   validateGraph(cell: mxCell, context: any): any {
-    cell = (cell != null) ? cell : this.model.getRoot();
-    context = (context != null) ? context : {};
+    cell = (!!cell) ? cell : this.model.getRoot();
+    context = (!!context) ? context : {};
     let isValid = true;
     const childCount = this.model.getChildCount(cell);
     for (let i = 0; i < childCount; i++) {
@@ -6521,12 +6521,12 @@ export class mxGraph {
         ctx = {};
       }
       const warn = this.validateGraph(tmp, ctx);
-      if (warn != null) {
+      if (!!warn) {
         this.setCellWarning(tmp, warn.replace(/\n/g, '<br>'));
       } else {
         this.setCellWarning(tmp, null);
       }
-      isValid = isValid && warn == null;
+      isValid = isValid && !warn;
     }
     let warning = '';
     if (this.isCellCollapsed(cell) && !isValid) {
@@ -6538,10 +6538,10 @@ export class mxGraph {
       warning += this.getCellValidationError(cell) || '';
     }
     const err = this.validateCell(cell, context);
-    if (err != null) {
+    if (!!err) {
       warning += err;
     }
-    if (this.model.getParent(cell) == null) {
+    if (!this.model.getParent(cell)) {
       this.view.validate();
     }
     return (warning.length > 0 || !isValid) ? warning : null;
@@ -6563,7 +6563,7 @@ export class mxGraph {
     const inCount = this.model.getDirectedEdgeCount(cell, false);
     const value = this.model.getValue(cell);
     let error = '';
-    if (this.multiplicities != null) {
+    if (!!this.multiplicities) {
       for (let i = 0; i < this.multiplicities.length; i++) {
         const rule = this.multiplicities[i];
         if (rule.source && mxUtils.isNode(value, rule.type, rule.attr, rule.value) && (outCount > rule.max || outCount < rule.min)) {
@@ -6621,7 +6621,7 @@ export class mxGraph {
    * the specified cell state. This returns null for all edges.
    */
   getFoldingImage(state: any): any {
-    if (state != null && this.foldingEnabled && !this.getModel().isEdge(state.cell)) {
+    if (!!state && this.foldingEnabled && !this.getModel().isEdge(state.cell)) {
       const tmp = this.isCellCollapsed(state.cell);
       if (this.isCellFoldable(state.cell, !tmp)) {
         return (tmp) ? this.collapsedImage : this.expandedImage;
@@ -6657,7 +6657,7 @@ export class mxGraph {
    */
   convertValueToString(cell: mxCell): any {
     const value = this.model.getValue(cell);
-    if (value != null) {
+    if (!!value) {
       if (mxUtils.isNode(value)) {
         return value.nodeName;
       } else if (typeof (value.toString) == 'function') {
@@ -6682,11 +6682,11 @@ export class mxGraph {
    * {
    *   var label = mxGraph.prototype.getLabel.apply(this, arguments);
    *
-   *   if (label != null && this.model.isVertex(cell))
+   *   if (!!label && this.model.isVertex(cell))
    *   {
    *     var geo = this.getCellGeometry(cell);
    *
-   *     if (geo != null)
+   *     if (!!geo)
    *     {
    *       var max = parseInt(geo.width / 8);
    *
@@ -6721,9 +6721,9 @@ export class mxGraph {
    */
   getLabel(cell: mxCell): any {
     let result = '';
-    if (this.labelsVisible && cell != null) {
+    if (this.labelsVisible && !!cell) {
       const state = this.view.getState(cell);
-      const style = (state != null) ? state.style : this.getCellStyle(cell);
+      const style = (!!state) ? state.style : this.getCellStyle(cell);
       if (!mxUtils.getValue(style, mxConstants.STYLE_NOLABEL, false)) {
         result = this.convertValueToString(cell);
       }
@@ -6810,8 +6810,8 @@ export class mxGraph {
    */
   isWrapping(cell: mxCell): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
-    return (style != null) ? style[mxConstants.STYLE_WHITE_SPACE] == 'wrap' : false;
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
+    return (!!style) ? style[mxConstants.STYLE_WHITE_SPACE] == 'wrap' : false;
   }
 
   /**
@@ -6828,8 +6828,8 @@ export class mxGraph {
    */
   isLabelClipped(cell: mxCell): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
-    return (style != null) ? style[mxConstants.STYLE_OVERFLOW] == 'hidden' : false;
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
+    return (!!style) ? style[mxConstants.STYLE_OVERFLOW] == 'hidden' : false;
   }
 
   /**
@@ -6852,26 +6852,26 @@ export class mxGraph {
    * y - Y-coordinate of the mouse.
    */
   getTooltip(state: any, node: Node, x: number, y: number): any {
-    let tip = null;
-    if (state != null) {
-      if (state.control != null && (node == state.control.node || node.parentNode == state.control.node)) {
+    let tip = undefined;
+    if (!!state) {
+      if (!!state.control && (node == state.control.node || node.parentNode == state.control.node)) {
         tip = this.collapseExpandResource;
         tip = mxUtils.htmlEntities(mxResources.get(tip) || tip).replace(/\\n/g, '<br>');
       }
-      if (tip == null && state.overlays != null) {
+      if (!tip && !!state.overlays) {
         state.overlays.visit(function (id, shape) {
-          if (tip == null && (node == shape.node || node.parentNode == shape.node)) {
+          if (!tip && (node == shape.node || node.parentNode == shape.node)) {
             tip = shape.overlay.toString();
           }
         });
       }
-      if (tip == null) {
+      if (!tip) {
         const handler = this.selectionCellsHandler.getHandler(state.cell);
-        if (handler != null && typeof (handler.getTooltipForNode) == 'function') {
+        if (!!handler && typeof (handler.getTooltipForNode) == 'function') {
           tip = handler.getTooltipForNode(node);
         }
       }
-      if (tip == null) {
+      if (!tip) {
         tip = this.getTooltipForCell(state.cell);
       }
     }
@@ -6901,8 +6901,8 @@ export class mxGraph {
    * cell - <mxCell> whose tooltip should be returned.
    */
   getTooltipForCell(cell: mxCell): any {
-    let tip = null;
-    if (cell != null && cell.getTooltip != null) {
+    let tip = undefined;
+    if (!!cell && !!cell.getTooltip) {
       tip = cell.getTooltip();
     } else {
       tip = this.convertValueToString(cell);
@@ -6967,8 +6967,8 @@ export class mxGraph {
   getStartSize(swimlane: any): any {
     const result = new mxRectangle();
     const state = this.view.getState(swimlane);
-    const style = (state != null) ? state.style : this.getCellStyle(swimlane);
-    if (style != null) {
+    const style = (!!state) ? state.style : this.getCellStyle(swimlane);
+    if (!!style) {
       const size = parseInt(mxUtils.getValue(style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
       if (mxUtils.getValue(style, mxConstants.STYLE_HORIZONTAL, true)) {
         result.height = size;
@@ -6991,7 +6991,7 @@ export class mxGraph {
    * state - <mxCellState> whose image URL should be returned.
    */
   getImage(state: any): any {
-    return (state != null && state.style != null) ? state.style[mxConstants.STYLE_IMAGE] : null;
+    return (!!state && !!state.style) ? state.style[mxConstants.STYLE_IMAGE] : null;
   }
 
   /**
@@ -7007,7 +7007,7 @@ export class mxGraph {
    * returned.
    */
   getVerticalAlign(state: any): any {
-    return (state != null && state.style != null) ? (state.style[mxConstants.STYLE_VERTICAL_ALIGN] || mxConstants.ALIGN_MIDDLE) : null;
+    return (!!state && !!state.style) ? (state.style[mxConstants.STYLE_VERTICAL_ALIGN] || mxConstants.ALIGN_MIDDLE) : null;
   }
 
   /**
@@ -7023,7 +7023,7 @@ export class mxGraph {
    * returned.
    */
   getIndicatorColor(state: any): string {
-    return (state != null && state.style != null) ? state.style[mxConstants.STYLE_INDICATOR_COLOR] : null;
+    return (!!state && !!state.style) ? state.style[mxConstants.STYLE_INDICATOR_COLOR] : null;
   }
 
   /**
@@ -7039,7 +7039,7 @@ export class mxGraph {
    * returned.
    */
   getIndicatorGradientColor(state: any): string {
-    return (state != null && state.style != null) ? state.style[mxConstants.STYLE_INDICATOR_GRADIENTCOLOR] : null;
+    return (!!state && !!state.style) ? state.style[mxConstants.STYLE_INDICATOR_GRADIENTCOLOR] : null;
   }
 
   /**
@@ -7054,7 +7054,7 @@ export class mxGraph {
    * state - <mxCellState> whose indicator shape should be returned.
    */
   getIndicatorShape(state: any): any {
-    return (state != null && state.style != null) ? state.style[mxConstants.STYLE_INDICATOR_SHAPE] : null;
+    return (!!state && !!state.style) ? state.style[mxConstants.STYLE_INDICATOR_SHAPE] : null;
   }
 
   /**
@@ -7069,7 +7069,7 @@ export class mxGraph {
    * state - <mxCellState> whose indicator image should be returned.
    */
   getIndicatorImage(state: any): any {
-    return (state != null && state.style != null) ? state.style[mxConstants.STYLE_INDICATOR_IMAGE] : null;
+    return (!!state && !!state.style) ? state.style[mxConstants.STYLE_INDICATOR_IMAGE] : null;
   }
 
   /**
@@ -7106,11 +7106,11 @@ export class mxGraph {
    * cell - <mxCell> to be checked.
    */
   isSwimlane(cell: mxCell): boolean {
-    if (cell != null) {
+    if (!!cell) {
       if (this.model.getParent(cell) != this.model.getRoot()) {
         const state = this.view.getState(cell);
-        const style = (state != null) ? state.style : this.getCellStyle(cell);
-        if (style != null && !this.model.isEdge(cell)) {
+        const style = (!!state) ? state.style : this.getCellStyle(cell);
+        if (!!style && !this.model.isEdge(cell)) {
           return style[mxConstants.STYLE_SHAPE] == mxConstants.SHAPE_SWIMLANE;
         }
       }
@@ -7234,7 +7234,7 @@ export class mxGraph {
    */
   isCellLocked(cell: mxCell): boolean {
     const geometry = this.model.getGeometry(cell);
-    return this.isCellsLocked() || (geometry != null && this.model.isVertex(cell) && geometry.relative);
+    return this.isCellsLocked() || (!!geometry && this.model.isVertex(cell) && geometry.relative);
   }
 
   /**
@@ -7290,7 +7290,7 @@ export class mxGraph {
    */
   isCellCloneable(cell: mxCell): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
     return this.isCellsCloneable() && style[mxConstants.STYLE_CLONEABLE] != 0;
   }
 
@@ -7381,7 +7381,7 @@ export class mxGraph {
    * mxGraph.prototype.isCellSelectable = function(cell)
    * {
    *   var state = this.view.getState(cell);
-   *   var style = (state != null) ? state.style : this.getCellStyle(cell);
+   *   var style = (!!state) ? state.style : this.getCellStyle(cell);
    *
    *   return this.isCellsSelectable() && !this.isCellLocked(cell) && style['selectable'] != 0;
    * };
@@ -7443,7 +7443,7 @@ export class mxGraph {
    */
   isCellDeletable(cell: mxCell): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
     return this.isCellsDeletable() && style[mxConstants.STYLE_DELETABLE] != 0;
   }
 
@@ -7496,7 +7496,7 @@ export class mxGraph {
    */
   isCellRotatable(cell: mxCell): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
     return style[mxConstants.STYLE_ROTATABLE] != 0;
   }
 
@@ -7524,7 +7524,7 @@ export class mxGraph {
    */
   isCellMovable(cell: mxCell): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
     return this.isCellsMovable() && !this.isCellLocked(cell) && style[mxConstants.STYLE_MOVABLE] != 0;
   }
 
@@ -7915,7 +7915,7 @@ export class mxGraph {
    */
   isCellResizable(cell: mxCell): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
     return this.isCellsResizable() && !this.isCellLocked(cell) && mxUtils.getValue(style, mxConstants.STYLE_RESIZABLE, '1') != '0';
   }
 
@@ -7974,7 +7974,7 @@ export class mxGraph {
    */
   isCellBendable(cell: mxCell): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
     return this.isCellsBendable() && !this.isCellLocked(cell) && style[mxConstants.STYLE_BENDABLE] != 0;
   }
 
@@ -8015,7 +8015,7 @@ export class mxGraph {
    */
   isCellEditable(cell: mxCell): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
     return this.isCellsEditable() && !this.isCellLocked(cell) && style[mxConstants.STYLE_EDITABLE] != 0;
   }
 
@@ -8091,7 +8091,7 @@ export class mxGraph {
    * cell - <mxCell> that represents a possible source or null.
    */
   isValidSource(cell: mxCell): boolean {
-    return (cell == null && this.allowDanglingEdges) || (cell != null && (!this.model.isEdge(cell) || this.connectableEdges) && this.isCellConnectable(cell));
+    return (!cell && this.allowDanglingEdges) || (!!cell && (!this.model.isEdge(cell) || this.connectableEdges) && this.isCellConnectable(cell));
   }
 
   /**
@@ -8189,9 +8189,9 @@ export class mxGraph {
    * cell - <mxCell> that should be checked.
    */
   isEditing(cell: mxCell | null = null): boolean {
-    if (this.cellEditor != null) {
+    if (!!this.cellEditor) {
       const editingCell = this.cellEditor.getEditingCell();
-      return (cell == null) ? editingCell != null : cell == editingCell;
+      return (!cell) ? !!editingCell : cell == editingCell;
     }
     return false;
   }
@@ -8210,7 +8210,7 @@ export class mxGraph {
    */
   isAutoSizeCell(cell: mxCell): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
     return this.isAutoSizeCells() || style[mxConstants.STYLE_AUTOSIZE] == 1;
   }
 
@@ -8473,7 +8473,7 @@ export class mxGraph {
    */
   isCellFoldable(cell: mxCell, collapse: any): boolean {
     const state = this.view.getState(cell);
-    const style = (state != null) ? state.style : this.getCellStyle(cell);
+    const style = (!!state) ? state.style : this.getCellStyle(cell);
     return this.model.getChildCount(cell) > 0 && style[mxConstants.STYLE_FOLDABLE] != 0;
   }
 
@@ -8492,7 +8492,7 @@ export class mxGraph {
    * evt - Mouseevent that triggered the invocation.
    */
   isValidDropTarget(cell: mxCell, cells: mxCell[], evt: Event): boolean {
-    return cell != null && ((this.isSplitEnabled() && this.isSplitTarget(cell, cells, evt)) || (!this.model.isEdge(cell) && (this.isSwimlane(cell) || (this.model.getChildCount(cell) > 0 && !this.isCellCollapsed(cell)))));
+    return !!cell && ((this.isSplitEnabled() && this.isSplitTarget(cell, cells, evt)) || (!this.model.isEdge(cell) && (this.isSwimlane(cell) || (this.model.getChildCount(cell) > 0 && !this.isCellCollapsed(cell)))));
   }
 
   /**
@@ -8508,7 +8508,7 @@ export class mxGraph {
    * evt - Mouseevent that triggered the invocation.
    */
   isSplitTarget(target: string, cells: mxCell[], evt: Event): boolean {
-    if (this.model.isEdge(target) && cells != null && cells.length == 1 && this.isCellConnectable(cells[0]) && this.getEdgeValidationError(target, this.model.getTerminal(target, true), cells[0]) == null) {
+    if (this.model.isEdge(target) && !!cells && cells.length == 1 && this.isCellConnectable(cells[0]) && this.getEdgeValidationError(target, !this.model.getTerminal(target, true), cells[0])) {
       const src = this.model.getTerminal(target, true);
       const trg = this.model.getTerminal(target, false);
       return (!this.model.isAncestor(cells[0], src) && !this.model.isAncestor(cells[0], trg));
@@ -8546,27 +8546,27 @@ export class mxGraph {
     pt.x -= this.panDx;
     pt.y -= this.panDy;
     const swimlane = this.getSwimlaneAt(pt.x, pt.y);
-    if (cell == null) {
+    if (!cell) {
       cell = swimlane;
-    } else if (swimlane != null) {
+    } else if (!!swimlane) {
       let tmp = this.model.getParent(swimlane);
-      while (tmp != null && this.isSwimlane(tmp) && tmp != cell) {
+      while (!!tmp && this.isSwimlane(tmp) && tmp != cell) {
         tmp = this.model.getParent(tmp);
       }
       if (tmp == cell) {
         cell = swimlane;
       }
     }
-    while (cell != null && !this.isValidDropTarget(cell, cells, evt) && !this.model.isLayer(cell)) {
+    while (!!cell && !this.isValidDropTarget(cell, cells, evt) && !this.model.isLayer(cell)) {
       cell = this.model.getParent(cell);
     }
-    if (clone == null || !clone) {
+    if (!clone || !clone) {
       let parent = cell;
-      while (parent != null && mxUtils.indexOf(cells, parent) < 0) {
+      while (!!parent && mxUtils.indexOf(cells, parent) < 0) {
         parent = this.model.getParent(parent);
       }
     }
-    return (!this.model.isLayer(cell) && parent == null) ? cell : null;
+    return (!this.model.isLayer(cell) && !parent) ? cell : null;
   }
 
   /**
@@ -8579,9 +8579,9 @@ export class mxGraph {
    */
   getDefaultParent(): any {
     let parent = this.getCurrentRoot();
-    if (parent == null) {
+    if (!parent) {
       parent = this.defaultParent;
-      if (parent == null) {
+      if (!parent) {
         const root = this.model.getRoot();
         parent = this.model.getChildAt(root, 0);
       }
@@ -8610,7 +8610,7 @@ export class mxGraph {
    * cell - <mxCell> for which the ancestor swimlane should be returned.
    */
   getSwimlane(cell: mxCell): any {
-    while (cell != null && !this.isSwimlane(cell)) {
+    while (!!cell && !this.isSwimlane(cell)) {
       cell = this.model.getParent(cell);
     }
     return cell;
@@ -8631,12 +8631,12 @@ export class mxGraph {
    */
   getSwimlaneAt(x: number, y: number, parent: any): any {
     parent = parent || this.getDefaultParent();
-    if (parent != null) {
+    if (!!parent) {
       const childCount = this.model.getChildCount(parent);
       for (let i = 0; i < childCount; i++) {
         const child = this.model.getChildAt(parent, i);
         const result = this.getSwimlaneAt(x, y, child);
-        if (result != null) {
+        if (!!result) {
           return result;
         } else if (this.isSwimlane(child)) {
           const state = this.view.getState(child);
@@ -8673,24 +8673,24 @@ export class mxGraph {
    * The function is passed the cell state and the x and y parameter.
    */
   getCellAt(x: number, y: number, parent: any, vertices: any, edges: any, ignoreFn: Function): any {
-    vertices = (vertices != null) ? vertices : true;
-    edges = (edges != null) ? edges : true;
-    if (parent == null) {
+    vertices = (!!vertices) ? vertices : true;
+    edges = (!!edges) ? edges : true;
+    if (!parent) {
       parent = this.getCurrentRoot();
-      if (parent == null) {
+      if (!parent) {
         parent = this.getModel().getRoot();
       }
     }
-    if (parent != null) {
+    if (!!parent) {
       const childCount = this.model.getChildCount(parent);
       for (let i = childCount - 1; i >= 0; i--) {
         const cell = this.model.getChildAt(parent, i);
         const result = this.getCellAt(x, y, cell, vertices, edges, ignoreFn);
-        if (result != null) {
+        if (!!result) {
           return result;
         } else if (this.isCellVisible(cell) && (edges && this.model.isEdge(cell) || vertices && this.model.isVertex(cell))) {
           const state = this.view.getState(cell);
-          if (state != null && (ignoreFn == null || !ignoreFn(state, x, y)) && this.intersects(state, x, y)) {
+          if (!!state && (!ignoreFn || !ignoreFn(state, x, y)) && this.intersects(state, x, y)) {
             return cell;
           }
         }
@@ -8712,9 +8712,9 @@ export class mxGraph {
    * y - Y-coordinate of the location to be checked.
    */
   intersects(state: any, x: number, y: number): any {
-    if (state != null) {
+    if (!!state) {
       const pts = state.absolutePoints;
-      if (pts != null) {
+      if (!!pts) {
         const t2 = this.tolerance * this.tolerance;
         let pt = pts[0];
         for (let i = 1; i < pts.length; i++) {
@@ -8758,7 +8758,7 @@ export class mxGraph {
   hitsSwimlaneContent(swimlane: any, x: number, y: number): any {
     const state = this.getView().getState(swimlane);
     const size = this.getStartSize(swimlane);
-    if (state != null) {
+    if (!!state) {
       const scale = this.getView().getScale();
       x -= state.x;
       y -= state.y;
@@ -8812,9 +8812,9 @@ export class mxGraph {
    * be returned. Default is false.
    */
   getChildCells(parent: any, vertices: any, edges: any): any {
-    parent = (parent != null) ? parent : this.getDefaultParent();
-    vertices = (vertices != null) ? vertices : false;
-    edges = (edges != null) ? edges : false;
+    parent = (!!parent) ? parent : this.getDefaultParent();
+    vertices = (!!vertices) ? vertices : false;
+    edges = (!!edges) ? edges : false;
     const cells = this.model.getChildCells(parent, vertices, edges);
     const result = [];
     for (let i = 0; i < cells.length; i++) {
@@ -8899,10 +8899,10 @@ export class mxGraph {
    * Default is false
    */
   getEdges(cell: mxCell, parent: any, incoming: any, outgoing: any, includeLoops: any, recurse: any): any {
-    incoming = (incoming != null) ? incoming : true;
-    outgoing = (outgoing != null) ? outgoing : true;
-    includeLoops = (includeLoops != null) ? includeLoops : true;
-    recurse = (recurse != null) ? recurse : false;
+    incoming = (!!incoming) ? incoming : true;
+    outgoing = (!!outgoing) ? outgoing : true;
+    includeLoops = (!!includeLoops) ? includeLoops : true;
+    recurse = (!!recurse) ? recurse : false;
     let edges = [];
     const isCollapsed = this.isCellCollapsed(cell);
     const childCount = this.model.getChildCount(cell);
@@ -8916,9 +8916,9 @@ export class mxGraph {
     const result = [];
     for (let i = 0; i < edges.length; i++) {
       const state = this.view.getState(edges[i]);
-      const source = (state != null) ? state.getVisibleTerminal(true) : this.view.getVisibleTerminal(edges[i], true);
-      const target = (state != null) ? state.getVisibleTerminal(false) : this.view.getVisibleTerminal(edges[i], false);
-      if ((includeLoops && source == target) || ((source != target) && ((incoming && target == cell && (parent == null || this.isValidAncestor(source, parent, recurse))) || (outgoing && source == cell && (parent == null || this.isValidAncestor(target, parent, recurse)))))) {
+      const source = (!!state) ? state.getVisibleTerminal(true) : this.view.getVisibleTerminal(edges[i], true);
+      const target = (!!state) ? state.getVisibleTerminal(false) : this.view.getVisibleTerminal(edges[i], false);
+      if ((includeLoops && source == target) || ((source != target) && ((incoming && target == cell && (!parent || this.isValidAncestor(source, parent, recurse))) || (outgoing && source == cell && (!parent || this.isValidAncestor(target, parent, recurse)))))) {
         result.push(edges[i]);
       }
     }
@@ -8960,21 +8960,21 @@ export class mxGraph {
    * included in the result. Default is true.
    */
   getOpposites(edges: any, terminal: any, sources: any, targets: any): any {
-    sources = (sources != null) ? sources : true;
-    targets = (targets != null) ? targets : true;
+    sources = (!!sources) ? sources : true;
+    targets = (!!targets) ? targets : true;
     const terminals = [];
     const dict = new mxDictionary();
-    if (edges != null) {
+    if (!!edges) {
       for (let i = 0; i < edges.length; i++) {
         const state = this.view.getState(edges[i]);
-        const source = (state != null) ? state.getVisibleTerminal(true) : this.view.getVisibleTerminal(edges[i], true);
-        const target = (state != null) ? state.getVisibleTerminal(false) : this.view.getVisibleTerminal(edges[i], false);
-        if (source == terminal && target != null && target != terminal && targets) {
+        const source = (!!state) ? state.getVisibleTerminal(true) : this.view.getVisibleTerminal(edges[i], true);
+        const target = (!!state) ? state.getVisibleTerminal(false) : this.view.getVisibleTerminal(edges[i], false);
+        if (source == terminal && !!target && target != terminal && targets) {
           if (!dict.get(target)) {
             dict.put(target, true);
             terminals.push(target);
           }
-        } else if (target == terminal && source != null && source != terminal && sources) {
+        } else if (target == terminal && !!source && source != terminal && sources) {
           if (!dict.get(source)) {
             dict.put(source, true);
             terminals.push(source);
@@ -8999,13 +8999,13 @@ export class mxGraph {
    * directed -
    */
   getEdgesBetween(source: any, target: string, directed: any): any {
-    directed = (directed != null) ? directed : false;
+    directed = (!!directed) ? directed : false;
     const edges = this.getEdges(source);
     const result = [];
     for (let i = 0; i < edges.length; i++) {
       const state = this.view.getState(edges[i]);
-      const src = (state != null) ? state.getVisibleTerminal(true) : this.view.getVisibleTerminal(edges[i], true);
-      const trg = (state != null) ? state.getVisibleTerminal(false) : this.view.getVisibleTerminal(edges[i], false);
+      const src = (!!state) ? state.getVisibleTerminal(true) : this.view.getVisibleTerminal(edges[i], true);
+      const trg = (!!state) ? state.getVisibleTerminal(false) : this.view.getVisibleTerminal(edges[i], false);
       if ((src == source && trg == target) || (!directed && src == target && trg == source)) {
         result.push(edges[i]);
       }
@@ -9054,23 +9054,23 @@ export class mxGraph {
    * result - Optional array to store the result in.
    */
   getCells(x: number, y: number, width: number, height: number, parent: any, result: any): any {
-    result = (result != null) ? result : [];
+    result = (!!result) ? result : [];
     if (width > 0 || height > 0) {
       const model = this.getModel();
       const right = x + width;
       const bottom = y + height;
-      if (parent == null) {
+      if (!parent) {
         parent = this.getCurrentRoot();
-        if (parent == null) {
+        if (!parent) {
           parent = model.getRoot();
         }
       }
-      if (parent != null) {
+      if (!!parent) {
         const childCount = model.getChildCount(parent);
         for (let i = 0; i < childCount; i++) {
           const cell = model.getChildAt(parent, i);
           const state = this.view.getState(cell);
-          if (state != null && this.isCellVisible(cell)) {
+          if (!!state && this.isCellVisible(cell)) {
             const deg = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION) || 0;
             let box = state;
             if (deg != 0) {
@@ -9109,15 +9109,15 @@ export class mxGraph {
   getCellsBeyond(x0: any, y0: any, parent: any, rightHalfpane: any, bottomHalfpane: any): any {
     const result = [];
     if (rightHalfpane || bottomHalfpane) {
-      if (parent == null) {
+      if (!parent) {
         parent = this.getDefaultParent();
       }
-      if (parent != null) {
+      if (!!parent) {
         const childCount = this.model.getChildCount(parent);
         for (let i = 0; i < childCount; i++) {
           const child = this.model.getChildAt(parent, i);
           const state = this.view.getState(child);
-          if (this.isCellVisible(child) && state != null) {
+          if (this.isCellVisible(child) && !!state) {
             if ((!rightHalfpane || state.x >= x0) && (!bottomHalfpane || state.y >= y0)) {
               result.push(child);
             }
@@ -9146,13 +9146,13 @@ export class mxGraph {
    * counted. Default is false.
    */
   findTreeRoots(parent: any, isolate: any, invert: any): any {
-    isolate = (isolate != null) ? isolate : false;
-    invert = (invert != null) ? invert : false;
+    isolate = (!!isolate) ? isolate : false;
+    invert = (!!invert) ? invert : false;
     const roots = [];
-    if (parent != null) {
+    if (!!parent) {
       const model = this.getModel();
       const childCount = model.getChildCount(parent);
-      let best = null;
+      let best = undefined;
       let maxDiff = 0;
       for (let i = 0; i < childCount; i++) {
         const cell = model.getChildAt(parent, i);
@@ -9178,7 +9178,7 @@ export class mxGraph {
           }
         }
       }
-      if (roots.length == 0 && best != null) {
+      if (roots.length == 0 && !!best) {
         roots.push(best);
       }
     }
@@ -9219,14 +9219,14 @@ export class mxGraph {
    * This is ignored if directed is false.
    */
   traverse(vertex: any, directed: any, func: any, edge: any, visited: any, inverse: any): void {
-    if (func != null && vertex != null) {
-      directed = (directed != null) ? directed : true;
-      inverse = (inverse != null) ? inverse : false;
+    if (!!func && !!vertex) {
+      directed = (!!directed) ? directed : true;
+      inverse = (!!inverse) ? inverse : false;
       visited = visited || new mxDictionary();
       if (!visited.get(vertex)) {
         visited.put(vertex, true);
         const result = func(vertex, edge);
-        if (result == null || result) {
+        if (!result || result) {
           const edgeCount = this.model.getEdgeCount(vertex);
           if (edgeCount > 0) {
             for (let i = 0; i < edgeCount; i++) {
@@ -9450,16 +9450,16 @@ export class mxGraph {
     if (sel.cells.length > 1) {
       sel.clear();
     }
-    const parent = (cell != null) ? this.model.getParent(cell) : this.getDefaultParent();
+    const parent = (!!cell) ? this.model.getParent(cell) : this.getDefaultParent();
     const childCount = this.model.getChildCount(parent);
-    if (cell == null && childCount > 0) {
+    if (!cell && childCount > 0) {
       const child = this.model.getChildAt(parent, 0);
       this.setSelectionCell(child);
-    } else if ((cell == null || isParent) && this.view.getState(parent) != null && this.model.getGeometry(parent) != null) {
+    } else if ((!cell || isParent) && this.view.getState(parent) && this.model.getGeometry(parent)) {
       if (this.getCurrentRoot() != parent) {
         this.setSelectionCell(parent);
       }
-    } else if (cell != null && isChild) {
+    } else if (!!cell && isChild) {
       const tmp = this.model.getChildCount(cell);
       if (tmp > 0) {
         const child = this.model.getChildAt(cell, 0);
@@ -9497,9 +9497,9 @@ export class mxGraph {
   selectAll(parent: any, descendants: any): any {
     parent = parent || this.getDefaultParent();
     const cells = (descendants) ? this.model.filterDescendants(mxUtils.bind(this, function (cell) {
-      return cell != parent && this.view.getState(cell) != null;
+      return cell != parent && this.view.getState(cell);
     }), parent) : this.model.getChildren(parent);
-    if (cells != null) {
+    if (!!cells) {
       this.setSelectionCells(cells);
     }
   }
@@ -9540,10 +9540,10 @@ export class mxGraph {
   selectCells(vertices: any, edges: any, parent: any): any {
     parent = parent || this.getDefaultParent();
     const filter = mxUtils.bind(this, function (cell) {
-      return this.view.getState(cell) != null && ((this.model.getChildCount(cell) == 0 && this.model.isVertex(cell) && vertices && !this.model.isEdge(this.model.getParent(cell))) || (this.model.isEdge(cell) && edges));
+      return this.view.getState(cell) && ((this.model.getChildCount(cell) == 0 && this.model.isVertex(cell) && vertices && !this.model.isEdge(this.model.getParent(cell))) || (this.model.isEdge(cell) && edges));
     });
     const cells = this.model.filterDescendants(filter, parent);
-    if (cells != null) {
+    if (!!cells) {
       this.setSelectionCells(cells);
     }
   }
@@ -9605,13 +9605,13 @@ export class mxGraph {
    * state - <mxCellState> whose handler should be created.
    */
   createHandler(state: any): Function {
-    let result = null;
-    if (state != null) {
+    let result = undefined;
+    if (!!state) {
       if (this.model.isEdge(state.cell)) {
         const source = state.getVisibleTerminalState(true);
         const target = state.getVisibleTerminalState(false);
         const geo = this.getCellGeometry(state.cell);
-        const edgeStyle = this.view.getEdgeStyle(state, (geo != null) ? geo.points : null, source, target);
+        const edgeStyle = this.view.getEdgeStyle(state, (!!geo) ? geo.points : null, source, target);
         result = this.createEdgeHandler(state, edgeStyle);
       } else {
         result = this.createVertexHandler(state);
@@ -9643,7 +9643,7 @@ export class mxGraph {
    * state - <mxCellState> to create the handler for.
    */
   createEdgeHandler(state: any, edgeStyle: any): Function {
-    let result = null;
+    let result = undefined;
     if (edgeStyle == mxEdgeStyle.Loop || edgeStyle == mxEdgeStyle.ElbowConnector || edgeStyle == mxEdgeStyle.SideToSide || edgeStyle == mxEdgeStyle.TopToBottom) {
       result = this.createElbowEdgeHandler(state);
     } else if (edgeStyle == mxEdgeStyle.SegmentConnector || edgeStyle == mxEdgeStyle.OrthConnector) {
@@ -9692,7 +9692,7 @@ export class mxGraph {
    * listener - Listener to be added to the graph event listeners.
    */
   addMouseListener(listener: Function): void {
-    if (this.mouseListeners == null) {
+    if (!this.mouseListeners) {
       this.mouseListeners = [];
     }
     this.mouseListeners.push(listener);
@@ -9708,7 +9708,7 @@ export class mxGraph {
    * listener - Listener to be removed from the graph event listeners.
    */
   removeMouseListener(listener: Function): void {
-    if (this.mouseListeners != null) {
+    if (!!this.mouseListeners) {
       for (let i = 0; i < this.mouseListeners.length; i++) {
         if (this.mouseListeners[i] == listener) {
           this.mouseListeners.splice(i, 1);
@@ -9730,13 +9730,13 @@ export class mxGraph {
    * evtName - Name of the mouse event.
    */
   updateMouseEvent(me: any, evtName: string): any {
-    if (me.graphX == null || me.graphY == null) {
+    if (!me.graphX || !me.graphY) {
       const pt = mxUtils.convertPoint(this.container, me.getX(), me.getY());
       me.graphX = pt.x - this.panDx;
       me.graphY = pt.y - this.panDy;
-      if (me.getCell() == null && this.isMouseDown && evtName == mxEvent.MOUSE_MOVE) {
+      if (!me.getCell() && this.isMouseDown && evtName == mxEvent.MOUSE_MOVE) {
         me.state = this.view.getState(this.getCellAt(pt.x, pt.y, null, null, null, function (state) {
-          return state.shape == null || state.shape.paintBackground != mxRectangleShape.prototype.paintBackground || mxUtils.getValue(state.style, mxConstants.STYLE_POINTER_EVENTS, '1') == '1' || (state.shape.fill != null && state.shape.fill != mxConstants.NONE);
+          return !state.shape || state.shape.paintBackground != mxRectangleShape.prototype.paintBackground || mxUtils.getValue(state.style, mxConstants.STYLE_POINTER_EVENTS, '1') == '1' || (!!state.shape.fill && state.shape.fill != mxConstants.NONE);
         }));
       }
     }
@@ -9768,12 +9768,12 @@ export class mxGraph {
     } else {
       this.lastEvent = me.getEvent();
     }
-    if (this.eventSource != null && evtName != mxEvent.MOUSE_MOVE) {
+    if (!!this.eventSource && evtName != mxEvent.MOUSE_MOVE) {
       mxEvent.removeGestureListeners(this.eventSource, null, this.mouseMoveRedirect, this.mouseUpRedirect);
-      this.mouseMoveRedirect = null;
-      this.mouseUpRedirect = null;
-      this.eventSource = null;
-    } else if (!mxClient.IS_GC && this.eventSource != null && me.getSource() != this.eventSource) {
+      this.mouseMoveRedirect = undefined;
+      this.mouseUpRedirect = undefined;
+      this.eventSource = undefined;
+    } else if (!mxClient.IS_GC && !!this.eventSource && me.getSource() != this.eventSource) {
       result = true;
     } else if (mxClient.IS_TOUCH && evtName == mxEvent.MOUSE_DOWN && !mouseEvent && !mxEvent.isPenEvent(me.getEvent())) {
       this.eventSource = me.getSource();
@@ -9838,7 +9838,7 @@ export class mxGraph {
    */
   isEventSourceIgnored(evtName: string, me: any): boolean {
     const source = me.getSource();
-    const name = (source.nodeName != null) ? source.nodeName.toLowerCase() : '';
+    const name = (!!source.nodeName) ? source.nodeName.toLowerCase() : '';
     const candidate = !mxEvent.isMouseEvent(me.getEvent()) || mxEvent.isLeftMouseButton(me.getEvent());
     return evtName == mxEvent.MOUSE_DOWN && candidate && (name == 'select' || name == 'option' || (name == 'input' && source.type != 'checkbox' && source.type != 'radio' && source.type != 'button' && source.type != 'submit' && source.type != 'file'));
   }
@@ -9873,26 +9873,26 @@ export class mxGraph {
    */
   fireMouseEvent(evtName: string, me: any, sender: any): void {
     if (this.isEventSourceIgnored(evtName, me)) {
-      if (this.tooltipHandler != null) {
+      if (!!this.tooltipHandler) {
         this.tooltipHandler.hide();
       }
       return;
     }
-    if (sender == null) {
+    if (!sender) {
       sender = this;
     }
     me = this.updateMouseEvent(me, evtName);
     if ((!this.nativeDblClickEnabled && !mxEvent.isPopupTrigger(me.getEvent())) || (this.doubleTapEnabled && mxClient.IS_TOUCH && (mxEvent.isTouchEvent(me.getEvent()) || mxEvent.isPenEvent(me.getEvent())))) {
       const currentTime = new Date().getTime();
       if ((!mxClient.IS_QUIRKS && evtName == mxEvent.MOUSE_DOWN) || (mxClient.IS_QUIRKS && evtName == mxEvent.MOUSE_UP && !this.fireDoubleClick)) {
-        if (this.lastTouchEvent != null && this.lastTouchEvent != me.getEvent() && currentTime - this.lastTouchTime < this.doubleTapTimeout && Math.abs(this.lastTouchX - me.getX()) < this.doubleTapTolerance && Math.abs(this.lastTouchY - me.getY()) < this.doubleTapTolerance && this.doubleClickCounter < 2) {
+        if (!!this.lastTouchEvent && this.lastTouchEvent != me.getEvent() && currentTime - this.lastTouchTime < this.doubleTapTimeout && Math.abs(this.lastTouchX - me.getX()) < this.doubleTapTolerance && Math.abs(this.lastTouchY - me.getY()) < this.doubleTapTolerance && this.doubleClickCounter < 2) {
           this.doubleClickCounter++;
           let doubleClickFired = false;
           if (evtName == mxEvent.MOUSE_UP) {
-            if (me.getCell() == this.lastTouchCell && this.lastTouchCell != null) {
+            if (me.getCell() == this.lastTouchCell && !!this.lastTouchCell) {
               this.lastTouchTime = 0;
               const cell = this.lastTouchCell;
-              this.lastTouchCell = null;
+              this.lastTouchCell = undefined;
               if (mxClient.IS_QUIRKS) {
                 me.getSource().fireEvent('ondblclick');
               }
@@ -9907,7 +9907,7 @@ export class mxGraph {
             mxEvent.consume(me.getEvent());
             return;
           }
-        } else if (this.lastTouchEvent == null || this.lastTouchEvent != me.getEvent()) {
+        } else if (!this.lastTouchEvent || this.lastTouchEvent != me.getEvent()) {
           this.lastTouchCell = me.getCell();
           this.lastTouchX = me.getX();
           this.lastTouchY = me.getY();
@@ -9918,9 +9918,9 @@ export class mxGraph {
       } else if ((this.isMouseDown || evtName == mxEvent.MOUSE_UP) && this.fireDoubleClick) {
         this.fireDoubleClick = false;
         const cell = this.lastTouchCell;
-        this.lastTouchCell = null;
+        this.lastTouchCell = undefined;
         this.isMouseDown = false;
-        const valid = (cell != null) || ((mxEvent.isTouchEvent(me.getEvent()) || mxEvent.isPenEvent(me.getEvent())) && (mxClient.IS_GC || mxClient.IS_SF));
+        const valid = (!!cell) || ((mxEvent.isTouchEvent(me.getEvent()) || mxEvent.isPenEvent(me.getEvent())) && (mxClient.IS_GC || mxClient.IS_SF));
         if (valid && Math.abs(this.lastTouchX - me.getX()) < this.doubleTapTolerance && Math.abs(this.lastTouchY - me.getY()) < this.doubleTapTolerance) {
           this.dblClick(me.getEvent(), cell);
         } else {
@@ -9942,7 +9942,7 @@ export class mxGraph {
           this.container.scrollLeft = 0;
           this.container.scrollTop = 0;
         }
-        if (this.mouseListeners != null) {
+        if (!!this.mouseListeners) {
           const args = [sender, me];
           if (!me.getEvent().preventDefault) {
             me.getEvent().returnValue = true;
@@ -10050,35 +10050,35 @@ export class mxGraph {
   destroy(): void {
     if (!this.destroyed) {
       this.destroyed = true;
-      if (this.tooltipHandler != null) {
+      if (!!this.tooltipHandler) {
         this.tooltipHandler.destroy();
       }
-      if (this.selectionCellsHandler != null) {
+      if (!!this.selectionCellsHandler) {
         this.selectionCellsHandler.destroy();
       }
-      if (this.panningHandler != null) {
+      if (!!this.panningHandler) {
         this.panningHandler.destroy();
       }
-      if (this.popupMenuHandler != null) {
+      if (!!this.popupMenuHandler) {
         this.popupMenuHandler.destroy();
       }
-      if (this.connectionHandler != null) {
+      if (!!this.connectionHandler) {
         this.connectionHandler.destroy();
       }
-      if (this.graphHandler != null) {
+      if (!!this.graphHandler) {
         this.graphHandler.destroy();
       }
-      if (this.cellEditor != null) {
+      if (!!this.cellEditor) {
         this.cellEditor.destroy();
       }
-      if (this.view != null) {
+      if (!!this.view) {
         this.view.destroy();
       }
-      if (this.model != null && this.graphModelChangeListener != null) {
+      if (!!this.model && !!this.graphModelChangeListener) {
         this.model.removeListener(this.graphModelChangeListener);
-        this.graphModelChangeListener = null;
+        this.graphModelChangeListener = undefined;
       }
-      this.container = null;
+      this.container = undefined;
     }
   }
 }

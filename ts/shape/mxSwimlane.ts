@@ -34,7 +34,7 @@ export class mxSwimlane extends mxShape {
     this.bounds = bounds;
     this.fill = fill;
     this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
+    this.strokewidth = (!!strokewidth) ? strokewidth : 1;
   }
 
   bounds: any;
@@ -159,7 +159,7 @@ export class mxSwimlane extends mxShape {
     }
     const sep = mxUtils.getValue(this.style, mxConstants.STYLE_SEPARATORCOLOR, mxConstants.NONE);
     this.paintSeparator(c, x, y, w, h, start, sep);
-    if (this.image != null) {
+    if (!!this.image) {
       const bounds = this.getImageBounds(x, y, w, h);
       c.image(bounds.x - x, bounds.y - y, bounds.width, bounds.height, this.image, false, false, false);
     }

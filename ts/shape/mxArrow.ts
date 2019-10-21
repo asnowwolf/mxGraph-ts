@@ -35,10 +35,10 @@ export class mxArrow extends mxShape {
     this.points = points;
     this.fill = fill;
     this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
-    this.arrowWidth = (arrowWidth != null) ? arrowWidth : mxConstants.ARROW_WIDTH;
-    this.spacing = (spacing != null) ? spacing : mxConstants.ARROW_SPACING;
-    this.endSize = (endSize != null) ? endSize : mxConstants.ARROW_SIZE;
+    this.strokewidth = (!!strokewidth) ? strokewidth : 1;
+    this.arrowWidth = (!!arrowWidth) ? arrowWidth : mxConstants.ARROW_WIDTH;
+    this.spacing = (!!spacing) ? spacing : mxConstants.ARROW_SPACING;
+    this.endSize = (!!endSize) ? endSize : mxConstants.ARROW_SIZE;
   }
 
   points: any;

@@ -9,7 +9,7 @@ import { mxRectangle } from '../util/mxRectangle';
 
 export class mxTemporaryCellStates {
   constructor(view: any, scale: any, cells: mxCell[], isCellVisibleFn: Function, getLinkForCellState: any) {
-    scale = (scale != null) ? scale : 1;
+    scale = (!!scale) ? scale : 1;
     this.view = view;
     this.oldValidateCellState = view.validateCellState;
     this.oldBounds = view.getGraphBounds();
@@ -17,16 +17,16 @@ export class mxTemporaryCellStates {
     this.oldScale = view.getScale();
     this.oldDoRedrawShape = view.graph.cellRenderer.doRedrawShape;
     const self = this;
-    if (getLinkForCellState != null) {
+    if (!!getLinkForCellState) {
       view.graph.cellRenderer.doRedrawShape = function (state) {
         const oldPaint = state.shape.paint;
         state.shape.paint = function (c) {
           const link = getLinkForCellState(state);
-          if (link != null) {
+          if (!!link) {
             c.setLink(link);
           }
           oldPaint.apply(this, arguments);
-          if (link != null) {
+          if (!!link) {
             c.setLink(null);
           }
         };
@@ -35,19 +35,19 @@ export class mxTemporaryCellStates {
       };
     }
     view.validateCellState = function (cell, resurse) {
-      if (cell == null || isCellVisibleFn == null || isCellVisibleFn(cell)) {
+      if (!cell || !isCellVisibleFn || isCellVisibleFn(cell)) {
         return self.oldValidateCellState.apply(view, arguments);
       }
       return null;
     };
     view.setStates(new mxDictionary());
     view.setScale(scale);
-    if (cells != null) {
+    if (!!cells) {
       view.resetValidationState();
-      let bbox = null;
+      let bbox = undefined;
       for (let i = 0; i < cells.length; i++) {
         const bounds = view.getBoundingBox(view.validateCellState(view.validateCell(cells[i])));
-        if (bbox == null) {
+        if (!bbox) {
           bbox = bounds;
         } else {
           bbox.add(bounds);

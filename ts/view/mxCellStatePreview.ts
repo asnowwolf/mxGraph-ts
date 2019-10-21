@@ -43,10 +43,10 @@ export class mxCellStatePreview {
    * Function: moveState
    */
   moveState(state: any, dx: number, dy: number, add: any, includeEdges: any): any {
-    add = (add != null) ? add : true;
-    includeEdges = (includeEdges != null) ? includeEdges : true;
+    add = (!!add) ? add : true;
+    includeEdges = (!!includeEdges) ? includeEdges : true;
     let delta = this.deltas.get(state.cell);
-    if (delta == null) {
+    if (!delta) {
       delta = { point: new mxPoint(dx, dy), state };
       this.deltas.put(state.cell, delta);
       this.count++;
@@ -79,12 +79,12 @@ export class mxCellStatePreview {
    * Function: translateState
    */
   translateState(state: any, dx: number, dy: number): void {
-    if (state != null) {
+    if (!!state) {
       const model = this.graph.getModel();
       if (model.isVertex(state.cell)) {
         state.view.updateCellState(state);
         const geo = model.getGeometry(state.cell);
-        if ((dx != 0 || dy != 0) && geo != null && (!geo.relative || this.deltas.get(state.cell) != null)) {
+        if ((dx != 0 || dy != 0) && !!geo && (!geo.relative || this.deltas.get(state.cell))) {
           state.x += dx;
           state.y += dy;
         }
@@ -100,19 +100,19 @@ export class mxCellStatePreview {
    * Function: revalidateState
    */
   revalidateState(state: any, dx: number, dy: number, visitor: any): void {
-    if (state != null) {
+    if (!!state) {
       const model = this.graph.getModel();
       if (model.isEdge(state.cell)) {
         state.view.updateCellState(state);
       }
       const geo = this.graph.getCellGeometry(state.cell);
       const pState = state.view.getState(model.getParent(state.cell));
-      if ((dx != 0 || dy != 0) && geo != null && geo.relative && model.isVertex(state.cell) && (pState == null || model.isVertex(pState.cell) || this.deltas.get(state.cell) != null)) {
+      if ((dx != 0 || dy != 0) && !!geo && geo.relative && model.isVertex(state.cell) && (!pState || model.isVertex(pState.cell) || this.deltas.get(state.cell))) {
         state.x += dx;
         state.y += dy;
       }
       this.graph.cellRenderer.redraw(state);
-      if (visitor != null) {
+      if (!!visitor) {
         visitor(state);
       }
       const childCount = model.getChildCount(state.cell);
@@ -130,7 +130,7 @@ export class mxCellStatePreview {
     const edgeCount = model.getEdgeCount(state.cell);
     for (let i = 0; i < edgeCount; i++) {
       const s = state.view.getState(model.getEdgeAt(state.cell, i));
-      if (s != null) {
+      if (!!s) {
         this.moveState(s, 0, 0);
       }
     }

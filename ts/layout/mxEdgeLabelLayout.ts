@@ -44,7 +44,7 @@ export class mxEdgeLabelLayout extends mxGraphLayout {
     for (let i = 0; i < childCount; i++) {
       const cell = model.getChildAt(parent, i);
       const state = view.getState(cell);
-      if (state != null) {
+      if (!!state) {
         if (!this.isVertexIgnored(cell)) {
           vertices.push(state);
         } else if (!this.isEdgeIgnored(cell)) {
@@ -66,10 +66,10 @@ export class mxEdgeLabelLayout extends mxGraphLayout {
     try {
       for (let i = 0; i < e.length; i++) {
         const edge = e[i];
-        if (edge != null && edge.text != null && edge.text.boundingBox != null) {
+        if (!!edge && !!edge.text && !!edge.text.boundingBox) {
           for (let j = 0; j < v.length; j++) {
             const vertex = v[j];
-            if (vertex != null) {
+            if (!!vertex) {
               this.avoid(edge, vertex);
             }
           }
@@ -101,9 +101,9 @@ export class mxEdgeLabelLayout extends mxGraphLayout {
         dx = 0;
       }
       let g = model.getGeometry(edge.cell);
-      if (g != null) {
+      if (!!g) {
         g = g.clone();
-        if (g.offset != null) {
+        if (!!g.offset) {
           g.offset.x += dx;
           g.offset.y += dy;
         } else {

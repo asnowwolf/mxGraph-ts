@@ -190,8 +190,8 @@ import { mxUtils } from './mxUtils';
 
 export class mxWindow {
   constructor(title: string, content: any, x: number, y: number, width: number, height: number, minimizable: boolean, movable: boolean, replaceNode: any, style: any) {
-    if (content != null) {
-      minimizable = (minimizable != null) ? minimizable : true;
+    if (!!content) {
+      minimizable = (!!minimizable) ? minimizable : true;
       this.content = content;
       this.init(x, y, width, height, style);
       this.installMaximizeHandler();
@@ -199,10 +199,10 @@ export class mxWindow {
       this.installCloseHandler();
       this.setMinimizable(minimizable);
       this.setTitle(title);
-      if (movable == null || movable) {
+      if (!movable || movable) {
         this.installMoveHandler();
       }
-      if (replaceNode != null && replaceNode.parentNode != null) {
+      if (!!replaceNode && !!replaceNode.parentNode) {
         replaceNode.parentNode.replaceChild(this.div, replaceNode);
       } else {
         document.body.appendChild(this.div);
@@ -292,7 +292,7 @@ export class mxWindow {
    * Initializes the DOM tree that represents the window.
    */
   init(x: number, y: number, width: number, height: number, style: any): void {
-    style = (style != null) ? style : 'mxWindow';
+    style = (!!style) ? style : 'mxWindow';
     this.div = document.createElement('div');
     this.div.className = style;
     this.div.style.left = x + 'px';
@@ -302,13 +302,13 @@ export class mxWindow {
     if (mxClient.IS_POINTER) {
       this.div.style.touchAction = 'none';
     }
-    if (width != null) {
+    if (!!width) {
       if (!mxClient.IS_QUIRKS) {
         this.div.style.width = width + 'px';
       }
       this.table.style.width = width + 'px';
     }
-    if (height != null) {
+    if (!!height) {
       if (!mxClient.IS_QUIRKS) {
         this.div.style.height = height + 'px';
       }
@@ -360,7 +360,7 @@ export class mxWindow {
    */
   setTitle(title: string): void {
     let child = this.title.firstChild;
-    while (child != null) {
+    while (!!child) {
       const next = child.nextSibling;
       if (child.nodeType == mxConstants.NODETYPE_TEXT) {
         child.parentNode.removeChild(child);
@@ -394,10 +394,10 @@ export class mxWindow {
   activate(): void {
     if (mxWindow.activeWindow != this) {
       const style = mxUtils.getCurrentStyle(this.getElement());
-      const index = (style != null) ? style.zIndex : 3;
+      const index = (!!style) ? style.zIndex : 3;
       if (mxWindow.activeWindow) {
         const elt = mxWindow.activeWindow.getElement();
-        if (elt != null && elt.style != null) {
+        if (!!elt && !!elt.style) {
           elt.style.zIndex = index;
         }
       }
@@ -432,7 +432,7 @@ export class mxWindow {
    * Returns true if the window is resizable.
    */
   isResizable(): boolean {
-    if (this.resize != null) {
+    if (!!this.resize) {
       return this.resize.style.display != 'none';
     }
     return false;
@@ -454,17 +454,17 @@ export class mxWindow {
    */
   setResizable(resizable: boolean): void {
     if (resizable) {
-      if (this.resize == null) {
+      if (!this.resize) {
         this.resize = document.createElement('img');
         this.resize.style.position = 'absolute';
         this.resize.style.bottom = '2px';
         this.resize.style.right = '2px';
         this.resize.setAttribute('src', this.resizeImage);
         this.resize.style.cursor = 'nw-resize';
-        let startX = null;
-        let startY = null;
-        let width = null;
-        let height = null;
+        let startX = undefined;
+        let startY = undefined;
+        let width = undefined;
+        let height = undefined;
         const start = mxUtils.bind(this, function (evt) {
           this.activate();
           startX = mxEvent.getClientX(evt);
@@ -476,7 +476,7 @@ export class mxWindow {
           mxEvent.consume(evt);
         });
         const dragHandler = mxUtils.bind(this, function (evt) {
-          if (startX != null && startY != null) {
+          if (!!startX && !!startY) {
             const dx = mxEvent.getClientX(evt) - startX;
             const dy = mxEvent.getClientY(evt) - startY;
             this.setSize(width + dx, height + dy);
@@ -485,9 +485,9 @@ export class mxWindow {
           }
         });
         const dropHandler = mxUtils.bind(this, function (evt) {
-          if (startX != null && startY != null) {
-            startX = null;
-            startY = null;
+          if (!!startX && !!startY) {
+            startX = undefined;
+            startY = undefined;
             mxEvent.removeGestureListeners(document, null, dragHandler, dropHandler);
             this.fireEvent(new mxEventObject(mxEvent.RESIZE_END, 'event', evt));
             mxEvent.consume(evt);
@@ -498,7 +498,7 @@ export class mxWindow {
       } else {
         this.resize.style.display = 'inline';
       }
-    } else if (this.resize != null) {
+    } else if (!!this.resize) {
       this.resize.style.display = 'none';
     }
   }
@@ -556,8 +556,8 @@ export class mxWindow {
     this.minimize.style.display = 'none';
     this.buttons.appendChild(this.minimize);
     let minimized = false;
-    let maxDisplay = null;
-    let height = null;
+    let maxDisplay = undefined;
+    let height = undefined;
     const funct = mxUtils.bind(this, function (evt) {
       this.activate();
       if (!minimized) {
@@ -581,7 +581,7 @@ export class mxWindow {
           }
           this.table.style.width = minSize.width + 'px';
         }
-        if (this.resize != null) {
+        if (!!this.resize) {
           this.resize.style.visibility = 'hidden';
         }
         this.fireEvent(new mxEventObject(mxEvent.MINIMIZE, 'event', evt));
@@ -595,7 +595,7 @@ export class mxWindow {
           this.div.style.height = height;
         }
         this.table.style.height = height;
-        if (this.resize != null) {
+        if (!!this.resize) {
           this.resize.style.visibility = '';
         }
         this.fireEvent(new mxEventObject(mxEvent.NORMALIZE, 'event', evt));
@@ -629,11 +629,11 @@ export class mxWindow {
     this.maximize.style.display = 'none';
     this.buttons.appendChild(this.maximize);
     let maximized = false;
-    let x = null;
-    let y = null;
-    let height = null;
-    let width = null;
-    let minDisplay = null;
+    let x = undefined;
+    let y = undefined;
+    let height = undefined;
+    let width = undefined;
+    let minDisplay = undefined;
     const funct = mxUtils.bind(this, function (evt) {
       this.activate();
       if (this.maximize.style.display != 'none') {
@@ -657,12 +657,12 @@ export class mxWindow {
           }
           this.table.style.width = (document.body.clientWidth - 2) + 'px';
           this.table.style.height = (docHeight - 2) + 'px';
-          if (this.resize != null) {
+          if (!!this.resize) {
             this.resize.style.visibility = 'hidden';
           }
           if (!mxClient.IS_QUIRKS) {
             const style = mxUtils.getCurrentStyle(this.contentWrapper);
-            if (style.overflow == 'auto' || this.resize != null) {
+            if (style.overflow == 'auto' || !!this.resize) {
               this.contentWrapper.style.height = (this.div.offsetHeight - this.title.offsetHeight - this.contentHeightCorrection) + 'px';
             }
           }
@@ -679,13 +679,13 @@ export class mxWindow {
             this.div.style.height = height;
             this.div.style.width = width;
             const style = mxUtils.getCurrentStyle(this.contentWrapper);
-            if (style.overflow == 'auto' || this.resize != null) {
+            if (style.overflow == 'auto' || !!this.resize) {
               this.contentWrapper.style.height = (this.div.offsetHeight - this.title.offsetHeight - this.contentHeightCorrection) + 'px';
             }
           }
           this.table.style.height = height;
           this.table.style.width = width;
-          if (this.resize != null) {
+          if (!!this.resize) {
             this.resize.style.visibility = '';
           }
           this.fireEvent(new mxEventObject(mxEvent.NORMALIZE, 'event', evt));
@@ -821,7 +821,7 @@ export class mxWindow {
    * Returns true if the window is visible.
    */
   isVisible(): boolean {
-    if (this.div != null) {
+    if (!!this.div) {
       return this.div.style.display != 'none';
     }
     return false;
@@ -837,7 +837,7 @@ export class mxWindow {
    * visible - Boolean indicating if the window should be made visible.
    */
   setVisible(visible: any): void {
-    if (this.div != null && this.isVisible() != visible) {
+    if (!!this.div && this.isVisible() != visible) {
       if (visible) {
         this.show();
       } else {
@@ -855,7 +855,7 @@ export class mxWindow {
     this.div.style.display = '';
     this.activate();
     const style = mxUtils.getCurrentStyle(this.contentWrapper);
-    if (!mxClient.IS_QUIRKS && (style.overflow == 'auto' || this.resize != null) && this.contentWrapper.style.display != 'none') {
+    if (!mxClient.IS_QUIRKS && (style.overflow == 'auto' || !!this.resize) && this.contentWrapper.style.display != 'none') {
       this.contentWrapper.style.height = (this.div.offsetHeight - this.title.offsetHeight - this.contentHeightCorrection) + 'px';
     }
     this.fireEvent(new mxEventObject(mxEvent.SHOW));
@@ -879,14 +879,14 @@ export class mxWindow {
    */
   destroy(): void {
     this.fireEvent(new mxEventObject(mxEvent.DESTROY));
-    if (this.div != null) {
+    if (!!this.div) {
       mxEvent.release(this.div);
       this.div.parentNode.removeChild(this.div);
-      this.div = null;
+      this.div = undefined;
     }
-    this.title = null;
-    this.content = null;
-    this.contentWrapper = null;
+    this.title = undefined;
+    this.content = undefined;
+    this.contentWrapper = undefined;
   }
 
   static activeWindow: any;

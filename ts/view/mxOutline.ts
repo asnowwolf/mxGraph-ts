@@ -64,7 +64,7 @@ import { mxGraph } from './mxGraph';
 export class mxOutline {
   constructor(source: any, container: HTMLElement) {
     this.source = source;
-    if (container != null) {
+    if (!!container) {
       this.init(container);
     }
   }
@@ -200,7 +200,7 @@ export class mxOutline {
     this.outline = this.createGraph(container);
     const outlineGraphModelChanged = this.outline.graphModelChanged;
     this.outline.graphModelChanged = mxUtils.bind(this, function (changes) {
-      if (!this.suspended && this.outline != null) {
+      if (!this.suspended && !!this.outline) {
         outlineGraphModelChanged.apply(this.outline, arguments);
       }
     });
@@ -328,7 +328,7 @@ export class mxOutline {
    * Creates the shape used as the sizer.
    */
   createSizer(): any {
-    if (this.sizerImage != null) {
+    if (!!this.sizerImage) {
       const sizer = new mxImageShape(new mxRectangle(0, 0, this.sizerImage.width, this.sizerImage.height), this.sizerImage.src);
       sizer.dialect = this.outline.dialect;
       return sizer;
@@ -372,7 +372,7 @@ export class mxOutline {
    * Updates the outline.
    */
   update(revalidate: any): void {
-    if (this.source != null && this.source.container != null && this.outline != null && this.outline.container != null) {
+    if (!!this.source && !!this.source.container && !!this.outline && !!this.outline.container) {
       const sourceScale = this.source.view.scale;
       const scaledGraphBounds = this.getSourceGraphBounds();
       const unscaledGraphBounds = new mxRectangle(scaledGraphBounds.x / sourceScale + this.source.panDx, scaledGraphBounds.y / sourceScale + this.source.panDy, scaledGraphBounds.width / sourceScale, scaledGraphBounds.height / sourceScale);
@@ -399,7 +399,7 @@ export class mxOutline {
         let tx = t.x + this.source.panDx;
         let ty = t.y + this.source.panDy;
         const off = this.getOutlineOffset(scale);
-        if (off != null) {
+        if (!!off) {
           tx += off.x;
           ty += off.y;
         }
@@ -451,7 +451,7 @@ export class mxOutline {
     if (this.enabled && this.showViewport) {
       const tol = (!mxEvent.isMouseEvent(me.getEvent())) ? this.source.tolerance : 0;
       const hit = (this.source.allowHandleBoundsCheck && (mxClient.IS_IE || tol > 0)) ? new mxRectangle(me.getGraphX() - tol, me.getGraphY() - tol, 2 * tol, 2 * tol) : null;
-      this.zoom = me.isSource(this.sizer) || (hit != null && mxUtils.intersects(shape.bounds, hit));
+      this.zoom = me.isSource(this.sizer) || (!!hit && mxUtils.intersects(shape.bounds, hit));
       this.startX = me.getX();
       this.startY = me.getY();
       this.active = true;
@@ -479,7 +479,7 @@ export class mxOutline {
       const delta = this.getTranslateForEvent(me);
       let dx = delta.x;
       let dy = delta.y;
-      let bounds = null;
+      let bounds = undefined;
       if (!this.zoom) {
         const scale = this.outline.getView().scale;
         bounds = new mxRectangle(this.bounds.x + dx, this.bounds.y + dy, this.bounds.width, this.bounds.height);
@@ -560,7 +560,7 @@ export class mxOutline {
         this.update();
         me.consume();
       }
-      this.index = null;
+      this.index = undefined;
       this.active = false;
     }
   }
@@ -571,26 +571,26 @@ export class mxOutline {
    * Destroy this outline and removes all listeners from <source>.
    */
   destroy(): void {
-    if (this.source != null) {
+    if (!!this.source) {
       this.source.removeListener(this.panHandler);
       this.source.removeListener(this.refreshHandler);
       this.source.getModel().removeListener(this.updateHandler);
       this.source.getView().removeListener(this.updateHandler);
       mxEvent.removeListener(this.source.container, 'scroll', this.updateHandler);
-      this.source = null;
+      this.source = undefined;
     }
-    if (this.outline != null) {
+    if (!!this.outline) {
       this.outline.removeMouseListener(this);
       this.outline.destroy();
-      this.outline = null;
+      this.outline = undefined;
     }
-    if (this.selectionBorder != null) {
+    if (!!this.selectionBorder) {
       this.selectionBorder.destroy();
-      this.selectionBorder = null;
+      this.selectionBorder = undefined;
     }
-    if (this.sizer != null) {
+    if (!!this.sizer) {
       this.sizer.destroy();
-      this.sizer = null;
+      this.sizer = undefined;
     }
   }
 }

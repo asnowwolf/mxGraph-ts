@@ -24,7 +24,7 @@ import { mxUtils } from '../util/mxUtils';
 
 export class mxRubberband {
   constructor(graph: mxGraph) {
-    if (graph != null) {
+    if (!!graph) {
       this.graph = graph;
       this.graph.addMouseListener(this);
       this.forceRubberbandHandler = mxUtils.bind(this, function (sender, evt) {
@@ -45,7 +45,7 @@ export class mxRubberband {
       });
       this.graph.addListener(mxEvent.PAN, this.panHandler);
       this.gestureHandler = mxUtils.bind(this, function (sender, eo) {
-        if (this.first != null) {
+        if (!!this.first) {
           this.reset();
         }
       });
@@ -157,7 +157,7 @@ export class mxRubberband {
    * handler.
    */
   mouseDown(sender: any, me: any): void {
-    if (!me.isConsumed() && this.isEnabled() && this.graph.isEnabled() && me.getState() == null && !mxEvent.isMultiTouchEvent(me.getEvent())) {
+    if (!me.isConsumed() && this.isEnabled() && this.graph.isEnabled() && !me.getState() && !mxEvent.isMultiTouchEvent(me.getEvent())) {
       const offset = mxUtils.getOffset(this.graph.container);
       const origin = mxUtils.getScrollOrigin(this.graph.container);
       origin.x -= offset.x;
@@ -201,7 +201,7 @@ export class mxRubberband {
    * Handles the event by updating therubberband selection.
    */
   mouseMove(sender: any, me: any): void {
-    if (!me.isConsumed() && this.first != null) {
+    if (!me.isConsumed() && !!this.first) {
       const origin = mxUtils.getScrollOrigin(this.graph.container);
       const offset = mxUtils.getOffset(this.graph.container);
       origin.x -= offset.x;
@@ -211,8 +211,8 @@ export class mxRubberband {
       const dx = this.first.x - x;
       const dy = this.first.y - y;
       const tol = this.graph.tolerance;
-      if (this.div != null || Math.abs(dx) > tol || Math.abs(dy) > tol) {
-        if (this.div == null) {
+      if (!!this.div || Math.abs(dx) > tol || Math.abs(dy) > tol) {
+        if (!this.div) {
           this.div = this.createShape();
         }
         mxUtils.clearSelection();
@@ -228,7 +228,7 @@ export class mxRubberband {
    * Creates the rubberband selection shape.
    */
   createShape(): any {
-    if (this.sharedDiv == null) {
+    if (!this.sharedDiv) {
       this.sharedDiv = document.createElement('div');
       this.sharedDiv.className = 'mxRubberband';
       mxUtils.setOpacity(this.sharedDiv, this.defaultOpacity);
@@ -236,7 +236,7 @@ export class mxRubberband {
     this.graph.container.appendChild(this.sharedDiv);
     const result = this.sharedDiv;
     if (mxClient.IS_SVG && (!mxClient.IS_IE || document.documentMode >= 10) && this.fadeOut) {
-      this.sharedDiv = null;
+      this.sharedDiv = undefined;
     }
     return result;
   }
@@ -247,7 +247,7 @@ export class mxRubberband {
    * Returns true if this handler is active.
    */
   isActive(sender: any, me: any): boolean {
-    return this.div != null && this.div.style.display != 'none';
+    return !!this.div && this.div.style.display != 'none';
   }
 
   /**
@@ -282,7 +282,7 @@ export class mxRubberband {
    * Resets the state of the rubberband selection.
    */
   reset(): void {
-    if (this.div != null) {
+    if (!!this.div) {
       if (mxClient.IS_SVG && (!mxClient.IS_IE || document.documentMode >= 10) && this.fadeOut) {
         const temp = this.div;
         mxUtils.setPrefixedStyle(temp.style, 'transition', 'all 0.2s linear');
@@ -296,12 +296,12 @@ export class mxRubberband {
       }
     }
     mxEvent.removeGestureListeners(document, null, this.dragHandler, this.dropHandler);
-    this.dragHandler = null;
-    this.dropHandler = null;
+    this.dragHandler = undefined;
+    this.dropHandler = undefined;
     this.currentX = 0;
     this.currentY = 0;
-    this.first = null;
-    this.div = null;
+    this.first = undefined;
+    this.div = undefined;
   }
 
   /**
@@ -321,7 +321,7 @@ export class mxRubberband {
    * Computes the bounding box and updates the style of the <div>.
    */
   repaint(): void {
-    if (this.div != null) {
+    if (!!this.div) {
       const x = this.currentX - this.graph.panDx;
       const y = this.currentY - this.graph.panDy;
       this.x = Math.min(this.first.x, x);
@@ -351,8 +351,8 @@ export class mxRubberband {
       this.graph.removeListener(this.forceRubberbandHandler);
       this.graph.removeListener(this.panHandler);
       this.reset();
-      if (this.sharedDiv != null) {
-        this.sharedDiv = null;
+      if (!!this.sharedDiv) {
+        this.sharedDiv = undefined;
       }
     }
   }

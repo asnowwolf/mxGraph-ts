@@ -17,7 +17,7 @@ import { mxUtils } from './mxUtils';
 
 export class mxAnimation {
   constructor(delay: any) {
-    this.delay = (delay != null) ? delay : 20;
+    this.delay = (!!delay) ? delay : 20;
   }
 
   delay: any;
@@ -34,7 +34,7 @@ export class mxAnimation {
    * Returns true if the animation is running.
    */
   isRunning(): boolean {
-    return this.thread != null;
+    return !!this.thread;
   }
 
   /**
@@ -43,7 +43,7 @@ export class mxAnimation {
    * Starts the animation by repeatedly invoking updateAnimation.
    */
   startAnimation(): void {
-    if (this.thread == null) {
+    if (!this.thread) {
       this.thread = window.setInterval(mxUtils.bind(this, this.updateAnimation), this.delay);
     }
   }
@@ -65,9 +65,9 @@ export class mxAnimation {
    * Stops the animation by deleting the timer and fires an <mxEvent.DONE>.
    */
   stopAnimation(): void {
-    if (this.thread != null) {
+    if (!!this.thread) {
       window.clearInterval(this.thread);
-      this.thread = null;
+      this.thread = undefined;
       this.fireEvent(new mxEventObject(mxEvent.DONE));
     }
   }

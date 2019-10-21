@@ -23,8 +23,8 @@ export class mxHandle {
   constructor(state: any, cursor: any, image: any) {
     this.graph = state.view.graph;
     this.state = state;
-    this.cursor = (cursor != null) ? cursor : this.cursor;
-    this.image = (image != null) ? image : this.image;
+    this.cursor = (!!cursor) ? cursor : this.cursor;
+    this.image = (!!image) ? image : this.image;
     this.init();
   }
 
@@ -82,7 +82,7 @@ export class mxHandle {
     const scale = this.graph.view.scale;
     const tr = this.graph.view.translate;
     let pt = new mxPoint(me.getGraphX() / scale - tr.x, me.getGraphY() / scale - tr.y);
-    if (this.shape != null && this.shape.bounds != null) {
+    if (!!this.shape && !!this.shape.bounds) {
       pt.x -= this.shape.bounds.width / scale / 4;
       pt.y -= this.shape.bounds.height / scale / 4;
     }
@@ -101,10 +101,10 @@ export class mxHandle {
    * the state using <mxCellRenderer>.
    */
   positionChanged(): void {
-    if (this.state.text != null) {
+    if (!!this.state.text) {
       this.state.text.apply(this.state);
     }
-    if (this.state.shape != null) {
+    if (!!this.state.shape) {
       this.state.shape.apply(this.state);
     }
     this.graph.cellRenderer.redraw(this.state, true);
@@ -116,7 +116,7 @@ export class mxHandle {
    * Returns the rotation defined in the style of the cell.
    */
   getRotation(): any {
-    if (this.state.shape != null) {
+    if (!!this.state.shape) {
       return this.state.shape.getRotation();
     }
     return 0;
@@ -129,7 +129,7 @@ export class mxHandle {
    * the cell.
    */
   getTotalRotation(): any {
-    if (this.state.shape != null) {
+    if (!!this.state.shape) {
       return this.state.shape.getShapeRotation();
     }
     return 0;
@@ -142,7 +142,7 @@ export class mxHandle {
    */
   init(): void {
     const html = this.isHtmlRequired();
-    if (this.image != null) {
+    if (!!this.image) {
       this.shape = new mxImageShape(new mxRectangle(0, 0, this.image.width, this.image.height), this.image.src);
       this.shape.preserveImageAspect = false;
     } else {
@@ -172,7 +172,7 @@ export class mxHandle {
       this.shape.init(this.graph.container);
     } else {
       this.shape.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_MIXEDHTML : mxConstants.DIALECT_SVG;
-      if (this.cursor != null) {
+      if (!!this.cursor) {
         this.shape.init(this.graph.getView().getOverlayPane());
       }
     }
@@ -186,9 +186,9 @@ export class mxHandle {
    * Renders the shape for this handle.
    */
   redraw(): void {
-    if (this.shape != null && this.state.shape != null) {
+    if (!!this.shape && !!this.state.shape) {
       let pt = this.getPosition(this.state.getPaintBounds());
-      if (pt != null) {
+      if (!!pt) {
         const alpha = mxUtils.toRadians(this.getTotalRotation());
         pt = this.rotatePoint(this.flipPoint(pt), alpha);
         const scale = this.graph.view.scale;
@@ -207,7 +207,7 @@ export class mxHandle {
    * the text node is in the graph container.
    */
   isHtmlRequired(): boolean {
-    return this.state.text != null && this.state.text.node.parentNode == this.graph.container;
+    return !!this.state.text && this.state.text.node.parentNode == this.graph.container;
   }
 
   /**
@@ -229,7 +229,7 @@ export class mxHandle {
    * Flips the given point vertically and/or horizontally.
    */
   flipPoint(pt: any): any {
-    if (this.state.shape != null) {
+    if (!!this.state.shape) {
       const bounds = this.state.getCellBounds();
       if (this.state.shape.flipH) {
         pt.x = 2 * bounds.x + bounds.width - pt.x;
@@ -261,7 +261,7 @@ export class mxHandle {
    * Shows or hides this handle.
    */
   setVisible(visible: any): void {
-    if (this.shape != null && this.shape.node != null) {
+    if (!!this.shape && !!this.shape.node) {
       this.shape.node.style.display = (visible) ? '' : 'none';
     }
   }
@@ -283,9 +283,9 @@ export class mxHandle {
    * Destroys this handle.
    */
   destroy(): void {
-    if (this.shape != null) {
+    if (!!this.shape) {
       this.shape.destroy();
-      this.shape = null;
+      this.shape = undefined;
     }
   }
 }

@@ -45,7 +45,7 @@ export class mxImageExport {
    * Draws the given state and all its descendants to the given canvas.
    */
   drawState(state: any, canvas: any): void {
-    if (state != null) {
+    if (!!state) {
       this.visitStatesRecursive(state, canvas, mxUtils.bind(this, function () {
         this.drawCellState.apply(this, arguments);
       }));
@@ -63,7 +63,7 @@ export class mxImageExport {
    * Draws the given state and all its descendants to the given canvas.
    */
   visitStatesRecursive(state: any, canvas: any, visitor: any): void {
-    if (state != null) {
+    if (!!state) {
       visitor(state, canvas);
       const graph = state.view.graph;
       const childCount = graph.model.getChildCount(state.cell);
@@ -90,12 +90,12 @@ export class mxImageExport {
    */
   drawCellState(state: any, canvas: any): void {
     const link = this.getLinkForCellState(state, canvas);
-    if (link != null) {
+    if (!!link) {
       canvas.setLink(link);
     }
     this.drawShape(state, canvas);
     this.drawText(state, canvas);
-    if (link != null) {
+    if (!!link) {
       canvas.setLink(null);
     }
   }
@@ -119,7 +119,7 @@ export class mxImageExport {
    * Draws the text of the given state.
    */
   drawText(state: any, canvas: any): void {
-    if (state.text != null && state.text.checkBounds()) {
+    if (!!state.text && state.text.checkBounds()) {
       canvas.save();
       state.text.paint(canvas);
       canvas.restore();
@@ -133,7 +133,7 @@ export class mxImageExport {
    * is true.
    */
   drawOverlays(state: any, canvas: any): void {
-    if (state.overlays != null) {
+    if (!!state.overlays) {
       state.overlays.visit(function (id, shape) {
         if (shape instanceof mxShape) {
           shape.paint(canvas);

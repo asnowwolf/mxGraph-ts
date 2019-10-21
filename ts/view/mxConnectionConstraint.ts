@@ -19,7 +19,7 @@
 export class mxConnectionConstraint {
   constructor(point: any, perimeter: any, name: string, dx: number, dy: number) {
     this.point = point;
-    this.perimeter = (perimeter != null) ? perimeter : true;
+    this.perimeter = (!!perimeter) ? perimeter : true;
     this.name = name;
     this.dx = dx ? dx : 0;
     this.dy = dy ? dy : 0;

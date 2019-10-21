@@ -354,6 +354,7 @@ import { mxConstants } from '../util/mxConstants';
 import { mxDivResizer } from '../util/mxDivResizer';
 import { mxEvent } from '../util/mxEvent';
 import { mxEventObject } from '../util/mxEventObject';
+import { mxEventSource } from '../util/mxEventSource';
 import { mxForm } from '../util/mxForm';
 import { mxLog } from '../util/mxLog';
 import { mxResources } from '../util/mxResources';
@@ -369,11 +370,12 @@ import { mxDefaultKeyHandler } from './mxDefaultKeyHandler';
 import { mxDefaultPopupMenu } from './mxDefaultPopupMenu';
 import { mxDefaultToolbar } from './mxDefaultToolbar';
 
-export class mxEditor {
+export class mxEditor extends mxEventSource {
   constructor(config: any) {
+    super();
     this.actions = [];
     this.addActions();
-    if (document.body != null) {
+    if (!!document.body) {
       this.cycleAttributeValues = [];
       this.popupHandler = new mxDefaultPopupMenu();
       this.undoManager = new mxUndoManager();
@@ -382,7 +384,7 @@ export class mxEditor {
       this.keyHandler = new mxDefaultKeyHandler(this);
       this.configure(config);
       this.graph.swimlaneIndicatorColorAttribute = this.cycleAttributeName;
-      if (this.onInit != null) {
+      if (!!this.onInit) {
         this.onInit();
       }
       if (mxClient.IS_IE) {
@@ -492,7 +494,7 @@ export class mxEditor {
    *   var e = evt.getProperty('event');
    *   var cell = evt.getProperty('cell');
    *
-   *   if (cell != null && !e.isConsumed())
+   *   if (!!cell && !e.isConsumed())
    *   {
    *     // Do something useful with cell...
    *     e.consume();
@@ -882,7 +884,7 @@ export class mxEditor {
     });
     this.addAction('exportImage', function (editor) {
       const url = editor.getUrlImage();
-      if (url == null || mxClient.IS_LOCAL) {
+      if (!url || mxClient.IS_LOCAL) {
         editor.execute('show');
       } else {
         const node = mxUtils.getViewXml(editor.graph, 1);
@@ -1120,21 +1122,21 @@ export class mxEditor {
       }
     });
     this.addAction('toggleTasks', function (editor) {
-      if (editor.tasks != null) {
+      if (!!editor.tasks) {
         editor.tasks.setVisible(!editor.tasks.isVisible());
       } else {
         editor.showTasks();
       }
     });
     this.addAction('toggleHelp', function (editor) {
-      if (editor.help != null) {
+      if (!!editor.help) {
         editor.help.setVisible(!editor.help.isVisible());
       } else {
         editor.showHelp();
       }
     });
     this.addAction('toggleOutline', function (editor) {
-      if (editor.outline == null) {
+      if (!editor.outline) {
         editor.showOutline();
       } else {
         editor.outline.setVisible(!editor.outline.isVisible());
@@ -1161,7 +1163,7 @@ export class mxEditor {
    * node - XML node that contains the configuration.
    */
   configure(node: Node): void {
-    if (node != null) {
+    if (!!node) {
       const dec = new mxCodec(node.ownerDocument);
       dec.decode(node, this);
       this.resetHistory();
@@ -1232,9 +1234,9 @@ export class mxEditor {
    * editor.execute("showProperties", cell);
    * (end)
    */
-  execute(actionname: any, cell: mxCell, evt: Event): void {
+  execute(actionname: any, cell?: mxCell, evt?: Event): void {
     const action = this.actions[actionname];
-    if (action != null) {
+    if (!!action) {
       try {
         const args = arguments;
         args[0] = this;
@@ -1318,16 +1320,16 @@ export class mxEditor {
     const layoutMgr = new mxLayoutManager(graph);
     const self = this;
     layoutMgr.getLayout = function (cell) {
-      let layout = null;
+      let layout = undefined;
       const model = self.graph.getModel();
-      if (model.getParent(cell) != null) {
+      if (model.getParent(cell)) {
         if (self.layoutSwimlanes && graph.isSwimlane(cell)) {
-          if (self.swimlaneLayout == null) {
+          if (!self.swimlaneLayout) {
             self.swimlaneLayout = self.createSwimlaneLayout();
           }
           layout = self.swimlaneLayout;
-        } else if (self.layoutDiagram && (graph.isValidRoot(cell) || model.getParent(model.getParent(cell)) == null)) {
-          if (self.diagramLayout == null) {
+        } else if (self.layoutDiagram && (graph.isValidRoot(cell) || !model.getParent(model.getParent(cell)))) {
+          if (!self.diagramLayout) {
             self.diagramLayout = self.createDiagramLayout();
           }
           layout = self.diagramLayout;
@@ -1344,7 +1346,7 @@ export class mxEditor {
    * Sets the graph's container using <mxGraph.init>.
    */
   setGraphContainer(container: HTMLElement): void {
-    if (this.graph.container == null) {
+    if (!this.graph.container) {
       this.graph.init(container);
       this.rubberband = new mxRubberband(this.graph);
       if (this.disableContextMenu) {
@@ -1365,7 +1367,7 @@ export class mxEditor {
   installDblClickHandler(graph: mxGraph): void {
     graph.addListener(mxEvent.DOUBLE_CLICK, mxUtils.bind(this, function (sender, evt) {
       const cell = evt.getProperty('cell');
-      if (cell != null && graph.isEnabled() && this.dblClickAction != null) {
+      if (!!cell && graph.isEnabled() && !!this.dblClickAction) {
         this.execute(this.dblClickAction, cell);
         evt.consume();
       }
@@ -1440,7 +1442,7 @@ export class mxEditor {
     const self = this;
     const insertHandler = {
       mouseDown(sender, me) {
-        if (self.insertFunction != null && !me.isPopupTrigger() && (self.forcedInserting || me.getState() == null)) {
+        if (!!self.insertFunction && !me.isPopupTrigger() && (self.forcedInserting || !me.getState())) {
           self.graph.clearSelection();
           self.insertFunction(me.getEvent(), me.getCell());
           this.isActive = true;
@@ -1520,7 +1522,7 @@ export class mxEditor {
    * container - DOM node that will contain the statusbar.
    */
   setStatusContainer(container: HTMLElement): void {
-    if (this.status == null) {
+    if (!this.status) {
       this.status = container;
       this.addListener(mxEvent.SAVE, mxUtils.bind(this, function () {
         const tstamp = new Date().toLocaleString();
@@ -1546,7 +1548,7 @@ export class mxEditor {
    * be displayed.
    */
   setStatus(message: any): void {
-    if (this.status != null && message != null) {
+    if (!!this.status && !!message) {
       this.status.innerHTML = message;
     }
   }
@@ -1584,7 +1586,7 @@ export class mxEditor {
    * orientation. Default is true.
    */
   treeLayout(cell: mxCell, horizontal: any): void {
-    if (cell != null) {
+    if (!!cell) {
       const layout = new mxCompactTreeLayout(this.graph, horizontal);
       layout.execute(cell);
     }
@@ -1600,7 +1602,7 @@ export class mxEditor {
     let title = '';
     const graph = this.graph;
     let cell = graph.getCurrentRoot();
-    while (cell != null && graph.getModel().getParent(graph.getModel().getParent(cell)) != null) {
+    while (!!cell && graph.getModel().getParent(graph.getModel().getParent(cell))) {
       if (graph.isValidRoot(cell)) {
         title = ' > ' + graph.convertValueToString(cell) + title;
       }
@@ -1647,7 +1649,7 @@ export class mxEditor {
    * in the group's content area.
    */
   groupCells(): any {
-    const border = (this.groupBorderSize != null) ? this.groupBorderSize : this.graph.gridSize;
+    const border = (!!this.groupBorderSize) ? this.groupBorderSize : this.graph.gridSize;
     return this.graph.groupCells(this.createGroup(), border);
   }
 
@@ -1686,7 +1688,7 @@ export class mxEditor {
    * filename - URL of the file to be opened.
    */
   open(filename: string): void {
-    if (filename != null) {
+    if (!!filename) {
       const xml = mxUtils.load(filename).getXml();
       this.readGraphModel(xml.documentElement);
       this.filename = filename;
@@ -1728,7 +1730,7 @@ export class mxEditor {
    */
   save(url: string, linefeed: any): void {
     url = url || this.getUrlPost();
-    if (url != null && url.length > 0) {
+    if (!!url && url.length > 0) {
       const data = this.writeGraphModel(linefeed);
       this.postDiagram(url, data);
       this.setModified(false);
@@ -1786,7 +1788,7 @@ export class mxEditor {
    * <linefeed>.
    */
   writeGraphModel(linefeed: any): any {
-    linefeed = (linefeed != null) ? linefeed : this.linefeed;
+    linefeed = (!!linefeed) ? linefeed : this.linefeed;
     const enc = new mxCodec();
     const node = enc.encode(this.graph.getModel());
     return mxUtils.getXml(node, linefeed);
@@ -1838,30 +1840,30 @@ export class mxEditor {
    */
   showProperties(cell: mxCell): void {
     cell = cell || this.graph.getSelectionCell();
-    if (cell == null) {
+    if (!cell) {
       cell = this.graph.getCurrentRoot();
-      if (cell == null) {
+      if (!cell) {
         cell = this.graph.getModel().getRoot();
       }
     }
-    if (cell != null) {
+    if (!!cell) {
       this.graph.stopEditing(true);
       const offset = mxUtils.getOffset(this.graph.container);
       let x = offset.x + 10;
       let y = offset.y;
-      if (this.properties != null && !this.movePropertiesDialog) {
+      if (!!this.properties && !this.movePropertiesDialog) {
         x = this.properties.getX();
         y = this.properties.getY();
       } else {
         const bounds = this.graph.getCellBounds(cell);
-        if (bounds != null) {
+        if (!!bounds) {
           x += bounds.x + Math.min(200, bounds.width);
           y += bounds.y;
         }
       }
       this.hideProperties();
       const node = this.createProperties(cell);
-      if (node != null) {
+      if (!!node) {
         this.properties = new mxWindow(mxResources.get(this.propertiesResource) || this.propertiesResource, node, x, y, this.propertiesWidth, this.propertiesHeight, false);
         this.properties.setVisible(true);
       }
@@ -1874,7 +1876,7 @@ export class mxEditor {
    * Returns true if the properties dialog is currently visible.
    */
   isPropertiesVisible(): boolean {
-    return this.properties != null;
+    return !!this.properties;
   }
 
   /**
@@ -1892,14 +1894,14 @@ export class mxEditor {
       const form = new mxForm('properties');
       const id = form.addText('ID', cell.getId());
       id.setAttribute('readonly', 'true');
-      let geo = null;
-      let yField = null;
-      let xField = null;
-      let widthField = null;
-      let heightField = null;
+      let geo = undefined;
+      let yField = undefined;
+      let xField = undefined;
+      let widthField = undefined;
+      let heightField = undefined;
       if (model.isVertex(cell)) {
         geo = model.getGeometry(cell);
-        if (geo != null) {
+        if (!!geo) {
           yField = form.addText('top', geo.y);
           xField = form.addText('left', geo.x);
           widthField = form.addText('width', geo.width);
@@ -1918,7 +1920,7 @@ export class mxEditor {
         this.hideProperties();
         model.beginUpdate();
         try {
-          if (geo != null) {
+          if (!!geo) {
             geo = geo.clone();
             geo.x = parseFloat(xField.value);
             geo.y = parseFloat(yField.value);
@@ -1957,9 +1959,9 @@ export class mxEditor {
    * Hides the properties dialog.
    */
   hideProperties(): void {
-    if (this.properties != null) {
+    if (!!this.properties) {
       this.properties.destroy();
-      this.properties = null;
+      this.properties = undefined;
     }
   }
 
@@ -1978,7 +1980,7 @@ export class mxEditor {
    * {
    *   oldShowTasks.apply(this, arguments); // "supercall"
    *
-   *   if (this.tasks != null)
+   *   if (!!this.tasks)
    *   {
    *     this.tasks.setLocation(10, 10);
    *   }
@@ -1986,7 +1988,7 @@ export class mxEditor {
    * (end)
    */
   showTasks(): void {
-    if (this.tasks == null) {
+    if (!this.tasks) {
       const div = document.createElement('div');
       div.style.padding = '4px';
       div.style.paddingLeft = '20px';
@@ -2002,7 +2004,7 @@ export class mxEditor {
       this.graph.getModel().addListener(mxEvent.CHANGE, funct);
       this.graph.getSelectionModel().addListener(mxEvent.CHANGE, funct);
       this.graph.addListener(mxEvent.ROOT, funct);
-      if (this.tasksWindowImage != null) {
+      if (!!this.tasksWindowImage) {
         wnd.setImage(this.tasksWindowImage);
       }
       this.tasks = wnd;
@@ -2017,7 +2019,7 @@ export class mxEditor {
    * Updates the contents of the tasks window using <createTasks>.
    */
   refreshTasks(div: HTMLElement): void {
-    if (this.tasks != null) {
+    if (!!this.tasks) {
       const div = this.tasks.content;
       mxEvent.release(div);
       div.innerHTML = '';
@@ -2046,7 +2048,7 @@ export class mxEditor {
    * is undefined.
    */
   showHelp(tasks: any): void {
-    if (this.help == null) {
+    if (!this.help) {
       const frame = document.createElement('iframe');
       frame.setAttribute('src', mxResources.get('urlHelp') || this.urlHelp);
       frame.setAttribute('height', '100%');
@@ -2060,7 +2062,7 @@ export class mxEditor {
       wnd.setClosable(true);
       wnd.destroyOnClose = false;
       wnd.setResizable(true);
-      if (this.helpWindowImage != null) {
+      if (!!this.helpWindowImage) {
         wnd.setImage(this.helpWindowImage);
       }
       if (mxClient.IS_NS) {
@@ -2085,7 +2087,7 @@ export class mxEditor {
    * created using an <mxOutline>.
    */
   showOutline(): void {
-    const create = this.outline == null;
+    const create = !this.outline;
     if (create) {
       const div = document.createElement('div');
       div.style.overflow = 'hidden';
@@ -2157,8 +2159,8 @@ export class mxEditor {
    * <getEdgeStyle>.
    */
   createEdge(source: any, target: string): any {
-    let e = null;
-    if (this.defaultEdge != null) {
+    let e = undefined;
+    if (!!this.defaultEdge) {
       const model = this.graph.getModel();
       e = model.cloneCell(this.defaultEdge);
     } else {
@@ -2169,7 +2171,7 @@ export class mxEditor {
       e.setGeometry(geo);
     }
     const style = this.getEdgeStyle();
-    if (style != null) {
+    if (!!style) {
       e.setStyle(style);
     }
     return e;
@@ -2194,7 +2196,7 @@ export class mxEditor {
    * specified cell.
    */
   consumeCycleAttribute(cell: mxCell): any {
-    return (this.cycleAttributeValues != null && this.cycleAttributeValues.length > 0 && this.graph.isSwimlane(cell)) ? this.cycleAttributeValues[this.cycleAttributeIndex++ % this.cycleAttributeValues.length] : null;
+    return (!!this.cycleAttributeValues && this.cycleAttributeValues.length > 0 && this.graph.isSwimlane(cell)) ? this.cycleAttributeValues[this.cycleAttributeIndex++ % this.cycleAttributeValues.length] : null;
   }
 
   /**
@@ -2205,9 +2207,9 @@ export class mxEditor {
    * the given cell's style.
    */
   cycleAttribute(cell: mxCell): void {
-    if (this.cycleAttributeName != null) {
+    if (!!this.cycleAttributeName) {
       const value = this.consumeCycleAttribute(cell);
-      if (value != null) {
+      if (!!value) {
         cell.setStyle(cell.getStyle() + ';' + this.cycleAttributeName + '=' + value);
       }
     }
@@ -2221,20 +2223,20 @@ export class mxEditor {
    */
   addVertex(parent: any, vertex: any, x: number, y: number): any {
     const model = this.graph.getModel();
-    while (parent != null && !this.graph.isValidDropTarget(parent)) {
+    while (!!parent && !this.graph.isValidDropTarget(parent)) {
       parent = model.getParent(parent);
     }
-    parent = (parent != null) ? parent : this.graph.getSwimlaneAt(x, y);
+    parent = (!!parent) ? parent : this.graph.getSwimlaneAt(x, y);
     const scale = this.graph.getView().scale;
     let geo = model.getGeometry(vertex);
     const pgeo = model.getGeometry(parent);
     if (this.graph.isSwimlane(vertex) && !this.graph.swimlaneNesting) {
-      parent = null;
-    } else if (parent == null && this.swimlaneRequired) {
+      parent = undefined;
+    } else if (!parent && this.swimlaneRequired) {
       return null;
-    } else if (parent != null && pgeo != null) {
+    } else if (!!parent && !!pgeo) {
       const state = this.graph.getView().getState(parent);
-      if (state != null) {
+      if (!!state) {
         x -= state.origin.x * scale;
         y -= state.origin.y * scale;
         if (this.graph.isConstrainedMoving) {
@@ -2249,7 +2251,7 @@ export class mxEditor {
             y -= y + height - tmp;
           }
         }
-      } else if (pgeo != null) {
+      } else if (!!pgeo) {
         x -= pgeo.x * scale;
         y -= pgeo.y * scale;
       }
@@ -2258,7 +2260,7 @@ export class mxEditor {
     geo.x = this.graph.snap(x / scale - this.graph.getView().translate.x - this.graph.gridSize / 2);
     geo.y = this.graph.snap(y / scale - this.graph.getView().translate.y - this.graph.gridSize / 2);
     vertex.setGeometry(geo);
-    if (parent == null) {
+    if (!parent) {
       parent = this.graph.getDefaultParent();
     }
     this.cycleAttribute(vertex);
@@ -2266,14 +2268,14 @@ export class mxEditor {
     model.beginUpdate();
     try {
       vertex = this.graph.addCell(vertex, parent);
-      if (vertex != null) {
+      if (!!vertex) {
         this.graph.constrainChild(vertex);
         this.fireEvent(new mxEventObject(mxEvent.ADD_VERTEX, 'vertex', vertex));
       }
     } finally {
       model.endUpdate();
     }
-    if (vertex != null) {
+    if (!!vertex) {
       this.graph.setSelectionCell(vertex);
       this.graph.scrollCellToVisible(vertex);
       this.fireEvent(new mxEventObject(mxEvent.AFTER_ADD_VERTEX, 'vertex', vertex));
@@ -2291,29 +2293,29 @@ export class mxEditor {
   destroy(): void {
     if (!this.destroyed) {
       this.destroyed = true;
-      if (this.tasks != null) {
+      if (!!this.tasks) {
         this.tasks.destroy();
       }
-      if (this.outline != null) {
+      if (!!this.outline) {
         this.outline.destroy();
       }
-      if (this.properties != null) {
+      if (!!this.properties) {
         this.properties.destroy();
       }
-      if (this.keyHandler != null) {
+      if (!!this.keyHandler) {
         this.keyHandler.destroy();
       }
-      if (this.rubberband != null) {
+      if (!!this.rubberband) {
         this.rubberband.destroy();
       }
-      if (this.toolbar != null) {
+      if (!!this.toolbar) {
         this.toolbar.destroy();
       }
-      if (this.graph != null) {
+      if (!!this.graph) {
         this.graph.destroy();
       }
-      this.status = null;
-      this.templates = null;
+      this.status = undefined;
+      this.templates = undefined;
     }
   }
 }

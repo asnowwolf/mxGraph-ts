@@ -51,12 +51,12 @@ export class mxMultiplicity {
     this.type = type;
     this.attr = attr;
     this.value = value;
-    this.min = (min != null) ? min : 0;
-    this.max = (max != null) ? max : 'n';
+    this.min = (!!min) ? min : 0;
+    this.max = (!!max) ? max : 'n';
     this.validNeighbors = validNeighbors;
     this.countError = mxResources.get(countError) || countError;
     this.typeError = mxResources.get(typeError) || typeError;
-    this.validNeighborsAllowed = (validNeighborsAllowed != null) ? validNeighborsAllowed : true;
+    this.validNeighborsAllowed = (!!validNeighborsAllowed) ? validNeighborsAllowed : true;
   }
 
   source: any;
@@ -88,10 +88,10 @@ export class mxMultiplicity {
   check(graph: mxGraph, edge: any, source: any, target: string, sourceOut: any, targetIn: any): any {
     let error = '';
     if ((this.source && this.checkTerminal(graph, source, edge)) || (!this.source && this.checkTerminal(graph, target, edge))) {
-      if (this.countError != null && ((this.source && (this.max == 0 || (sourceOut >= this.max))) || (!this.source && (this.max == 0 || (targetIn >= this.max))))) {
+      if (!!this.countError && ((this.source && (this.max == 0 || (sourceOut >= this.max))) || (!this.source && (this.max == 0 || (targetIn >= this.max))))) {
         error += this.countError + '\n';
       }
-      if (this.validNeighbors != null && this.typeError != null && this.validNeighbors.length > 0) {
+      if (!!this.validNeighbors && !!this.typeError && this.validNeighbors.length > 0) {
         const isValid = this.checkNeighbors(graph, edge, source, target);
         if (!isValid) {
           error += this.typeError + '\n';
@@ -142,7 +142,7 @@ export class mxMultiplicity {
    * Checks the type of the given value.
    */
   checkType(graph: mxGraph, value: any, type: any, attr: any, attrValue: any): any {
-    if (value != null) {
+    if (!!value) {
       if (!isNaN(value.nodeType)) {
         return mxUtils.isNode(value, type, attr, attrValue);
       } else {

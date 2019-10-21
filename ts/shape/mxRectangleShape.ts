@@ -28,7 +28,7 @@ export class mxRectangleShape extends mxShape {
     this.bounds = bounds;
     this.fill = fill;
     this.stroke = stroke;
-    this.strokewidth = (strokewidth != null) ? strokewidth : 1;
+    this.strokewidth = (!!strokewidth) ? strokewidth : 1;
   }
 
   bounds: any;
@@ -43,10 +43,10 @@ export class mxRectangleShape extends mxShape {
    */
   isHtmlAllowed(): boolean {
     let events = true;
-    if (this.style != null) {
+    if (!!this.style) {
       events = mxUtils.getValue(this.style, mxConstants.STYLE_POINTER_EVENTS, '1') == '1';
     }
-    return !this.isRounded && !this.glass && this.rotation == 0 && (events || (this.fill != null && this.fill != mxConstants.NONE));
+    return !this.isRounded && !this.glass && this.rotation == 0 && (events || (!!this.fill && this.fill != mxConstants.NONE));
   }
 
   /**
@@ -56,11 +56,11 @@ export class mxRectangleShape extends mxShape {
    */
   paintBackground(c: any, x: number, y: number, w: number, h: number): void {
     let events = true;
-    if (this.style != null) {
+    if (!!this.style) {
       events = mxUtils.getValue(this.style, mxConstants.STYLE_POINTER_EVENTS, '1') == '1';
     }
-    if (events || (this.fill != null && this.fill != mxConstants.NONE) || (this.stroke != null && this.stroke != mxConstants.NONE)) {
-      if (!events && (this.fill == null || this.fill == mxConstants.NONE)) {
+    if (events || (!!this.fill && this.fill != mxConstants.NONE) || (!!this.stroke && this.stroke != mxConstants.NONE)) {
+      if (!events && (!this.fill || this.fill == mxConstants.NONE)) {
         c.pointerEvents = false;
       }
       if (this.isRounded) {
@@ -94,7 +94,7 @@ export class mxRectangleShape extends mxShape {
    * Generic background painting implementation.
    */
   paintForeground(c: any, x: number, y: number, w: number, h: number): void {
-    if (this.glass && !this.outline && this.fill != null && this.fill != mxConstants.NONE) {
+    if (this.glass && !this.outline && !!this.fill && this.fill != mxConstants.NONE) {
       this.paintGlassEffect(c, x, y, w, h, this.getArcSize(w + this.strokewidth, h + this.strokewidth));
     }
   }

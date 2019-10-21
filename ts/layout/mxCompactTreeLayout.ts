@@ -29,8 +29,8 @@ import { mxGraphLayout, WeightedCellSorter } from './mxGraphLayout';
 export class mxCompactTreeLayout extends mxGraphLayout {
   constructor(graph: mxGraph, horizontal: any, invert: any) {
     super(graph);
-    this.horizontal = (horizontal != null) ? horizontal : true;
-    this.invert = (invert != null) ? invert : false;
+    this.horizontal = (!!horizontal) ? horizontal : true;
+    this.invert = (!!invert) ? invert : false;
   }
 
   horizontal: any;
@@ -240,7 +240,7 @@ export class mxCompactTreeLayout extends mxGraphLayout {
   execute(parent: any, root: any): void {
     this.parent = parent;
     const model = this.graph.getModel();
-    if (root == null) {
+    if (!root) {
       if (this.graph.getEdges(parent, model.getParent(parent), this.invert, !this.invert, false).length > 0) {
         this.root = parent;
       } else {
@@ -257,17 +257,17 @@ export class mxCompactTreeLayout extends mxGraphLayout {
     } else {
       this.root = root;
     }
-    if (this.root != null) {
+    if (!!this.root) {
       if (this.resizeParent) {
         this.parentsChanged = {};
       } else {
-        this.parentsChanged = null;
+        this.parentsChanged = undefined;
       }
-      this.parentX = null;
-      this.parentY = null;
-      if (parent != this.root && model.isVertex(parent) != null && this.maintainParentLocation) {
+      this.parentX = undefined;
+      this.parentY = undefined;
+      if (parent != this.root && model.isVertex(parent) && this.maintainParentLocation) {
         const geo = this.graph.getCellGeometry(parent);
-        if (geo != null) {
+        if (!!geo) {
           this.parentX = geo.x;
           this.parentY = geo.y;
         }
@@ -281,24 +281,24 @@ export class mxCompactTreeLayout extends mxGraphLayout {
           this.findRankHeights(this.node, 0);
           this.setCellHeights(this.node, 0);
         }
-        if (this.node != null) {
+        if (!!this.node) {
           this.layout(this.node);
           let x0 = this.graph.gridSize;
           let y0 = x0;
           if (!this.moveTree) {
             const g = this.getVertexBounds(this.root);
-            if (g != null) {
+            if (!!g) {
               x0 = g.x;
               y0 = g.y;
             }
           }
-          let bounds = null;
+          let bounds = undefined;
           if (this.isHorizontal()) {
             bounds = this.horizontalLayout(this.node, x0, y0);
           } else {
             bounds = this.verticalLayout(this.node, null, x0, y0);
           }
-          if (bounds != null) {
+          if (!!bounds) {
             let dx = 0;
             let dy = 0;
             if (bounds.x < 0) {
@@ -317,9 +317,9 @@ export class mxCompactTreeLayout extends mxGraphLayout {
               this.localEdgeProcessing(this.node);
             }
           }
-          if (this.parentX != null && this.parentY != null) {
+          if (!!this.parentX && !!this.parentY) {
             let geo = this.graph.getCellGeometry(parent);
-            if (geo != null) {
+            if (!!geo) {
               geo = geo.clone();
               geo.x = this.parentX;
               geo.y = this.parentY;
@@ -343,7 +343,7 @@ export class mxCompactTreeLayout extends mxGraphLayout {
     node.y += dy;
     this.apply(node);
     let child = node.child;
-    while (child != null) {
+    while (!!child) {
       this.moveNode(child, dx, dy);
       child = child.next;
     }
@@ -359,13 +359,13 @@ export class mxCompactTreeLayout extends mxGraphLayout {
     edges.sort(function (e1, e2) {
       const end1 = e1.getTerminal(e1.getTerminal(false) == source);
       let p1 = lookup.get(end1);
-      if (p1 == null) {
+      if (!p1) {
         p1 = mxCellPath.create(end1).split(mxCellPath.PATH_SEPARATOR);
         lookup.put(end1, p1);
       }
       const end2 = e2.getTerminal(e2.getTerminal(false) == source);
       let p2 = lookup.get(end2);
-      if (p2 == null) {
+      if (!p2) {
         p2 = mxCellPath.create(end2).split(mxCellPath.PATH_SEPARATOR);
         lookup.put(end2, p2);
       }
@@ -380,11 +380,11 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    * direction) of cells in each rank
    */
   findRankHeights(node: Node, rank: any): void {
-    if (this.maxRankHeight[rank] == null || this.maxRankHeight[rank] < node.height) {
+    if (!this.maxRankHeight[rank] || this.maxRankHeight[rank] < node.height) {
       this.maxRankHeight[rank] = node.height;
     }
     let child = node.child;
-    while (child != null) {
+    while (!!child) {
       this.findRankHeights(child, rank + 1);
       child = child.next;
     }
@@ -397,11 +397,11 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    * direction) when the tops of each rank are to be aligned
    */
   setCellHeights(node: Node, rank: any): void {
-    if (this.maxRankHeight[rank] != null && this.maxRankHeight[rank] > node.height) {
+    if (this.maxRankHeight[rank] && this.maxRankHeight[rank] > node.height) {
       node.height = this.maxRankHeight[rank];
     }
     let child = node.child;
-    while (child != null) {
+    while (!!child) {
       this.setCellHeights(child, rank + 1);
       child = child.next;
     }
@@ -416,12 +416,12 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    */
   dfs(cell: mxCell, parent: any): any {
     const id = mxCellPath.create(cell);
-    let node = null;
-    if (cell != null && this.visited[id] == null && !this.isVertexIgnored(cell)) {
+    let node = undefined;
+    if (!!cell && !this.visited[id] && !this.isVertexIgnored(cell)) {
       this.visited[id] = cell;
       node = this.createNode(cell);
       const model = this.graph.getModel();
-      let prev = null;
+      let prev = undefined;
       const out = this.graph.getEdges(cell, parent, this.invert, !this.invert, false, true);
       const view = this.graph.getView();
       if (this.sortEdges) {
@@ -438,10 +438,10 @@ export class mxCompactTreeLayout extends mxGraphLayout {
             this.setEdgePoints(edge, null);
           }
           const state = view.getState(edge);
-          const target = (state != null) ? state.getVisibleTerminal(this.invert) : view.getVisibleTerminal(edge, this.invert);
+          const target = (!!state) ? state.getVisibleTerminal(this.invert) : view.getVisibleTerminal(edge, this.invert);
           const tmp = this.dfs(target, parent);
-          if (tmp != null && model.getGeometry(target) != null) {
-            if (prev == null) {
+          if (!!tmp && model.getGeometry(target)) {
+            if (!prev) {
               node.child = tmp;
             } else {
               prev.next = tmp;
@@ -461,13 +461,13 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    * at the given node.
    */
   layout(node: Node): void {
-    if (node != null) {
+    if (!!node) {
       let child = node.child;
-      while (child != null) {
+      while (!!child) {
         this.layout(child);
         child = child.next;
       }
-      if (node.child != null) {
+      if (!!node.child) {
         this.attachParent(node, this.join(node));
       } else {
         this.layoutLeaf(node);
@@ -483,11 +483,11 @@ export class mxCompactTreeLayout extends mxGraphLayout {
     node.y += y0 + node.offsetY;
     bounds = this.apply(node, bounds);
     const child = node.child;
-    if (child != null) {
+    if (!!child) {
       bounds = this.horizontalLayout(child, node.x, node.y, bounds);
       let siblingOffset = node.y + child.offsetY;
       let s = child.next;
-      while (s != null) {
+      while (!!s) {
         bounds = this.horizontalLayout(s, node.x + child.offsetX, siblingOffset, bounds);
         siblingOffset += s.offsetY;
         s = s.next;
@@ -504,11 +504,11 @@ export class mxCompactTreeLayout extends mxGraphLayout {
     node.y += y0 + node.offsetX;
     bounds = this.apply(node, bounds);
     const child = node.child;
-    if (child != null) {
+    if (!!child) {
       bounds = this.verticalLayout(child, node, node.x, node.y, bounds);
       let siblingOffset = node.x + child.offsetY;
       let s = child.next;
-      while (s != null) {
+      while (!!s) {
         bounds = this.verticalLayout(s, node, siblingOffset, node.y + child.offsetX, bounds);
         siblingOffset += s.offsetY;
         s = s.next;
@@ -551,7 +551,7 @@ export class mxCompactTreeLayout extends mxGraphLayout {
     let h = child.width + dist;
     let sum = h;
     child = child.next;
-    while (child != null) {
+    while (!!child) {
       const d = this.merge(node.contour, child.contour);
       child.offsetY = d + h;
       child.offsetX = 0;
@@ -571,7 +571,7 @@ export class mxCompactTreeLayout extends mxGraphLayout {
     let total = 0;
     let upper = p1.lowerHead;
     let lower = p2.upperHead;
-    while (lower != null && upper != null) {
+    while (!!lower && !!upper) {
       const d = this.offset(x, y, lower.dx, lower.dy, upper.dx, upper.dy);
       y += d;
       total += d;
@@ -585,13 +585,13 @@ export class mxCompactTreeLayout extends mxGraphLayout {
         upper = upper.next;
       }
     }
-    if (lower != null) {
+    if (!!lower) {
       const b = this.bridge(p1.upperTail, 0, 0, lower, x, y);
-      p1.upperTail = (b.next != null) ? p2.upperTail : b;
+      p1.upperTail = (!!b.next) ? p2.upperTail : b;
       p1.lowerTail = p2.lowerTail;
     } else {
       const b = this.bridge(p2.lowerTail, x, y, upper, 0, 0);
-      if (b.next == null) {
+      if (!b.next) {
         p1.lowerTail = b;
       }
     }
@@ -663,7 +663,7 @@ export class mxCompactTreeLayout extends mxGraphLayout {
     node.width = 0;
     node.height = 0;
     const geo = this.getVertexBounds(cell);
-    if (geo != null) {
+    if (!!geo) {
       if (this.isHorizontal()) {
         node.width = geo.height;
         node.height = geo.width;
@@ -685,18 +685,18 @@ export class mxCompactTreeLayout extends mxGraphLayout {
     const model = this.graph.getModel();
     const cell = node.cell;
     let g = model.getGeometry(cell);
-    if (cell != null && g != null) {
+    if (!!cell && !!g) {
       if (this.isVertexMovable(cell)) {
         g = this.setVertexLocation(cell, node.x, node.y);
         if (this.resizeParent) {
           const parent = model.getParent(cell);
           const id = mxCellPath.create(parent);
-          if (this.parentsChanged[id] == null) {
+          if (!this.parentsChanged[id]) {
             this.parentsChanged[id] = parent;
           }
         }
       }
-      if (bounds == null) {
+      if (!bounds) {
         bounds = new mxRectangle(g.x, g.y, g.width, g.height);
       } else {
         bounds = new mxRectangle(Math.min(bounds.x, g.x), Math.min(bounds.y, g.y), Math.max(bounds.x + bounds.width, g.x + g.width), Math.max(bounds.y + bounds.height, g.y + g.height));
@@ -739,7 +739,7 @@ export class mxCompactTreeLayout extends mxGraphLayout {
   localEdgeProcessing(node: Node): void {
     this.processNodeOutgoing(node);
     let child = node.child;
-    while (child != null) {
+    while (!!child) {
       this.localEdgeProcessing(child);
       child = child.next;
     }
@@ -755,7 +755,7 @@ export class mxCompactTreeLayout extends mxGraphLayout {
     const parentCell = node.cell;
     let childCount = 0;
     const sortedCells = [];
-    while (child != null) {
+    while (!!child) {
       childCount++;
       let sortingCriterion = child.x;
       if (this.horizontal) {

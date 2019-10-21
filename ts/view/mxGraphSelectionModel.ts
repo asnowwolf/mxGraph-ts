@@ -106,7 +106,7 @@ export class mxGraphSelectionModel {
    * Returns true if the given <mxCell> is selected.
    */
   isSelected(cell: mxCell): boolean {
-    if (cell != null) {
+    if (!!cell) {
       return mxUtils.indexOf(this.cells, cell) >= 0;
     }
     return false;
@@ -141,7 +141,7 @@ export class mxGraphSelectionModel {
    * cell - <mxCell> to be selected.
    */
   setCell(cell: mxCell): void {
-    if (cell != null) {
+    if (!!cell) {
       this.setCells([cell]);
     }
   }
@@ -156,7 +156,7 @@ export class mxGraphSelectionModel {
    * cells - Array of <mxCells> to be selected.
    */
   setCells(cells: mxCell[]): void {
-    if (cells != null) {
+    if (!!cells) {
       if (this.singleSelection) {
         cells = [this.getFirstSelectableCell(cells)];
       }
@@ -176,7 +176,7 @@ export class mxGraphSelectionModel {
    * Returns the first selectable cell in the given array of cells.
    */
   getFirstSelectableCell(cells: mxCell[]): any {
-    if (cells != null) {
+    if (!!cells) {
       for (let i = 0; i < cells.length; i++) {
         if (this.graph.isCellSelectable(cells[i])) {
           return cells[i];
@@ -196,7 +196,7 @@ export class mxGraphSelectionModel {
    * cell - <mxCell> to add to the selection.
    */
   addCell(cell: mxCell): void {
-    if (cell != null) {
+    if (!!cell) {
       this.addCells([cell]);
     }
   }
@@ -212,8 +212,8 @@ export class mxGraphSelectionModel {
    * cells - Array of <mxCells> to add to the selection.
    */
   addCells(cells: mxCell[]): void {
-    if (cells != null) {
-      let remove = null;
+    if (!!cells) {
+      let remove = undefined;
       if (this.singleSelection) {
         remove = this.cells;
         cells = [this.getFirstSelectableCell(cells)];
@@ -239,7 +239,7 @@ export class mxGraphSelectionModel {
    * cell - <mxCell> to remove from the selection.
    */
   removeCell(cell: mxCell): void {
-    if (cell != null) {
+    if (!!cell) {
       this.removeCells([cell]);
     }
   }
@@ -248,7 +248,7 @@ export class mxGraphSelectionModel {
    * Function: removeCells
    */
   removeCells(cells: mxCell[]): void {
-    if (cells != null) {
+    if (!!cells) {
       const tmp = [];
       for (let i = 0; i < cells.length; i++) {
         if (this.isSelected(cells[i])) {
@@ -270,7 +270,7 @@ export class mxGraphSelectionModel {
    * cell - <mxCell> to add to the selection.
    */
   changeSelection(added: any, removed: any): void {
-    if ((added != null && added.length > 0 && added[0] != null) || (removed != null && removed.length > 0 && removed[0] != null)) {
+    if ((!!added && added.length > 0 && added[0]) || (!!removed && removed.length > 0 && removed[0])) {
       const change = new mxSelectionChange(this, added, removed);
       change.execute();
       const edit = new mxUndoableEdit(this, false);
@@ -290,7 +290,7 @@ export class mxGraphSelectionModel {
    * cell - <mxCell> to add to the selection.
    */
   cellAdded(cell: mxCell): void {
-    if (cell != null && !this.isSelected(cell)) {
+    if (!!cell && !this.isSelected(cell)) {
       this.cells.push(cell);
     }
   }
@@ -306,7 +306,7 @@ export class mxGraphSelectionModel {
    * cell - <mxCell> to remove from the selection.
    */
   cellRemoved(cell: mxCell): void {
-    if (cell != null) {
+    if (!!cell) {
       const index = mxUtils.indexOf(this.cells, cell);
       if (index >= 0) {
         this.cells.splice(index, 1);
@@ -327,8 +327,8 @@ export class mxGraphSelectionModel {
 export class mxSelectionChange {
   constructor(selectionModel: any, added: any, removed: any) {
     this.selectionModel = selectionModel;
-    this.added = (added != null) ? added.slice() : null;
-    this.removed = (removed != null) ? removed.slice() : null;
+    this.added = (!!added) ? added.slice() : null;
+    this.removed = (!!removed) ? removed.slice() : null;
   }
 
   selectionModel: any;
@@ -343,12 +343,12 @@ export class mxSelectionChange {
   execute(): void {
     const t0 = mxLog.enter('mxSelectionChange.execute');
     window.status = mxResources.get(this.selectionModel.updatingSelectionResource) || this.selectionModel.updatingSelectionResource;
-    if (this.removed != null) {
+    if (!!this.removed) {
       for (let i = 0; i < this.removed.length; i++) {
         this.selectionModel.cellRemoved(this.removed[i]);
       }
     }
-    if (this.added != null) {
+    if (!!this.added) {
       for (let i = 0; i < this.added.length; i++) {
         this.selectionModel.cellAdded(this.added[i]);
       }

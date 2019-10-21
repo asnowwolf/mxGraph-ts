@@ -5,7 +5,7 @@ import { mxWindow } from './mxWindow';
 
 export let mxLog = {
   consoleName: 'Console', TRACE: false, DEBUG: true, WARN: true, buffer: '', init() {
-    if (mxLog.window == null && document.body != null) {
+    if (!mxLog.window && !!document.body) {
       const title = mxLog.consoleName + ' - mxGraph ' + mxClient.VERSION;
       const table = document.createElement('table');
       table.setAttribute('width', '100%');
@@ -101,17 +101,17 @@ export let mxLog = {
     mxEvent.addListener(button, 'click', funct);
     mxLog.td.appendChild(button);
   }, isVisible() {
-    if (mxLog.window != null) {
+    if (!!mxLog.window) {
       return mxLog.window.isVisible();
     }
     return false;
   }, show() {
     mxLog.setVisible(true);
   }, setVisible(visible) {
-    if (mxLog.window == null) {
+    if (!mxLog.window) {
       mxLog.init();
     }
-    if (mxLog.window != null) {
+    if (!!mxLog.window) {
       mxLog.window.setVisible(visible);
     }
   }, enter(string) {
@@ -140,7 +140,7 @@ export let mxLog = {
         string += ' ';
       }
     }
-    if (mxLog.textarea != null) {
+    if (!!mxLog.textarea) {
       mxLog.textarea.value = mxLog.textarea.value + string;
       if (navigator.userAgent.indexOf('Presto/2.5') >= 0) {
         mxLog.textarea.style.visibility = 'hidden';

@@ -39,12 +39,12 @@ import { mxUtils } from './mxUtils';
 export class mxDivResizer {
   constructor(div: HTMLElement, container: HTMLElement) {
     if (div.nodeName.toLowerCase() == 'div') {
-      if (container == null) {
+      if (!container) {
         container = window;
       }
       this.div = div;
       const style = mxUtils.getCurrentStyle(div);
-      if (style != null) {
+      if (!!style) {
         this.resizeWidth = style.width == 'auto';
         this.resizeHeight = style.height == 'auto';
       }

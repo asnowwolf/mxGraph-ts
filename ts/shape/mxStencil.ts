@@ -267,9 +267,9 @@ export class mxStencil {
     this.w0 = Number(this.desc.getAttribute('w') || 100);
     this.h0 = Number(this.desc.getAttribute('h') || 100);
     const aspect = this.desc.getAttribute('aspect');
-    this.aspect = (aspect != null) ? aspect : 'variable';
+    this.aspect = (!!aspect) ? aspect : 'variable';
     const sw = this.desc.getAttribute('strokewidth');
-    this.strokewidth = (sw != null) ? sw : '1';
+    this.strokewidth = (!!sw) ? sw : '1';
   }
 
   /**
@@ -280,9 +280,9 @@ export class mxStencil {
    */
   parseConstraints(): void {
     const conns = this.desc.getElementsByTagName('connections')[0];
-    if (conns != null) {
+    if (!!conns) {
       const tmp = mxUtils.getChildNodes(conns);
-      if (tmp != null && tmp.length > 0) {
+      if (!!tmp && tmp.length > 0) {
         this.constraints = [];
         for (let i = 0; i < tmp.length; i++) {
           this.constraints.push(this.parseConstraint(tmp[i]));
@@ -314,7 +314,7 @@ export class mxStencil {
   evaluateTextAttribute(node: Node, attribute: any, shape: any): any {
     let result = this.evaluateAttribute(node, attribute, shape);
     const loc = node.getAttribute('localized');
-    if ((mxStencil.defaultLocalized && loc == null) || loc == '1') {
+    if ((mxStencil.defaultLocalized && !loc) || loc == '1') {
       result = mxResources.get(result);
     }
     return result;
@@ -330,9 +330,9 @@ export class mxStencil {
    */
   evaluateAttribute(node: Node, attribute: any, shape: any): any {
     let result = node.getAttribute(attribute);
-    if (result == null) {
+    if (!result) {
       const text = mxUtils.getTextContent(node);
-      if (text != null && mxStencil.allowEval) {
+      if (!!text && mxStencil.allowEval) {
         const funct = mxUtils.eval(text);
         if (typeof (funct) == 'function') {
           result = funct(shape);
@@ -353,14 +353,14 @@ export class mxStencil {
     const minScale = Math.min(aspect.width, aspect.height);
     const sw = (this.strokewidth == 'inherit') ? Number(mxUtils.getNumber(shape.style, mxConstants.STYLE_STROKEWIDTH, 1)) : Number(this.strokewidth) * minScale;
     canvas.setStrokeWidth(sw);
-    if (shape.style != null && mxUtils.getValue(shape.style, mxConstants.STYLE_POINTER_EVENTS, '0') == '1') {
+    if (!!shape.style && mxUtils.getValue(shape.style, mxConstants.STYLE_POINTER_EVENTS, '0') == '1') {
       canvas.setStrokeColor(mxConstants.NONE);
       canvas.rect(x, y, w, h);
       canvas.stroke();
       canvas.setStrokeColor(shape.stroke);
     }
     this.drawChildren(canvas, shape, x, y, w, h, this.bgNode, aspect, false, true);
-    this.drawChildren(canvas, shape, x, y, w, h, this.fgNode, aspect, true, !shape.outline || shape.style == null || mxUtils.getValue(shape.style, mxConstants.STYLE_BACKGROUND_OUTLINE, 0) == 0);
+    this.drawChildren(canvas, shape, x, y, w, h, this.fgNode, aspect, true, !shape.outline || !shape.style || mxUtils.getValue(shape.style, mxConstants.STYLE_BACKGROUND_OUTLINE, 0) == 0);
   }
 
   /**
@@ -369,9 +369,9 @@ export class mxStencil {
    * Draws this stencil inside the given bounds.
    */
   drawChildren(canvas: any, shape: any, x: number, y: number, w: number, h: number, node: Node, aspect: any, disableShadow: any, paint: any): void {
-    if (node != null && w > 0 && h > 0) {
+    if (!!node && w > 0 && h > 0) {
       let tmp = node.firstChild;
-      while (tmp != null) {
+      while (!!tmp) {
         if (tmp.nodeType == mxConstants.NODETYPE_ELEMENT) {
           this.drawNode(canvas, shape, tmp, aspect, disableShadow, paint);
         }
@@ -446,7 +446,7 @@ export class mxStencil {
           let pointCount = 0;
           const segs = [];
           let childNode = node.firstChild;
-          while (childNode != null) {
+          while (!!childNode) {
             if (childNode.nodeType == mxConstants.NODETYPE_ELEMENT) {
               const childName = childNode.nodeName;
               if (childName == 'move' || childName == 'line') {
@@ -477,7 +477,7 @@ export class mxStencil {
         }
         if (parseRegularly) {
           let childNode = node.firstChild;
-          while (childNode != null) {
+          while (!!childNode) {
             if (childNode.nodeType == mxConstants.NODETYPE_ELEMENT) {
               this.drawNode(canvas, shape, childNode, aspect, disableShadow, paint);
             }
@@ -536,7 +536,7 @@ export class mxStencil {
         }
       } else if (name == 'include-shape') {
         const stencil = mxStencilRegistry.getStencil(node.getAttribute('name'));
-        if (stencil != null) {
+        if (!!stencil) {
           const x = x0 + Number(node.getAttribute('x')) * sx;
           const y = y0 + Number(node.getAttribute('y')) * sy;
           const w = Number(node.getAttribute('w')) * sx;
@@ -556,7 +556,7 @@ export class mxStencil {
         canvas.setDashed(node.getAttribute('dashed') == '1');
       } else if (name == 'dashpattern') {
         let value = node.getAttribute('pattern');
-        if (value != null) {
+        if (!!value) {
           const tmp = value.split(' ');
           const pat = [];
           for (let i = 0; i < tmp.length; i++) {

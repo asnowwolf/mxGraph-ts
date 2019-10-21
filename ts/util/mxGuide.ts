@@ -108,17 +108,17 @@ export class mxGuide {
    * Moves the <bounds> by the given <mxPoint> and returnt the snapped point.
    */
   move(bounds: any, delta: any, gridEnabled: any, clone: boolean): any {
-    if (this.states != null && (this.horizontal || this.vertical) && bounds != null && delta != null) {
+    if (!!this.states && (this.horizontal || this.vertical) && !!bounds && !!delta) {
       const trx = this.graph.getView().translate;
       const scale = this.graph.getView().scale;
       let dx = delta.x;
       let dy = delta.y;
       let overrideX = false;
-      let stateX = null;
-      let valueX = null;
+      let stateX = undefined;
+      let valueX = undefined;
       let overrideY = false;
-      let stateY = null;
-      let valueY = null;
+      let stateY = undefined;
+      let valueY = undefined;
       const tt = this.getGuideTolerance();
       let ttX = tt;
       let ttY = tt;
@@ -151,7 +151,7 @@ export class mxGuide {
         if (override) {
           stateX = state;
           valueX = Math.round(x - this.graph.panDx);
-          if (this.guideX == null) {
+          if (!this.guideX) {
             this.guideX = this.createGuideShape(true);
             this.guideX.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
             this.guideX.pointerEvents = false;
@@ -180,7 +180,7 @@ export class mxGuide {
         if (override) {
           stateY = state;
           valueY = Math.round(y - this.graph.panDy);
-          if (this.guideY == null) {
+          if (!this.guideY) {
             this.guideY = this.createGuideShape(false);
             this.guideY.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
             this.guideY.pointerEvents = false;
@@ -192,7 +192,7 @@ export class mxGuide {
 
       for (let i = 0; i < this.states.length; i++) {
         const state = this.states[i];
-        if (state != null) {
+        if (!!state) {
           if (this.horizontal) {
             snapX.call(this, state.getCenterX(), state);
             snapX.call(this, state.x, state);
@@ -216,14 +216,14 @@ export class mxGuide {
         }
       }
       const c = this.graph.container;
-      if (!overrideX && this.guideX != null) {
+      if (!overrideX && !!this.guideX) {
         this.guideX.node.style.visibility = 'hidden';
-      } else if (this.guideX != null) {
-        if (stateX != null && bounds != null) {
+      } else if (!!this.guideX) {
+        if (!!stateX && !!bounds) {
           minY = Math.min(bounds.y + dy - this.graph.panDy, stateX.y);
           maxY = Math.max(bounds.y + bounds.height + dy - this.graph.panDy, stateX.y + stateX.height);
         }
-        if (minY != null && maxY != null) {
+        if (!!minY && !!maxY) {
           this.guideX.points = [new mxPoint(valueX, minY), new mxPoint(valueX, maxY)];
         } else {
           this.guideX.points = [new mxPoint(valueX, -this.graph.panDy), new mxPoint(valueX, c.scrollHeight - 3 - this.graph.panDy)];
@@ -232,14 +232,14 @@ export class mxGuide {
         this.guideX.node.style.visibility = 'visible';
         this.guideX.redraw();
       }
-      if (!overrideY && this.guideY != null) {
+      if (!overrideY && !!this.guideY) {
         this.guideY.node.style.visibility = 'hidden';
-      } else if (this.guideY != null) {
-        if (stateY != null && bounds != null) {
+      } else if (!!this.guideY) {
+        if (!!stateY && !!bounds) {
           minX = Math.min(bounds.x + dx - this.graph.panDx, stateY.x);
           maxX = Math.max(bounds.x + bounds.width + dx - this.graph.panDx, stateY.x + stateY.width);
         }
-        if (minX != null && maxX != null) {
+        if (!!minX && !!maxX) {
           this.guideY.points = [new mxPoint(minX, valueY), new mxPoint(maxX, valueY)];
         } else {
           this.guideY.points = [new mxPoint(-this.graph.panDx, valueY), new mxPoint(c.scrollWidth - 3 - this.graph.panDx, valueY)];
@@ -259,10 +259,10 @@ export class mxGuide {
    * Hides all current guides.
    */
   getDelta(bounds: any, stateX: any, dx: number, stateY: any, dy: number): any {
-    if (this.rounded || (stateX != null && stateX.cell == null)) {
+    if (this.rounded || (!!stateX && !stateX.cell)) {
       dx = Math.floor(bounds.x + dx) - bounds.x;
     }
-    if (this.rounded || (stateY != null && stateY.cell == null)) {
+    if (this.rounded || (!!stateY && !stateY.cell)) {
       dy = Math.floor(bounds.y + dy) - bounds.y;
     }
     return new mxPoint(dx, dy);
@@ -292,10 +292,10 @@ export class mxGuide {
    * Shows or hides the current guides.
    */
   setVisible(visible: any): void {
-    if (this.guideX != null) {
+    if (!!this.guideX) {
       this.guideX.node.style.visibility = (visible) ? 'visible' : 'hidden';
     }
-    if (this.guideY != null) {
+    if (!!this.guideY) {
       this.guideY.node.style.visibility = (visible) ? 'visible' : 'hidden';
     }
   }
@@ -306,13 +306,13 @@ export class mxGuide {
    * Destroys all resources that this object uses.
    */
   destroy(): void {
-    if (this.guideX != null) {
+    if (!!this.guideX) {
       this.guideX.destroy();
-      this.guideX = null;
+      this.guideX = undefined;
     }
-    if (this.guideY != null) {
+    if (!!this.guideY) {
       this.guideY.destroy();
-      this.guideY = null;
+      this.guideY = undefined;
     }
   }
 }
