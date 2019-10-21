@@ -41,7 +41,7 @@ export class mxPartitionLayout extends mxGraphLayout {
    * Boolean that specifies if vertices should be resized. Default is true.
    * @example true
    */
-  resizeVertices: boolean;
+  resizeVertices: boolean = true;
 
   /**
    * Function: isHorizontal

@@ -116,26 +116,26 @@ export class mxText extends mxShape {
    * Specifies the spacing to be added to the top spacing. Default is 0. Use the
    * value 5 here to get the same label positions as in mxGraph 1.x.
    */
-  baseSpacingTop: number;
+  baseSpacingTop: number = '';
   /**
    * Variable: baseSpacingBottom
    *
    * Specifies the spacing to be added to the bottom spacing. Default is 0. Use the
    * value 1 here to get the same label positions as in mxGraph 1.x.
    */
-  baseSpacingBottom: number;
+  baseSpacingBottom: number = 0;
   /**
    * Variable: baseSpacingLeft
    *
    * Specifies the spacing to be added to the left spacing. Default is 0.
    */
-  baseSpacingLeft: number;
+  baseSpacingLeft: number = 0;
   /**
    * Variable: baseSpacingRight
    *
    * Specifies the spacing to be added to the right spacing. Default is 0.
    */
-  baseSpacingRight: number;
+  baseSpacingRight: number = 0;
   /**
    * Variable: replaceLinefeeds
    *
@@ -143,13 +143,13 @@ export class mxText extends mxShape {
    * Default is true.
    * @example true
    */
-  replaceLinefeeds: boolean;
+  replaceLinefeeds: boolean = true;
   /**
    * Variable: verticalTextRotation
    *
    * Rotation for vertical text. Default is -90 (bottom to top).
    */
-  verticalTextRotation: number;
+  verticalTextRotation: number = true;
   /**
    * Variable: ignoreClippedStringSize
    *
@@ -159,7 +159,7 @@ export class mxText extends mxShape {
    * <ignoreStringSize> has precedence over this switch.
    * @example true
    */
-  ignoreClippedStringSize: boolean;
+  ignoreClippedStringSize: boolean = true;
   /**
    * Variable: ignoreStringSize
    *
@@ -167,7 +167,7 @@ export class mxText extends mxShape {
    * boundingBox will not ignore the actual size of the string, otherwise
    * <bounds> will be used instead. Default is false.
    */
-  ignoreStringSize: boolean;
+  ignoreStringSize: boolean = true;
   /**
    * Variable: textWidthPadding
    *
@@ -188,7 +188,7 @@ export class mxText extends mxShape {
    * Specifies if caching for HTML labels should be enabled. Default is true.
    * @example true
    */
-  cacheEnabled: boolean;
+  cacheEnabled: boolean = true;
   lastUnscaledWidth: any;
   opacity: any;
   flipV: any;

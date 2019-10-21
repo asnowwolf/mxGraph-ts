@@ -30,7 +30,7 @@ export class mxRadialTreeLayout extends mxCompactTreeLayout {
    * The initial offset to compute the angle position.
    * @example 0.5
    */
-  angleOffset: number;
+  angleOffset: number = 0.5;
   /**
    * Variable: rootx
    *
@@ -49,20 +49,20 @@ export class mxRadialTreeLayout extends mxCompactTreeLayout {
    * Holds the levelDistance. Default is 120.
    * @example 120
    */
-  levelDistance: number;
+  levelDistance: number = 120;
   /**
    * Variable: nodeDistance
    *
    * Holds the nodeDistance. Default is 10.
    * @example 10
    */
-  nodeDistance: number;
+  nodeDistance: number = 10;
   /**
    * Variable: autoRadius
    *
    * Specifies if the radios should be computed automatically
    */
-  autoRadius: boolean;
+  autoRadius: boolean = 120;
   /**
    * Variable: sortEdges
    *

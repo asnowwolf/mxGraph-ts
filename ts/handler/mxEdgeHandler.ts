@@ -105,34 +105,34 @@ export class mxEdgeHandler {
    * Specifies if cloning by control-drag is enabled. Default is true.
    * @example true
    */
-  cloneEnabled: boolean;
+  cloneEnabled: boolean = true;
   /**
    * Variable: addEnabled
    *
    * Specifies if adding bends by shift-click is enabled. Default is false.
    * Note: This experimental feature is not recommended for production use.
    */
-  addEnabled: boolean;
+  addEnabled: boolean = true;
   /**
    * Variable: removeEnabled
    *
    * Specifies if removing bends by shift-click is enabled. Default is false.
    * Note: This experimental feature is not recommended for production use.
    */
-  removeEnabled: boolean;
+  removeEnabled: boolean = false;
   /**
    * Variable: dblClickRemoveEnabled
    *
    * Specifies if removing bends by double click is enabled. Default is false.
    */
-  dblClickRemoveEnabled: boolean;
+  dblClickRemoveEnabled: boolean = false;
   /**
    * Variable: mergeRemoveEnabled
    *
    * Specifies if removing bends by dropping them on other bends is enabled.
    * Default is false.
    */
-  mergeRemoveEnabled: boolean;
+  mergeRemoveEnabled: boolean = false;
   /**
    * Variable: straightRemoveEnabled
    *
@@ -140,7 +140,7 @@ export class mxEdgeHandler {
    * If enabled, this can be overridden by holding down the alt key while moving.
    * Default is false.
    */
-  straightRemoveEnabled: boolean;
+  straightRemoveEnabled: boolean = false;
   /**
    * Variable: virtualBendsEnabled
    *
@@ -148,7 +148,7 @@ export class mxEdgeHandler {
    * segments. These bends can then be used to add new waypoints.
    * Default is false.
    */
-  virtualBendsEnabled: boolean;
+  virtualBendsEnabled: boolean = false;
   /**
    * Variable: virtualBendOpacity
    *
@@ -156,14 +156,14 @@ export class mxEdgeHandler {
    * Default is 20.
    * @example 20
    */
-  virtualBendOpacity: number;
+  virtualBendOpacity: number = 20;
   /**
    * Variable: parentHighlightEnabled
    *
    * Specifies if the parent should be highlighted if a child cell is selected.
    * Default is false.
    */
-  parentHighlightEnabled: boolean;
+  parentHighlightEnabled: boolean = 20;
   /**
    * Variable: preferHtml
    *
@@ -179,26 +179,26 @@ export class mxEdgeHandler {
    * Default is true.
    * @example true
    */
-  allowHandleBoundsCheck: boolean;
+  allowHandleBoundsCheck: boolean = true;
   /**
    * Variable: snapToTerminals
    *
    * Specifies if waypoints should snap to the routing centers of terminals.
    * Default is false.
    */
-  snapToTerminals: boolean;
+  snapToTerminals: boolean = true;
   /**
    * Variable: handleImage
    *
    * Optional <mxImage> to be used as handles. Default is null.
    */
-  handleImage: any;
+  handleImage: any = null;
   /**
    * Variable: tolerance
    *
    * Optional tolerance for hit-detection in <getHandleForEvent>. Default is 0.
    */
-  tolerance: number;
+  tolerance: number = 0;
   /**
    * Variable: outlineConnect
    *
@@ -206,14 +206,14 @@ export class mxEdgeHandler {
    * enabled. This will allow to place the connection point along the outline of
    * the highlighted target. Default is false.
    */
-  outlineConnect: boolean;
+  outlineConnect: boolean = false;
   /**
    * Variable: manageLabelHandle
    *
    * Specifies if the label handle should be moved if it intersects with another
    * handle. Uses <checkLabelHandle> for checking and moving. Default is false.
    */
-  manageLabelHandle: boolean;
+  manageLabelHandle: boolean = false;
   points: any[];
   abspoints: any;
   parentHighlight: any;
@@ -231,7 +231,7 @@ export class mxEdgeHandler {
   /**
    * @example true
    */
-  active: boolean;
+  active: boolean = true;
   i;
 
   /**

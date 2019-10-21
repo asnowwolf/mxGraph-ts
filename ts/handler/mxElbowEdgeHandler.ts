@@ -33,7 +33,7 @@ export class mxElbowEdgeHandler extends mxEdgeHandler {
    * <mxGraph.flipEdge>. Default is true.
    * @example true
    */
-  flipEnabled: boolean;
+  flipEnabled: boolean = true;
   /**
    * Variable: doubleClickOrientationResource
    *
@@ -42,7 +42,7 @@ export class mxElbowEdgeHandler extends mxEdgeHandler {
    * exist then the value is used as the error message. Default is
    * 'doubleClickOrientation'.
    */
-  doubleClickOrientationResource: any;
+  doubleClickOrientationResource: any = true;
 
   /**
    * Function: createBends

@@ -89,7 +89,7 @@ export class mxPanningHandler {
   /**
    * @example true
    */
-  active: boolean;
+  active: boolean = true;
   gestureHandler: Function;
   initialScale: any;
   mouseDownEvent: any;
@@ -100,69 +100,69 @@ export class mxPanningHandler {
    * Specifies if panning should be active for the left mouse button.
    * Setting this to true may conflict with <mxRubberband>. Default is false.
    */
-  useLeftButtonForPanning: boolean;
+  useLeftButtonForPanning: boolean = false;
   /**
    * Variable: usePopupTrigger
    *
    * Specifies if <mxEvent.isPopupTrigger> should also be used for panning.
    * @example true
    */
-  usePopupTrigger: boolean;
+  usePopupTrigger: boolean = true;
   /**
    * Variable: ignoreCell
    *
    * Specifies if panning should be active even if there is a cell under the
    * mousepointer. Default is false.
    */
-  ignoreCell: boolean;
+  ignoreCell: boolean = false;
   /**
    * Variable: previewEnabled
    *
    * Specifies if the panning should be previewed. Default is true.
    * @example true
    */
-  previewEnabled: boolean;
+  previewEnabled: boolean = true;
   /**
    * Variable: useGrid
    *
    * Specifies if the panning steps should be aligned to the grid size.
    * Default is false.
    */
-  useGrid: boolean;
+  useGrid: boolean = true;
   /**
    * Variable: panningEnabled
    *
    * Specifies if panning should be enabled. Default is true.
    * @example true
    */
-  panningEnabled: boolean;
+  panningEnabled: boolean = true;
   /**
    * Variable: pinchEnabled
    *
    * Specifies if pinch gestures should be handled as zoom. Default is true.
    * @example true
    */
-  pinchEnabled: boolean;
+  pinchEnabled: boolean = true;
   /**
    * Variable: maxScale
    *
    * Specifies the maximum scale. Default is 8.
    * @example 8
    */
-  maxScale: number;
+  maxScale: number = 8;
   /**
    * Variable: minScale
    *
    * Specifies the minimum scale. Default is 0.01.
    * @example 0.01
    */
-  minScale: number;
+  minScale: number = 0.01;
   /**
    * Variable: dx
    *
    * Holds the current horizontal offset.
    */
-  dx: number;
+  dx: number = true;
   /**
    * Variable: dy
    *
@@ -186,7 +186,7 @@ export class mxPanningHandler {
   /**
    * @example true
    */
-  panningTrigger: boolean;
+  panningTrigger: boolean = true;
 
   /**
    * Function: isActive

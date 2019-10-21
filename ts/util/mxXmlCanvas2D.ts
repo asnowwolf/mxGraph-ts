@@ -47,7 +47,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
    * Specifies if text output should be enabled. Default is true.
    * @example true
    */
-  textEnabled: boolean;
+  textEnabled: boolean = true;
   /**
    * Variable: compressed
    *
@@ -55,7 +55,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
    * Default is true.
    * @example true
    */
-  compressed: boolean;
+  compressed: boolean = true;
   lastX: number;
   lastY: number;
 

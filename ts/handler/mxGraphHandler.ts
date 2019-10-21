@@ -28,6 +28,7 @@ import { mxGuide } from '../util/mxGuide';
 import { mxPoint } from '../util/mxPoint';
 import { mxRectangle } from '../util/mxRectangle';
 import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from '../view/mxGraph';
 import { mxCellHighlight } from './mxCellHighlight';
 
 export class mxGraphHandler {
@@ -80,7 +81,7 @@ export class mxGraphHandler {
    * Specifies if events are handled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: highlightEnabled
    *
@@ -88,28 +89,28 @@ export class mxGraphHandler {
    * true.
    * @example true
    */
-  highlightEnabled: boolean;
+  highlightEnabled: boolean = true;
   /**
    * Variable: cloneEnabled
    *
    * Specifies if cloning by control-drag is enabled. Default is true.
    * @example true
    */
-  cloneEnabled: boolean;
+  cloneEnabled: boolean = true;
   /**
    * Variable: moveEnabled
    *
    * Specifies if moving is enabled. Default is true.
    * @example true
    */
-  moveEnabled: boolean;
+  moveEnabled: boolean = true;
   /**
    * Variable: guidesEnabled
    *
    * Specifies if other cells should be used for snapping the right, center or
    * left side of the current selection. Default is false.
    */
-  guidesEnabled: boolean;
+  guidesEnabled: boolean = true;
   /**
    * Variable: guide
    *
@@ -135,35 +136,35 @@ export class mxGraphHandler {
    * cell. Default is true.
    * @example true
    */
-  updateCursor: boolean;
+  updateCursor: boolean = true;
   /**
    * Variable: selectEnabled
    *
    * Specifies if selecting is enabled. Default is true.
    * @example true
    */
-  selectEnabled: boolean;
+  selectEnabled: boolean = true;
   /**
    * Variable: removeCellsFromParent
    *
    * Specifies if cells may be moved out of their parents. Default is true.
    * @example true
    */
-  removeCellsFromParent: boolean;
+  removeCellsFromParent: boolean = true;
   /**
    * Variable: removeEmptyParents
    *
    * If empty parents should be removed from the model after all child cells
    * have been moved out. Default is true.
    */
-  removeEmptyParents: boolean;
+  removeEmptyParents: boolean = true;
   /**
    * Variable: connectOnDrop
    *
    * Specifies if drop events are interpreted as new connections if no other
    * drop action is defined. Default is false.
    */
-  connectOnDrop: boolean;
+  connectOnDrop: boolean = false;
   /**
    * Variable: scrollOnMove
    *
@@ -171,7 +172,7 @@ export class mxGraphHandler {
    * visible. Default is true.
    * @example true
    */
-  scrollOnMove: boolean;
+  scrollOnMove: boolean = true;
   /**
    * Variable: minimumSize
    *
@@ -179,14 +180,14 @@ export class mxGraphHandler {
    * selection border. Default is 6.
    * @example 6
    */
-  minimumSize: number;
+  minimumSize: number = 6;
   /**
    * Variable: previewColor
    *
    * Specifies the color of the preview shape. Default is black.
    * @example black
    */
-  previewColor: string;
+  previewColor: string = black;
   /**
    * Variable: htmlPreview
    *
@@ -194,7 +195,7 @@ export class mxGraphHandler {
    * then drop target detection relies entirely on <mxGraph.getCellAt> because
    * the HTML preview does not "let events through". Default is false.
    */
-  htmlPreview: boolean;
+  htmlPreview: boolean = true;
   /**
    * Variable: shape
    *
@@ -206,20 +207,20 @@ export class mxGraphHandler {
    *
    * Specifies if the grid should be scaled. Default is false.
    */
-  scaleGrid: boolean;
+  scaleGrid: boolean = false;
   /**
    * Variable: rotationEnabled
    *
    * Specifies if the bounding box should allow for rotation. Default is true.
    * @example true
    */
-  rotationEnabled: boolean;
+  rotationEnabled: boolean = true;
   delayedSelection: any;
   cell: mxCell;
   /**
    * @example true
    */
-  cellWasClicked: boolean;
+  cellWasClicked: boolean = true;
   first: any;
   cells: mxCell[];
   highlight: any;

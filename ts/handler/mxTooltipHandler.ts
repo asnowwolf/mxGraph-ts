@@ -43,21 +43,21 @@ export class mxTooltipHandler {
    * Specifies the zIndex for the tooltip and its shadow. Default is 10005.
    * @example 10005
    */
-  zIndex: number;
+  zIndex: number = 10005;
   /**
    * Variable: ignoreTouchEvents
    *
    * Specifies if touch and pen events should be ignored. Default is true.
    * @example true
    */
-  ignoreTouchEvents: boolean;
+  ignoreTouchEvents: boolean = true;
   /**
    * Variable: hideOnHover
    *
    * Specifies if the tooltip should be hidden if the mouse is moved over the
    * current cell. Default is false.
    */
-  hideOnHover: boolean;
+  hideOnHover: boolean = 10005;
   /**
    * Variable: destroyed
    *
@@ -70,7 +70,7 @@ export class mxTooltipHandler {
    * Specifies if events are handled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   div: HTMLElement;
   lastX: any;
   lastY: any;

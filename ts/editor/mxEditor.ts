@@ -341,9 +341,11 @@
  *
  * config - Optional XML node that contains the configuration.
  */
+import { mxGraphHandler } from '../handler/mxGraphHandler';
 import { mxRubberband } from '../handler/mxRubberband';
 import { mxCodec } from '../io/mxCodec';
 import { mxCompactTreeLayout } from '../layout/mxCompactTreeLayout';
+import { mxGraphLayout } from '../layout/mxGraphLayout';
 import { mxStackLayout } from '../layout/mxStackLayout';
 import { mxCell } from '../model/mxCell';
 import { mxGeometry } from '../model/mxGeometry';
@@ -375,28 +377,27 @@ export class mxEditor extends mxEventSource {
     super();
     this.actions = [];
     this.addActions();
-    if (!!document.body) {
-      this.cycleAttributeValues = [];
-      this.popupHandler = new mxDefaultPopupMenu();
-      this.undoManager = new mxUndoManager();
-      this.graph = this.createGraph();
-      this.toolbar = this.createToolbar();
-      this.keyHandler = new mxDefaultKeyHandler(this);
-      this.configure(config);
-      this.graph.swimlaneIndicatorColorAttribute = this.cycleAttributeName;
-      if (!!this.onInit) {
-        this.onInit();
-      }
-      if (mxClient.IS_IE) {
-        mxEvent.addListener(window, 'unload', () => {
-          this.destroy();
-        });
-      }
+    this.cycleAttributeValues = [];
+    this.popupHandler = new mxDefaultPopupMenu();
+    this.undoManager = new mxUndoManager();
+    this.graph = this.createGraph();
+    this.toolbar = this.createToolbar();
+    this.keyHandler = new mxDefaultKeyHandler(this);
+    this.configure(config);
+    this.graph.swimlaneIndicatorColorAttribute = this.cycleAttributeName;
+    if (!!this.onInit) {
+      this.onInit();
+    }
+    if (mxClient.IS_IE) {
+      mxEvent.addListener(window, 'unload', () => {
+        this.destroy();
+      });
     }
   }
 
+  onInit?: Function;
   actions: any[];
-  cycleAttributeValues: any[];
+  cycleAttributeValues: any[] = [];
   popupHandler: mxDefaultPopupMenu;
   undoManager: mxUndoManager;
   graph: mxGraph;
@@ -417,7 +418,7 @@ export class mxEditor extends mxEventSource {
    * this key does not exist then the value is used as the error message.
    * Default is 'lastSaved'.
    */
-  lastSavedResource: any;
+  lastSavedResource: any = 'lastSaved';
   /**
    * Variable: currentFileResource
    *
@@ -425,7 +426,7 @@ export class mxEditor extends mxEventSource {
    * this key does not exist then the value is used as the error message.
    * Default is 'lastSaved'.
    */
-  currentFileResource: any;
+  currentFileResource: any = 'lastSaved';
   /**
    * Variable: propertiesResource
    *
@@ -433,7 +434,7 @@ export class mxEditor extends mxEventSource {
    * resource for this key does not exist then the value is used as the
    * error message. Default is 'properties'.
    */
-  propertiesResource: any;
+  propertiesResource: any = 'properties';
   /**
    * Variable: tasksResource
    *
@@ -441,7 +442,7 @@ export class mxEditor extends mxEventSource {
    * resource for this key does not exist then the value is used as the
    * error message. Default is 'tasks'.
    */
-  tasksResource: any;
+  tasksResource: any = 'tasks';
   /**
    * Variable: helpResource
    *
@@ -449,7 +450,7 @@ export class mxEditor extends mxEventSource {
    * resource for this key does not exist then the value is used as the
    * error message. Default is 'help'.
    */
-  helpResource: any;
+  helpResource: any = 'help';
   /**
    * Variable: outlineResource
    *
@@ -457,14 +458,14 @@ export class mxEditor extends mxEventSource {
    * resource for this key does not exist then the value is used as the
    * error message. Default is 'outline'.
    */
-  outlineResource: any;
+  outlineResource: any = 'outline';
   /**
    * Variable: outline
    *
    * Reference to the <mxWindow> that contains the outline. The <mxOutline>
    * is stored in outline.outline.
    */
-  outline: any;
+  outline: any = 'lastSaved';
   /**
    * Variable: graphRenderHint
    *
@@ -472,14 +473,14 @@ export class mxEditor extends mxEventSource {
    * graph in <setGraphContainer>. See <mxGraph>.
    * Default is null.
    */
-  graphRenderHint: any;
+  graphRenderHint: any = null;
   /**
    * Variable: status
    *
    * DOM container that holds the statusbar. Default is null.
    * Use <setStatusContainer> to set this value.
    */
-  status: any;
+  status: any = null;
   /**
    * Variable: dblClickAction
    *
@@ -503,7 +504,7 @@ export class mxEditor extends mxEventSource {
    * (end)
    * @example edit
    */
-  dblClickAction: string;
+  dblClickAction: string = 'edit';
   /**
    * Variable: swimlaneRequired
    *
@@ -512,7 +513,7 @@ export class mxEditor extends mxEventSource {
    * that are not swimlanes can be inserted as
    * top-level cells. Default is false.
    */
-  swimlaneRequired: boolean;
+  swimlaneRequired: boolean = false;
   /**
    * Variable: disableContextMenu
    *
@@ -520,7 +521,7 @@ export class mxEditor extends mxEventSource {
    * Default is true.
    * @example true
    */
-  disableContextMenu: boolean;
+  disableContextMenu: boolean = true;
   /**
    * Variable: insertFunction
    *
@@ -528,7 +529,7 @@ export class mxEditor extends mxEventSource {
    * cells into the graph. This is assigned from the
    * <mxDefaultToolbar> if a vertex-tool is clicked.
    */
-  insertFunction: any;
+  insertFunction: any = null;
   /**
    * Variable: forcedInserting
    *
@@ -537,7 +538,7 @@ export class mxEditor extends mxEventSource {
    * under the mousepointer, otherwise the cell under the
    * mousepointer is selected. Default is false.
    */
-  forcedInserting: boolean;
+  forcedInserting: boolean = false;
   /**
    * Variable: templates
    *
@@ -545,7 +546,7 @@ export class mxEditor extends mxEventSource {
    * in the toolbar for inserting new cells into
    * the diagram.
    */
-  templates: any;
+  templates: any = false;
   /**
    * Variable: defaultEdge
    *
@@ -559,14 +560,14 @@ export class mxEditor extends mxEventSource {
    * Specifies the edge style to be returned in <getEdgeStyle>.
    * Default is null.
    */
-  defaultEdgeStyle: any;
+  defaultEdgeStyle: any = null;
   /**
    * Variable: defaultGroup
    *
    * Prototype group cell that is used for creating
    * new groups.
    */
-  defaultGroup: any;
+  defaultGroup: any = null;
   /**
    * Variable: groupBorderSize
    *
@@ -581,14 +582,14 @@ export class mxEditor extends mxEventSource {
    * Contains the URL of the last opened file as a string.
    * Default is null.
    */
-  filename: string;
+  filename?: string;
   /**
    * Variable: lineFeed
    *
    * Character to be used for encoding linefeeds in <save>. Default is '&#xa;'.
    * @example &#xa;
    */
-  linefeed: string;
+  linefeed: string = '&#xa;';
   /**
    * Variable: postParameterName
    *
@@ -596,7 +597,7 @@ export class mxEditor extends mxEventSource {
    * data in a post request to the server. Default is xml.
    * @example xml
    */
-  postParameterName: string;
+  postParameterName: string = 'xml';
   /**
    * Variable: escapePostData
    *
@@ -604,14 +605,14 @@ export class mxEditor extends mxEventSource {
    * should be converted using encodeURIComponent. Default is true.
    * @example true
    */
-  escapePostData: boolean;
+  escapePostData: boolean = true;
   /**
    * Variable: urlPost
    *
    * Specifies the URL to be used for posting the diagram
    * to a backend in <save>.
    */
-  urlPost: any;
+  urlPost: any = null;
   /**
    * Variable: urlImage
    *
@@ -627,7 +628,7 @@ export class mxEditor extends mxEventSource {
    * layout algorithms. Default is false,
    * ie. vertical flow.
    */
-  horizontalFlow: boolean;
+  horizontalFlow: boolean = false;
   /**
    * Variable: layoutDiagram
    *
@@ -642,7 +643,7 @@ export class mxEditor extends mxEventSource {
    * the intra-swimlane layout is activated by
    * the <layoutSwimlanes> switch.
    */
-  layoutDiagram: boolean;
+  layoutDiagram: boolean = false;
   /**
    * Variable: swimlaneSpacing
    *
@@ -650,7 +651,7 @@ export class mxEditor extends mxEventSource {
    * automatic layout is turned on in
    * <layoutDiagram>. Default is 0.
    */
-  swimlaneSpacing: number;
+  swimlaneSpacing: number = 0;
   /**
    * Variable: maintainSwimlanes
    *
@@ -663,7 +664,7 @@ export class mxEditor extends mxEventSource {
    * have the same width. Furthermore, the swimlanes are
    * automatically "stacked" if <layoutDiagram> is true.
    */
-  maintainSwimlanes: boolean;
+  maintainSwimlanes: boolean = false;
   /**
    * Variable: layoutSwimlanes
    *
@@ -672,7 +673,7 @@ export class mxEditor extends mxEventSource {
    * depending on <horizontalFlow>.
    * Default is false.
    */
-  layoutSwimlanes: boolean;
+  layoutSwimlanes: boolean = false;
   /**
    * Variable: cycleAttributeIndex
    *
@@ -681,7 +682,7 @@ export class mxEditor extends mxEventSource {
    * at this index will be used as the value for
    * <cycleAttributeName>. Default is 0.
    */
-  cycleAttributeIndex: number;
+  cycleAttributeIndex: number = 0;
   /**
    * Variable: cycleAttributeName
    *
@@ -689,13 +690,13 @@ export class mxEditor extends mxEventSource {
    * when inserting new swimlanes. Default is fillColor.
    * @example fillColor
    */
-  cycleAttributeName: string;
+  cycleAttributeName: string = 'fillColor';
   /**
    * Variable: tasks
    *
    * Holds the <mxWindow> created in <showTasks>.
    */
-  tasks: any;
+  tasks: any = false;
   /**
    * Variable: tasksWindowImage
    *
@@ -709,13 +710,13 @@ export class mxEditor extends mxEventSource {
    * Default is 20.
    * @example 20
    */
-  tasksTop: number;
+  tasksTop: number = 20;
   /**
    * Variable: help
    *
    * Holds the <mxWindow> created in <showHelp>.
    */
-  help: any;
+  help: any = 20;
   /**
    * Variable: helpWindowImage
    *
@@ -738,7 +739,7 @@ export class mxEditor extends mxEventSource {
    * Default is 300.
    * @example 300
    */
-  helpWidth: number;
+  helpWidth: number = 300;
   /**
    * Variable: helpHeight
    *
@@ -746,7 +747,7 @@ export class mxEditor extends mxEventSource {
    * Default is 260.
    * @example 260
    */
-  helpHeight: number;
+  helpHeight: number = 260;
   /**
    * Variable: propertiesWidth
    *
@@ -754,7 +755,7 @@ export class mxEditor extends mxEventSource {
    * Default is 240.
    * @example 240
    */
-  propertiesWidth: number;
+  propertiesWidth: number = 240;
   /**
    * Variable: propertiesHeight
    *
@@ -762,7 +763,7 @@ export class mxEditor extends mxEventSource {
    * If no height is specified then the window will be automatically
    * sized to fit its contents. Default is null.
    */
-  propertiesHeight: any;
+  propertiesHeight: any = null;
   /**
    * Variable: movePropertiesDialog
    *
@@ -771,28 +772,30 @@ export class mxEditor extends mxEventSource {
    * dialog is not moved. This value is only taken into
    * account if the dialog is already visible. Default is false.
    */
-  movePropertiesDialog: boolean;
+  movePropertiesDialog: boolean = false;
   /**
    * Variable: validating
    *
    * Specifies if <mxGraph.validateGraph> should automatically be invoked after
    * each change. Default is false.
    */
-  validating: boolean;
+  validating: boolean = false;
   /**
    * Variable: modified
    *
    * True if the graph has been modified since it was last saved.
    */
-  modified: boolean;
+  modified: boolean = true;
   lastSnapshot: any;
-  ignoredChanges: number;
-  rubberband: mxRubberband;
+  ignoredChanges: number = 0;
+  rubberband?: mxRubberband;
   properties: any;
   /**
    * @example true
    */
-  destroyed: boolean;
+  destroyed: boolean = true;
+  private diagramLayout?: mxStackLayout;
+  private swimlaneLayout?: mxCompactTreeLayout;
 
   /**
    * Function: isModified
@@ -1316,23 +1319,22 @@ export class mxEditor extends mxEventSource {
    * Creates a layout manager for the swimlane and diagram layouts, that
    * is, the locally defined inter- and intraswimlane layouts.
    */
-  createLayoutManager(graph: mxGraph): any {
+  createLayoutManager(graph: mxGraph): mxLayoutManager {
     const layoutMgr = new mxLayoutManager(graph);
-    const self = this;
-    layoutMgr.getLayout = function (cell) {
-      let layout = undefined;
-      const model = self.graph.getModel();
+    layoutMgr.getLayout = (cell) => {
+      let layout: mxGraphLayout | undefined;
+      const model = this.graph.getModel();
       if (model.getParent(cell)) {
-        if (self.layoutSwimlanes && graph.isSwimlane(cell)) {
-          if (!self.swimlaneLayout) {
-            self.swimlaneLayout = self.createSwimlaneLayout();
+        if (this.layoutSwimlanes && graph.isSwimlane(cell)) {
+          if (!this.swimlaneLayout) {
+            this.swimlaneLayout = this.createSwimlaneLayout();
           }
-          layout = self.swimlaneLayout;
-        } else if (self.layoutDiagram && (graph.isValidRoot(cell) || !model.getParent(model.getParent(cell)))) {
-          if (!self.diagramLayout) {
-            self.diagramLayout = self.createDiagramLayout();
+          layout = this.swimlaneLayout;
+        } else if (this.layoutDiagram && (graph.isValidRoot(cell) || !model.getParent(model.getParent(cell)))) {
+          if (!this.diagramLayout) {
+            this.diagramLayout = this.createDiagramLayout();
           }
-          layout = self.diagramLayout;
+          layout = this.diagramLayout;
         }
       }
       return layout;
@@ -1417,7 +1419,7 @@ export class mxEditor extends mxEventSource {
   installChangeHandler(graph: mxGraph): void {
     const listener = (sender, evt) => {
       this.setModified(true);
-      if (this.validating == true) {
+      if (this.validating) {
         graph.validateGraph();
       }
       const changes = evt.getProperty('edit').changes;
@@ -1439,26 +1441,37 @@ export class mxEditor extends mxEventSource {
    * one is defined.
    */
   installInsertHandler(graph: mxGraph): void {
-    const self = this;
-    const insertHandler = {
+    class InsertHandler extends mxGraphHandler {
+      constructor(private editor: mxEditor) {
+        super(editor.graph);
+      }
+
+      private isActive: boolean = false;
+
       mouseDown(sender, me) {
-        if (!!self.insertFunction && !me.isPopupTrigger() && (self.forcedInserting || !me.getState())) {
-          self.graph.clearSelection();
-          self.insertFunction(me.getEvent(), me.getCell());
+        if (!!this.editor.insertFunction && !me.isPopupTrigger() && (this.editor.forcedInserting || !me.getState())) {
+          this.editor.graph.clearSelection();
+          this.editor.insertFunction(me.getEvent(), me.getCell());
           this.isActive = true;
           me.consume();
         }
-      }, mouseMove(sender, me) {
+      }
+
+      mouseMove(sender, me) {
         if (this.isActive) {
           me.consume();
         }
-      }, mouseUp(sender, me) {
+      }
+
+      mouseUp(sender, me) {
         if (this.isActive) {
           this.isActive = false;
           me.consume();
         }
-      },
-    };
+      }
+    }
+
+    const insertHandler = new InsertHandler(this);
     graph.addMouseListener(insertHandler);
   }
 
@@ -1468,7 +1481,7 @@ export class mxEditor extends mxEventSource {
    * Creates the layout instance used to layout the
    * swimlanes in the diagram.
    */
-  createDiagramLayout(): any {
+  createDiagramLayout(): mxStackLayout {
     const gs = this.graph.gridSize;
     const layout = new mxStackLayout(this.graph, !this.horizontalFlow, this.swimlaneSpacing, 2 * gs, 2 * gs);
     layout.isVertexIgnored = function (cell) {
@@ -1483,7 +1496,7 @@ export class mxEditor extends mxEventSource {
    * Creates the layout instance used to layout the
    * children of each swimlane.
    */
-  createSwimlaneLayout(): any {
+  createSwimlaneLayout(): mxCompactTreeLayout {
     return new mxCompactTreeLayout(this.graph, this.horizontalFlow);
   }
 
@@ -2158,7 +2171,7 @@ export class mxEditor extends mxEventSource {
    * edge will be overridden with the value returned by
    * <getEdgeStyle>.
    */
-  createEdge(source: any, target: string): any {
+  createEdge(source: any, target: string): mxCell {
     let e = undefined;
     if (!!this.defaultEdge) {
       const model = this.graph.getModel();

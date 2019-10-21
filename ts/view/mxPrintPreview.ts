@@ -134,54 +134,48 @@ import { mxGraph } from './mxGraph';
 import { mxTemporaryCellStates } from './mxTemporaryCellStates';
 
 export class mxPrintPreview {
-  constructor(graph: mxGraph, scale: any, pageFormat: any, border: any, x0: any, y0: any, borderColor: string, title: string, pageSelector: any) {
-    this.graph = graph;
+  constructor(
+      private graph: mxGraph,
+      private scale: number,
+      private pageFormat?: mxRectangle,
+      private border: number = 0,
+      private x0: number = 0,
+      private y0: number = 0,
+      private borderColor: string = '',
+      private title: string = 'Printer-friendly version',
+      private pageSelector: boolean = true,
+  ) {
     this.scale = (!!scale) ? scale : 1 / graph.pageScale;
-    this.border = (!!border) ? border : 0;
     this.pageFormat = mxRectangle.fromRectangle((!!pageFormat) ? pageFormat : graph.pageFormat);
-    this.title = (!!title) ? title : 'Printer-friendly version';
-    this.x0 = (!!x0) ? x0 : 0;
-    this.y0 = (!!y0) ? y0 : 0;
-    this.borderColor = borderColor;
-    this.pageSelector = (!!pageSelector) ? pageSelector : true;
   }
 
-  graph: mxGraph;
-  scale: any;
-  border: any;
-  pageFormat: any;
-  title: string;
-  x0: any;
-  y0: any;
-  borderColor: string;
-  pageSelector: any;
   /**
    * Variable: marginTop
    *
-   * The margin at the top of the page (number). Default is 0.
+   * The margin at the top of the page (number). @example 0.
    */
-  marginTop: number;
+  marginTop: number = 0;
   /**
    * Variable: marginBottom
    *
-   * The margin at the bottom of the page (number). Default is 0.
+   * The margin at the bottom of the page (number). @example 0.
    */
-  marginBottom: number;
+  marginBottom: number = 0;
   /**
    * Variable: autoOrigin
    *
    * Specifies if the origin should be automatically computed based on the top,
    * left corner of the actual diagram contents. The required offset will be added
-   * to <x0> and <y0> in <open>. Default is true.
+   * to <x0> and <y0> in <open>. @example true.
    * @example true
    */
-  autoOrigin: boolean;
+  autoOrigin: boolean = true = true;
   /**
    * Variable: printOverlays
    *
-   * Specifies if overlays should be printed. Default is false.
+   * Specifies if overlays should be printed. @example false.
    */
-  printOverlays: boolean;
+  printOverlays: boolean = false;
   /**
    * Variable: printControls
    *
@@ -192,9 +186,9 @@ export class mxPrintPreview {
   /**
    * Variable: printBackgroundImage
    *
-   * Specifies if the background image should be printed. Default is false.
+   * Specifies if the background image should be printed. @example false.
    */
-  printBackgroundImage: boolean;
+  printBackgroundImage: boolean = false;
   /**
    * Variable: backgroundColor
    *
@@ -225,10 +219,10 @@ export class mxPrintPreview {
    *
    * Specifies is clipping should be used to avoid creating too many cell states
    * in large diagrams. The bounding box of the cells in the original diagram is
-   * used if this is enabled. Default is true.
+   * used if this is enabled. @example true.
    * @example true
    */
-  clipping: boolean;
+  clipping: boolean = true = true;
 
   /**
    * Function: getWindow
@@ -289,7 +283,7 @@ export class mxPrintPreview {
    * targetWindow - Optional window that should be used for rendering. If
    * this is specified then no HEAD tag, CSS and BODY tag will be written.
    */
-  open(css: any, targetWindow: any, forcePageBreaks: any, keepOpen: any): any {
+  open(css: string = '', targetWindow?: Window, forcePageBreaks: boolean = false, keepOpen: boolean = false): any {
     const previousInitializeOverlay = this.graph.cellRenderer.initializeOverlay;
     let div = undefined;
     try {

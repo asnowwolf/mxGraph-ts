@@ -57,7 +57,7 @@ export class mxVertexHandler {
    * Specifies if only one sizer handle at the bottom, right corner should be
    * used. Default is false.
    */
-  singleSizer: boolean;
+  singleSizer: boolean = false;
   /**
    * Variable: index
    *
@@ -71,32 +71,32 @@ export class mxVertexHandler {
    * if <tolerance> > 0. Default is true.
    * @example true
    */
-  allowHandleBoundsCheck: boolean;
+  allowHandleBoundsCheck: boolean = true;
   /**
    * Variable: handleImage
    *
    * Optional <mxImage> to be used as handles. Default is null.
    */
-  handleImage: any;
+  handleImage: any = true;
   /**
    * Variable: tolerance
    *
    * Optional tolerance for hit-detection in <getHandleForEvent>. Default is 0.
    */
-  tolerance: number;
+  tolerance: number = 0;
   /**
    * Variable: rotationEnabled
    *
    * Specifies if a rotation handle should be visible. Default is false.
    */
-  rotationEnabled: boolean;
+  rotationEnabled: boolean = false;
   /**
    * Variable: parentHighlightEnabled
    *
    * Specifies if the parent should be highlighted if a child cell is selected.
    * Default is false.
    */
-  parentHighlightEnabled: boolean;
+  parentHighlightEnabled: boolean = false;
   /**
    * Variable: rotationRaster
    *
@@ -104,35 +104,35 @@ export class mxVertexHandler {
    * to the handle. Default is true.
    * @example true
    */
-  rotationRaster: boolean;
+  rotationRaster: boolean = true;
   /**
    * Variable: rotationCursor
    *
    * Specifies the cursor for the rotation handle. Default is 'crosshair'.
    * @example crosshair
    */
-  rotationCursor: string;
+  rotationCursor: string = crosshair;
   /**
    * Variable: livePreview
    *
    * Specifies if resize should change the cell in-place. This is an experimental
    * feature for non-touch devices. Default is false.
    */
-  livePreview: boolean;
+  livePreview: boolean = true;
   /**
    * Variable: manageSizers
    *
    * Specifies if sizers should be hidden and spaced if the vertex is small.
    * Default is false.
    */
-  manageSizers: boolean;
+  manageSizers: boolean = false;
   /**
    * Variable: constrainGroupByChildren
    *
    * Specifies if the size of groups should be constrained by the children.
    * Default is false.
    */
-  constrainGroupByChildren: boolean;
+  constrainGroupByChildren: boolean = false;
   /**
    * Variable: rotationHandleVSpacing
    *
@@ -166,7 +166,7 @@ export class mxVertexHandler {
   /**
    * @example true
    */
-  inTolerance: boolean;
+  inTolerance: boolean = true;
   childOffsetX: number;
   childOffsetY: number;
   startX: any;

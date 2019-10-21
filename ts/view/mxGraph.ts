@@ -658,6 +658,7 @@ import { mxConstants } from '../util/mxConstants';
 import { mxDictionary } from '../util/mxDictionary';
 import { mxEvent } from '../util/mxEvent';
 import { mxEventObject } from '../util/mxEventObject';
+import { mxEventSource } from '../util/mxEventSource';
 import { mxImage } from '../util/mxImage';
 import { mxMouseEvent } from '../util/mxMouseEvent';
 import { mxPanningManager } from '../util/mxPanningManager';
@@ -674,8 +675,9 @@ import { mxGraphSelectionModel } from './mxGraphSelectionModel';
 import { mxGraphView } from './mxGraphView';
 import { mxStylesheet } from './mxStylesheet';
 
-export class mxGraph {
-  constructor(container: HTMLElement, model: any, renderHint: any, stylesheet: any) {
+export class mxGraph extends mxEventSource {
+  constructor(container: HTMLElement | null, model: mxGraphModel | null, renderHint: string, stylesheet?: mxStylesheet) {
+    super();
     this.mouseListeners = undefined;
     this.renderHint = renderHint;
     if (mxClient.IS_SVG) {
@@ -721,7 +723,7 @@ export class mxGraph {
    *
    * Holds the state of the mouse button.
    */
-  isMouseDown: boolean;
+  isMouseDown: boolean = mxConstants;
   /**
    * Variable: stylesheet
    *
@@ -758,7 +760,7 @@ export class mxGraph {
    * Specifies the grid size. Default is 10.
    * @example 10
    */
-  gridSize: number;
+  gridSize: number = 10;
   /**
    * Variable: gridEnabled
    *
@@ -766,7 +768,7 @@ export class mxGraph {
    * true.
    * @example true
    */
-  gridEnabled: boolean;
+  gridEnabled: boolean = true;
   /**
    * Variable: portsEnabled
    *
@@ -774,14 +776,14 @@ export class mxGraph {
    * the respective style. Default is true.
    * @example true
    */
-  portsEnabled: boolean;
+  portsEnabled: boolean = true;
   /**
    * Variable: nativeDoubleClickEnabled
    *
    * Specifies if native double click events should be detected. Default is true.
    * @example true
    */
-  nativeDblClickEnabled: boolean;
+  nativeDblClickEnabled: boolean = true;
   /**
    * Variable: doubleTapEnabled
    *
@@ -789,7 +791,7 @@ export class mxGraph {
    * double click. Default is true.
    * @example true
    */
-  doubleTapEnabled: boolean;
+  doubleTapEnabled: boolean = true;
   /**
    * Variable: doubleTapTimeout
    *
@@ -797,7 +799,7 @@ export class mxGraph {
    * is 500 ms.
    * @example 500
    */
-  doubleTapTimeout: number;
+  doubleTapTimeout: number = 500;
   /**
    * Variable: doubleTapTolerance
    *
@@ -805,13 +807,13 @@ export class mxGraph {
    * Default is 25 pixels.
    * @example 25
    */
-  doubleTapTolerance: number;
+  doubleTapTolerance: number = 25;
   /**
    * Variable: lastTouchX
    *
    * Holds the x-coordinate of the last touch event for double tap detection.
    */
-  lastTouchY: number;
+  lastTouchY: number = 10;
   /**
    * Variable: lastTouchTime
    *
@@ -825,20 +827,20 @@ export class mxGraph {
    * devices. Default is true.
    * @example true
    */
-  tapAndHoldEnabled: boolean;
+  tapAndHoldEnabled: boolean = true;
   /**
    * Variable: tapAndHoldDelay
    *
    * Specifies the time for a tap and hold. Default is 500 ms.
    * @example 500
    */
-  tapAndHoldDelay: number;
+  tapAndHoldDelay: number = 500;
   /**
    * Variable: tapAndHoldInProgress
    *
    * True if the timer for tap and hold events is running.
    */
-  tapAndHoldInProgress: boolean;
+  tapAndHoldInProgress: boolean = true;
   /**
    * Variable: tapAndHoldValid
    *
@@ -865,7 +867,7 @@ export class mxGraph {
    * Default is 4 pixels.
    * @example 4
    */
-  tolerance: number;
+  tolerance: number = 4;
   /**
    * Variable: defaultOverlap
    *
@@ -875,21 +877,21 @@ export class mxGraph {
    * portion of the child which is allowed to overlap the parent.
    * @example 0.5
    */
-  defaultOverlap: number;
+  defaultOverlap: number = 0.5;
   /**
    * Variable: defaultParent
    *
    * Specifies the default parent to be used to insert new cells.
    * This is used in <getDefaultParent>. Default is null.
    */
-  defaultParent: any;
+  defaultParent: any = null;
   /**
    * Variable: alternateEdgeStyle
    *
    * Specifies the alternate edge style to be used if the main control point
    * on an edge is being doubleclicked. Default is null.
    */
-  alternateEdgeStyle: any;
+  alternateEdgeStyle: any = null;
   /**
    * Variable: backgroundImage
    *
@@ -911,7 +913,7 @@ export class mxGraph {
    * Specifies if the background page should be visible. Default is false.
    * Not yet implemented.
    */
-  pageVisible: boolean;
+  pageVisible: boolean = false;
   /**
    * Variable: pageBreaksVisible
    *
@@ -926,14 +928,14 @@ export class mxGraph {
    * Specifies the color for page breaks. Default is 'gray'.
    * @example gray
    */
-  pageBreakColor: string;
+  pageBreakColor: string = gray;
   /**
    * Variable: pageBreakDashed
    *
    * Specifies the page breaks should be dashed. Default is true.
    * @example true
    */
-  pageBreakDashed: boolean;
+  pageBreakDashed: boolean = true;
   /**
    * Variable: minPageBreakDist
    *
@@ -941,7 +943,7 @@ export class mxGraph {
    * 20 (in pixels).
    * @example 20
    */
-  minPageBreakDist: number;
+  minPageBreakDist: number = 20;
   /**
    * Variable: preferPageSize
    *
@@ -949,7 +951,7 @@ export class mxGraph {
    * <sizeDidChange>. This is only used if the graph container has scrollbars.
    * Default is false.
    */
-  preferPageSize: boolean;
+  preferPageSize: boolean = 'gray';
   /**
    * Variable: pageFormat
    *
@@ -958,7 +960,7 @@ export class mxGraph {
    * <mxPrintPreview> and for painting the background page if <pageVisible> is
    * true and the pagebreaks if <pageBreaksVisible> is true.
    */
-  pageFormat: any;
+  pageFormat: mxRectangle = mxConstants.PAGE_FORMAT_A4_PORTRAIT;
   /**
    * Variable: pageScale
    *
@@ -966,14 +968,14 @@ export class mxGraph {
    * Not yet implemented.
    * @example 1.5
    */
-  pageScale: number;
+  pageScale: number = 1.5;
   /**
    * Variable: enabled
    *
    * Specifies the return value for <isEnabled>. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: escapeEnabled
    *
@@ -981,7 +983,7 @@ export class mxGraph {
    * is pressed. Default is true.
    * @example true
    */
-  escapeEnabled: boolean;
+  escapeEnabled: boolean = true;
   /**
    * Variable: invokesStopCellEditing
    *
@@ -991,7 +993,7 @@ export class mxGraph {
    * <mxCellEditor>. Default is true.
    * @example true
    */
-  invokesStopCellEditing: boolean;
+  invokesStopCellEditing: boolean = true;
   /**
    * Variable: enterStopsCellEditing
    *
@@ -1000,7 +1002,7 @@ export class mxGraph {
    * cell editing. Note: You can always use F2 and escape to stop editing.
    * Default is false.
    */
-  enterStopsCellEditing: boolean;
+  enterStopsCellEditing: boolean = 1.5;
   /**
    * Variable: useScrollbarsForPanning
    *
@@ -1010,34 +1012,34 @@ export class mxGraph {
    * then no panning occurs if this is true. Default is true.
    * @example true
    */
-  useScrollbarsForPanning: boolean;
+  useScrollbarsForPanning: boolean = true;
   /**
    * Variable: exportEnabled
    *
    * Specifies the return value for <canExportCell>. Default is true.
    * @example true
    */
-  exportEnabled: boolean;
+  exportEnabled: boolean = true;
   /**
    * Variable: importEnabled
    *
    * Specifies the return value for <canImportCell>. Default is true.
    * @example true
    */
-  importEnabled: boolean;
+  importEnabled: boolean = true;
   /**
    * Variable: cellsLocked
    *
    * Specifies the return value for <isCellLocked>. Default is false.
    */
-  cellsLocked: boolean;
+  cellsLocked: boolean = true;
   /**
    * Variable: cellsCloneable
    *
    * Specifies the return value for <isCellCloneable>. Default is true.
    * @example true
    */
-  cellsCloneable: boolean;
+  cellsCloneable: boolean = true;
   /**
    * Variable: foldingEnabled
    *
@@ -1045,47 +1047,47 @@ export class mxGraph {
    * should be enabled). Default is true.
    * @example true
    */
-  foldingEnabled: boolean;
+  foldingEnabled: boolean = true;
   /**
    * Variable: cellsEditable
    *
    * Specifies the return value for <isCellEditable>. Default is true.
    * @example true
    */
-  cellsEditable: boolean;
+  cellsEditable: boolean = true;
   /**
    * Variable: cellsDeletable
    *
    * Specifies the return value for <isCellDeletable>. Default is true.
    * @example true
    */
-  cellsDeletable: boolean;
+  cellsDeletable: boolean = true;
   /**
    * Variable: cellsMovable
    *
    * Specifies the return value for <isCellMovable>. Default is true.
    * @example true
    */
-  cellsMovable: boolean;
+  cellsMovable: boolean = true;
   /**
    * Variable: edgeLabelsMovable
    *
    * Specifies the return value for edges in <isLabelMovable>. Default is true.
    * @example true
    */
-  edgeLabelsMovable: boolean;
+  edgeLabelsMovable: boolean = true;
   /**
    * Variable: vertexLabelsMovable
    *
    * Specifies the return value for vertices in <isLabelMovable>. Default is false.
    */
-  vertexLabelsMovable: boolean;
+  vertexLabelsMovable: boolean = true;
   /**
    * Variable: dropEnabled
    *
    * Specifies the return value for <isDropEnabled>. Default is false.
    */
-  dropEnabled: boolean;
+  dropEnabled: boolean = false;
   /**
    * Variable: splitEnabled
    *
@@ -1094,48 +1096,48 @@ export class mxGraph {
    * out the drop operation. Default is true.
    * @example true
    */
-  splitEnabled: boolean;
+  splitEnabled: boolean = true;
   /**
    * Variable: cellsResizable
    *
    * Specifies the return value for <isCellResizable>. Default is true.
    * @example true
    */
-  cellsResizable: boolean;
+  cellsResizable: boolean = true;
   /**
    * Variable: cellsBendable
    *
    * Specifies the return value for <isCellsBendable>. Default is true.
    * @example true
    */
-  cellsBendable: boolean;
+  cellsBendable: boolean = true;
   /**
    * Variable: cellsSelectable
    *
    * Specifies the return value for <isCellSelectable>. Default is true.
    * @example true
    */
-  cellsSelectable: boolean;
+  cellsSelectable: boolean = true;
   /**
    * Variable: cellsDisconnectable
    *
    * Specifies the return value for <isCellDisconntable>. Default is true.
    * @example true
    */
-  cellsDisconnectable: boolean;
+  cellsDisconnectable: boolean = true;
   /**
    * Variable: autoSizeCells
    *
    * Specifies if the graph should automatically update the cell size after an
    * edit. This is used in <isAutoSizeCell>. Default is false.
    */
-  autoSizeCells: boolean;
+  autoSizeCells: boolean = true;
   /**
    * Variable: autoSizeCellsOnAdd
    *
    * Specifies if autoSize style should be applied when cells are added. Default is false.
    */
-  autoSizeCellsOnAdd: boolean;
+  autoSizeCellsOnAdd: boolean = false;
   /**
    * Variable: autoScroll
    *
@@ -1148,7 +1150,7 @@ export class mxGraph {
    * no scrollbars, the use of <allowAutoPanning> is recommended.
    * @example true
    */
-  autoScroll: boolean;
+  autoScroll: boolean = true;
   /**
    * Variable: ignoreScrollbars
    *
@@ -1157,7 +1159,7 @@ export class mxGraph {
    * scroll positions (ie usually only rightwards and downwards). To avoid
    * possible conflicts with panning, set <translateToScrollPosition> to true.
    */
-  ignoreScrollbars: boolean;
+  ignoreScrollbars: boolean = true;
   /**
    * Variable: translateToScrollPosition
    *
@@ -1176,7 +1178,7 @@ export class mxGraph {
    * disabled. It should only be used with a scroll buffer or when scollbars
    * are visible and scrollable in all directions. Default is false.
    */
-  timerAutoScroll: boolean;
+  timerAutoScroll: boolean = false;
   /**
    * Variable: allowAutoPanning
    *
@@ -1185,7 +1187,7 @@ export class mxGraph {
    * inside the container, near the edge, set <mxPanningManager.border> to a
    * positive value. Default is false.
    */
-  allowAutoPanning: boolean;
+  allowAutoPanning: boolean = false;
   /**
    * Variable: autoExtend
    *
@@ -1194,7 +1196,7 @@ export class mxGraph {
    * account if the container has scrollbars. Default is true. See <autoScroll>.
    * @example true
    */
-  autoExtend: boolean;
+  autoExtend: boolean = true;
   /**
    * Variable: maximumGraphBounds
    *
@@ -1202,14 +1204,14 @@ export class mxGraph {
    * should be placed. Uses in <getMaximumGraphBounds>. Use a width or height of
    * 0 if you only want to give a upper, left corner.
    */
-  maximumGraphBounds: any;
+  maximumGraphBounds: any = true;
   /**
    * Variable: minimumGraphSize
    *
    * <mxRectangle> that specifies the minimum size of the graph. This is ignored
    * if the graph container has no scrollbars. Default is null.
    */
-  minimumGraphSize: any;
+  minimumGraphSize: any = null;
   /**
    * Variable: minimumContainerSize
    *
@@ -1230,14 +1232,14 @@ export class mxGraph {
    * Specifies if the container should be resized to the graph size when
    * the graph size has changed. Default is false.
    */
-  resizeContainer: boolean;
+  resizeContainer: boolean = false;
   /**
    * Variable: border
    *
    * Border to be added to the bottom and right side when the container is
    * being resized after the graph has been changed. Default is 0.
    */
-  border: number;
+  border: number = 0;
   /**
    * Variable: keepEdgesInForeground
    *
@@ -1245,7 +1247,7 @@ export class mxGraph {
    * in the model. If <keepEdgesInForeground> and <keepEdgesInBackground> are
    * both true then the normal order is applied. Default is false.
    */
-  keepEdgesInForeground: boolean;
+  keepEdgesInForeground: boolean = false;
   /**
    * Variable: keepEdgesInBackground
    *
@@ -1253,14 +1255,14 @@ export class mxGraph {
    * in the model. If <keepEdgesInForeground> and <keepEdgesInBackground> are
    * both true then the normal order is applied. Default is false.
    */
-  keepEdgesInBackground: boolean;
+  keepEdgesInBackground: boolean = false;
   /**
    * Variable: allowNegativeCoordinates
    *
    * Specifies if negative coordinates for vertices are allowed. Default is true.
    * @example true
    */
-  allowNegativeCoordinates: boolean;
+  allowNegativeCoordinates: boolean = true;
   /**
    * Variable: constrainChildren
    *
@@ -1268,7 +1270,7 @@ export class mxGraph {
    * move or resize of the child. Default is true.
    * @example true
    */
-  constrainChildren: boolean;
+  constrainChildren: boolean = true;
   /**
    * Variable: constrainRelativeChildren
    *
@@ -1276,7 +1278,7 @@ export class mxGraph {
    * inside the parent bounds, if <constrainChildren> is true, and/or the
    * <maximumGraphBounds>. Default is false.
    */
-  constrainRelativeChildren: boolean;
+  constrainRelativeChildren: boolean = true;
   /**
    * Variable: extendParents
    *
@@ -1284,7 +1286,7 @@ export class mxGraph {
    * the child. Default is true. This has precedence over <constrainChildren>.
    * @example true
    */
-  extendParents: boolean;
+  extendParents: boolean = true;
   /**
    * Variable: extendParentsOnAdd
    *
@@ -1292,14 +1294,14 @@ export class mxGraph {
    * switch if cells are added. Default is true.
    * @example true
    */
-  extendParentsOnAdd: boolean;
+  extendParentsOnAdd: boolean = true;
   /**
    * Variable: extendParentsOnAdd
    *
    * Specifies if parents should be extended according to the <extendParents>
    * switch if cells are added. Default is false for backwards compatiblity.
    */
-  extendParentsOnMove: boolean;
+  extendParentsOnMove: boolean = true;
   /**
    * Variable: recursiveResize
    *
@@ -1314,7 +1316,7 @@ export class mxGraph {
    * a cell is first collapsed. Default is true.
    * @example true
    */
-  collapseToPreferredSize: boolean;
+  collapseToPreferredSize: boolean = true;
   /**
    * Variable: zoomFactor
    *
@@ -1322,14 +1324,14 @@ export class mxGraph {
    * (120%).
    * @example 1.2
    */
-  zoomFactor: number;
+  zoomFactor: number = 1.2;
   /**
    * Variable: keepSelectionVisibleOnZoom
    *
    * Specifies if the viewport should automatically contain the selection cells
    * after a zoom operation. Default is false.
    */
-  keepSelectionVisibleOnZoom: boolean;
+  keepSelectionVisibleOnZoom: boolean = true;
   /**
    * Variable: centerZoom
    *
@@ -1337,7 +1339,7 @@ export class mxGraph {
    * diagram rather than going from top, left. Default is true.
    * @example true
    */
-  centerZoom: boolean;
+  centerZoom: boolean = true;
   /**
    * Variable: resetViewOnRootChange
    *
@@ -1345,21 +1347,21 @@ export class mxGraph {
    * the model. Default is true.
    * @example true
    */
-  resetViewOnRootChange: boolean;
+  resetViewOnRootChange: boolean = true;
   /**
    * Variable: resetEdgesOnResize
    *
    * Specifies if edge control points should be reset after the resize of a
    * connected cell. Default is false.
    */
-  resetEdgesOnResize: boolean;
+  resetEdgesOnResize: boolean = true;
   /**
    * Variable: resetEdgesOnMove
    *
    * Specifies if edge control points should be reset after the move of a
    * connected cell. Default is false.
    */
-  resetEdgesOnMove: boolean;
+  resetEdgesOnMove: boolean = false;
   /**
    * Variable: resetEdgesOnConnect
    *
@@ -1367,13 +1369,13 @@ export class mxGraph {
    * reconnected. Default is true.
    * @example true
    */
-  resetEdgesOnConnect: boolean;
+  resetEdgesOnConnect: boolean = true;
   /**
    * Variable: allowLoops
    *
    * Specifies if loops (aka self-references) are allowed. Default is false.
    */
-  allowLoops: boolean;
+  allowLoops: boolean = true;
   /**
    * Variable: defaultLoopStyle
    *
@@ -1388,14 +1390,14 @@ export class mxGraph {
    * vertices are allowed. Default is true.
    * @example true
    */
-  multigraph: boolean;
+  multigraph: boolean = true;
   /**
    * Variable: connectableEdges
    *
    * Specifies if edges are connectable. Default is false. This overrides the
    * connectable field in edges.
    */
-  connectableEdges: boolean;
+  connectableEdges: boolean = true;
   /**
    * Variable: allowDanglingEdges
    *
@@ -1403,14 +1405,14 @@ export class mxGraph {
    * Default is true.
    * @example true
    */
-  allowDanglingEdges: boolean;
+  allowDanglingEdges: boolean = true;
   /**
    * Variable: cloneInvalidEdges
    *
    * Specifies if edges that are cloned should be validated and only inserted
    * if they are valid. Default is true.
    */
-  cloneInvalidEdges: boolean;
+  cloneInvalidEdges: boolean = true;
   /**
    * Variable: disconnectOnMove
    *
@@ -1418,7 +1420,7 @@ export class mxGraph {
    * are moved. Default is true.
    * @example true
    */
-  disconnectOnMove: boolean;
+  disconnectOnMove: boolean = true;
   /**
    * Variable: labelsVisible
    *
@@ -1426,13 +1428,13 @@ export class mxGraph {
    * is true.
    * @example true
    */
-  labelsVisible: boolean;
+  labelsVisible: boolean = true;
   /**
    * Variable: htmlLabels
    *
    * Specifies the return value for <isHtmlLabel>. Default is false.
    */
-  htmlLabels: boolean;
+  htmlLabels: boolean = true;
   /**
    * Variable: swimlaneSelectionEnabled
    *
@@ -1440,21 +1442,21 @@ export class mxGraph {
    * mouse is released. Default is true.
    * @example true
    */
-  swimlaneSelectionEnabled: boolean;
+  swimlaneSelectionEnabled: boolean = true;
   /**
    * Variable: swimlaneNesting
    *
    * Specifies if nesting of swimlanes is allowed. Default is true.
    * @example true
    */
-  swimlaneNesting: boolean;
+  swimlaneNesting: boolean = true;
   /**
    * Variable: swimlaneIndicatorColorAttribute
    *
    * The attribute used to find the color for the indicator if the indicator
    * color is set to 'swimlane'. Default is <mxConstants.STYLE_FILLCOLOR>.
    */
-  swimlaneIndicatorColorAttribute: any;
+  swimlaneIndicatorColorAttribute: any = true;
   /**
    * Variable: minFitScale
    *
@@ -1462,7 +1464,7 @@ export class mxGraph {
    * to null to allow any value.
    * @example 0.1
    */
-  minFitScale: number;
+  minFitScale: number = 0.1;
   /**
    * Variable: maxFitScale
    *
@@ -1470,19 +1472,19 @@ export class mxGraph {
    * to null to allow any value.
    * @example 8
    */
-  maxFitScale: number;
+  maxFitScale: number = 8;
   /**
    * Variable: panDx
    *
    * Current horizontal panning value. Default is 0.
    */
-  panDx: number;
+  panDx: number = 0.1;
   /**
    * Variable: panDy
    *
    * Current vertical panning value. Default is 0.
    */
-  panDy: number;
+  panDy: number = 0;
   /**
    * Variable: collapsedImage
    *
@@ -1514,7 +1516,7 @@ export class mxGraph {
    * for this key does not exist then the value is used as the error message.
    * Default is 'alreadyConnected'.
    */
-  alreadyConnectedResource: any;
+  alreadyConnectedResource: any = 'alreadyConnected';
   /**
    * Variable: containsValidationErrorsResource
    *
@@ -1523,7 +1525,7 @@ export class mxGraph {
    * key does not exist then the value is used as the warning message.
    * Default is 'containsValidationErrors'.
    */
-  containsValidationErrorsResource: any;
+  containsValidationErrorsResource: any = 'containsValidationErrors';
   /**
    * Variable: collapseExpandResource
    *
@@ -1533,13 +1535,13 @@ export class mxGraph {
    */
   collapseExpandResource: any;
   container: HTMLElement;
-  tooltipHandler: Function;
-  selectionCellsHandler: Function;
-  connectionHandler: Function;
-  graphHandler: Function;
-  panningHandler: Function;
-  popupMenuHandler: Function;
-  panningManager: any;
+  tooltipHandler: mxTooltipHandler;
+  selectionCellsHandler: mxSelectionCellsHandler;
+  connectionHandler: mxConnectionHandler;
+  graphHandler: mxGraphHandler;
+  panningHandler: mxPanningHandler;
+  popupMenuHandler: mxPopupMenuHandler;
+  panningManager: mxPanningManager;
   horizontalPageBreaks: any[];
   verticalPageBreaks: any[];
   shiftPreview1: any;
@@ -1556,7 +1558,7 @@ export class mxGraph {
   /**
    * @example true
    */
-  fireDoubleClick: boolean;
+  fireDoubleClick: boolean = true;
   lastTouchX: any;
   lastTouchEvent: any;
   doubleClickCounter: number;
@@ -1564,7 +1566,7 @@ export class mxGraph {
   /**
    * @example true
    */
-  destroyed: boolean;
+  destroyed: boolean = true;
 
   /**
    * Function: init
@@ -1684,7 +1686,7 @@ export class mxGraph {
    *
    * Creates a new <mxGraphSelectionModel> to be used in this graph.
    */
-  createStylesheet(): any {
+  createStylesheet(): mxStylesheet {
     return new mxStylesheet();
   }
 
@@ -3197,7 +3199,7 @@ export class mxGraph {
    * cells - Optional array of <mxCells> to be grouped. If null is specified
    * then the selection cells are used.
    */
-  groupCells(group: any, border: any, cells: mxCell[]): any {
+  groupCells(group: mxGraph, border: number = 0, cells?: mxCell[]): any {
     if (!cells) {
       cells = mxUtils.sortCells(this.getSelectionCells(), true);
     }
@@ -3493,7 +3495,7 @@ export class mxGraph {
    * keepPosition - Optional boolean indicating if the position of the cells should
    * be updated to reflect the lost parent cell. Default is false.
    */
-  cloneCell(cell: mxCell, allowInvalidEdges: any, mapping: any, keepPosition: any): any {
+  cloneCell(cell: mxCell, allowInvalidEdges: boolean = true, mapping: object = {}, keepPosition: boolean = false): any {
     return this.cloneCells([cell], allowInvalidEdges, mapping, keepPosition)[0];
   }
 
@@ -3514,7 +3516,7 @@ export class mxGraph {
    * keepPosition - Optional boolean indicating if the position of the cells should
    * be updated to reflect the lost parent cell. Default is false.
    */
-  cloneCells(cells: mxCell[], allowInvalidEdges: any, mapping: any, keepPosition: any): any {
+  cloneCells(cells: mxCell[], allowInvalidEdges: boolean = true, mapping: object = {}, keepPosition: boolean = false): mxCell[] {
     allowInvalidEdges = (!!allowInvalidEdges) ? allowInvalidEdges : true;
     let clones = undefined;
     if (!!cells) {
@@ -3693,7 +3695,7 @@ export class mxGraph {
    * target - Optional <mxCell> that represents the target terminal.
    * index - Optional index to insert the cells at. Default is to append.
    */
-  addEdge(edge: any, parent: any, source: any, target: string, index: number): any {
+  addEdge(edge: mxCell, parent: mxCell, source: mxCell, target: mxCell, index?: number): any {
     return this.addCell(edge, parent, index, source, target);
   }
 
@@ -3713,7 +3715,7 @@ export class mxGraph {
    * source - Optional <mxCell> that represents the source terminal.
    * target - Optional <mxCell> that represents the target terminal.
    */
-  addCell(cell: mxCell, parent: any, index: number, source: any, target: string): any {
+  addCell(cell: mxCell, parent: mxCell, index?: number, source?: mxCell, target?: mxCell): any {
     return this.addCells([cell], parent, index, source, target)[0];
   }
 
@@ -3734,7 +3736,7 @@ export class mxGraph {
    * source - Optional source <mxCell> for all inserted cells.
    * target - Optional target <mxCell> for all inserted cells.
    */
-  addCells(cells: mxCell[], parent: any, index: number, source: any, target: string): any {
+  addCells(cells: mxCell[], parent: mxCell, index?: number, source?: mxCell, target?: mxCell): any {
     if (!parent) {
       parent = this.getDefaultParent();
     }
@@ -3852,8 +3854,7 @@ export class mxGraph {
    * includeEdges - Optional boolean which specifies if all connected edges
    * should be removed as well. Default is true.
    */
-  removeCells(cells: mxCell[], includeEdges: any): any {
-    includeEdges = (!!includeEdges) ? includeEdges : true;
+  removeCells(cells: mxCell[], includeEdges: boolean = true): any {
     if (!cells) {
       cells = this.getDeletableCells(this.getSelectionCells());
     }
@@ -4693,7 +4694,7 @@ export class mxGraph {
    * evt - Mouseevent that triggered the invocation.
    * mapping - Optional mapping for existing clones.
    */
-  importCells(cells: mxCell[], dx: number, dy: number, target: string, evt: Event, mapping: any): any {
+  importCells(cells: mxCell[], dx: number = 0, dy: number = 0, target?: mxCell, evt?: MouseEvent, mapping: object = {}): any {
     return this.moveCells(cells, dx, dy, true, target, evt, mapping);
   }
 
@@ -4722,7 +4723,7 @@ export class mxGraph {
    * evt - Mouseevent that triggered the invocation.
    * mapping - Optional mapping for existing clones.
    */
-  moveCells(cells: mxCell[], dx: number, dy: number, clone: boolean, target: string, evt: Event, mapping: any): any {
+  moveCells(cells: mxCell[], dx: number = 0, dy: number = 0, clone: boolean = false, target?: mxCell, evt?: Event, mapping: object = {}): mxCell[] {
     dx = (!!dx) ? dx : 0;
     dy = (!!dy) ? dy : 0;
     clone = (!!clone) ? clone : false;
@@ -4921,7 +4922,7 @@ export class mxGraph {
    * cells - <mxCell> which should be constrained.
    * sizeFirst - Specifies if the size should be changed first. Default is true.
    */
-  constrainChild(cell: mxCell, sizeFirst: any): void {
+  constrainChild(cell: mxCell, sizeFirst: boolean = true): void {
     sizeFirst = (!!sizeFirst) ? sizeFirst : true;
     if (!!cell) {
       let geo = this.getCellGeometry(cell);
@@ -5639,7 +5640,7 @@ export class mxGraph {
    * includeDescendants - Optional boolean that specifies if the bounds
    * of all descendants should be included. Default is false.
    */
-  getCellBounds(cell: mxCell, includeEdges: any, includeDescendants: any): any {
+  getCellBounds(cell: mxCell, includeEdges: boolean = false, includeDescendants: boolean = false): any {
     let cells = [cell];
     if (includeEdges) {
       cells = cells.concat(this.model.getEdges(cell));
@@ -6108,7 +6109,7 @@ export class mxGraph {
    * cell - <mxCell> to be made visible.
    * center - Optional boolean flag. Default is false.
    */
-  scrollCellToVisible(cell: mxCell, center: any): void {
+  scrollCellToVisible(cell: mxCell, center: boolean = false): void {
     const x = -this.view.translate.x;
     const y = -this.view.translate.y;
     const state = this.view.getState(cell);
@@ -6509,7 +6510,7 @@ export class mxGraph {
    * the graph root.
    * context - Object that represents the global validation state.
    */
-  validateGraph(cell: mxCell, context: any): any {
+  validateGraph(cell?: mxCell, context?: object): any {
     cell = (!!cell) ? cell : this.model.getRoot();
     context = (!!context) ? context : {};
     let isValid = true;
@@ -8507,7 +8508,7 @@ export class mxGraph {
    * cells - <mxCells> that should split the edge.
    * evt - Mouseevent that triggered the invocation.
    */
-  isSplitTarget(target: string, cells: mxCell[], evt: Event): boolean {
+  isSplitTarget(target: mxCell, cells: mxCell[], evt: Event): boolean {
     if (this.model.isEdge(target) && !!cells && cells.length == 1 && this.isCellConnectable(cells[0]) && this.getEdgeValidationError(target, !this.model.getTerminal(target, true), cells[0])) {
       const src = this.model.getTerminal(target, true);
       const trg = this.model.getTerminal(target, false);
@@ -9297,7 +9298,7 @@ export class mxGraph {
    *
    * Returns the array of selected <mxCells>.
    */
-  getSelectionCells(): any {
+  getSelectionCells(): mxCell[] {
     return this.getSelectionModel().cells.slice();
   }
 
@@ -9691,7 +9692,7 @@ export class mxGraph {
    *
    * listener - Listener to be added to the graph event listeners.
    */
-  addMouseListener(listener: Function): void {
+  addMouseListener(listener: mxGraphHandler): void {
     if (!this.mouseListeners) {
       this.mouseListeners = [];
     }

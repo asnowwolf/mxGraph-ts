@@ -52,49 +52,49 @@ export class mxVmlCanvas2D {
    * Specifies if text output should be enabledetB. Default is true.
    * @example true
    */
-  textEnabled: boolean;
+  textEnabled: boolean = true;
   /**
    * Variable: moveOp
    *
    * Contains the string used for moving in paths. Default is 'm'.
    * @example m
    */
-  moveOp: string;
+  moveOp: string = m;
   /**
    * Variable: lineOp
    *
    * Contains the string used for moving in paths. Default is 'l'.
    * @example l
    */
-  lineOp: string;
+  lineOp: string = l;
   /**
    * Variable: curveOp
    *
    * Contains the string used for bezier curves. Default is 'c'.
    * @example c
    */
-  curveOp: string;
+  curveOp: string = c;
   /**
    * Variable: closeOp
    *
    * Holds the operator for closing curves. Default is 'x e'.
    * @example x
    */
-  closeOp: string;
+  closeOp: string = x;
   /**
    * Variable: rotatedHtmlBackground
    *
    * Background color for rotated HTML. Default is ''. This can be set to eg.
    * white to improve rendering of rotated text in VML for IE9.
    */
-  rotatedHtmlBackground: string;
+  rotatedHtmlBackground: string = true;
   /**
    * Variable: vmlScale
    *
    * Specifies the scale used to draw VML shapes.
    * @example 1
    */
-  vmlScale: number;
+  vmlScale: number = 1;
   lastX: any;
   lastY: any;
 

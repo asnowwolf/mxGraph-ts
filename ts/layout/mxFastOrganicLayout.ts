@@ -31,7 +31,7 @@ export class mxFastOrganicLayout extends mxGraphLayout {
    * of the layout result. Default is true.
    * @example true
    */
-  useInputOrigin: boolean;
+  useInputOrigin: boolean = true;
   /**
    * Variable: resetEdges
    *
@@ -39,7 +39,7 @@ export class mxFastOrganicLayout extends mxGraphLayout {
    * Default is true.
    * @example true
    */
-  resetEdges: boolean;
+  resetEdges: boolean = true;
   /**
    * Variable: disableEdgeStyle
    *
@@ -47,7 +47,7 @@ export class mxFastOrganicLayout extends mxGraphLayout {
    * modified by the result. Default is true.
    * @example true
    */
-  disableEdgeStyle: boolean;
+  disableEdgeStyle: boolean = true;
   /**
    * Variable: forceConstant
    *
@@ -56,13 +56,13 @@ export class mxFastOrganicLayout extends mxGraphLayout {
    * average radius there is of free space around each node. Default is 50.
    * @example 50
    */
-  forceConstant: number;
+  forceConstant: number = 50;
   /**
    * Variable: forceConstantSquared
    *
    * Cache of <forceConstant>^2 for performance.
    */
-  forceConstantSquared: number;
+  forceConstantSquared: number = true;
   /**
    * Variable: minDistanceLimit
    *
@@ -70,7 +70,7 @@ export class mxFastOrganicLayout extends mxGraphLayout {
    * dividing by zero.
    * @example 2
    */
-  minDistanceLimit: number;
+  minDistanceLimit: number = 2;
   /**
    * Variable: minDistanceLimit
    *
@@ -78,27 +78,27 @@ export class mxFastOrganicLayout extends mxGraphLayout {
    * dividing by zero.
    * @example 500
    */
-  maxDistanceLimit: number;
+  maxDistanceLimit: number = 500;
   /**
    * Variable: minDistanceLimitSquared
    *
    * Cached version of <minDistanceLimit> squared.
    * @example 4
    */
-  minDistanceLimitSquared: number;
+  minDistanceLimitSquared: number = 4;
   /**
    * Variable: initialTemp
    *
    * Start value of temperature. Default is 200.
    * @example 200
    */
-  initialTemp: number;
+  initialTemp: number = 200;
   /**
    * Variable: temperature
    *
    * Temperature to limit displacement at later stages of layout.
    */
-  temperature: number;
+  temperature: number = 2;
   /**
    * Variable: maxIterations
    *
@@ -172,7 +172,7 @@ export class mxFastOrganicLayout extends mxGraphLayout {
    * set to false, then the layout exits in the following iteration.
    * @example true
    */
-  allowedToRun: boolean;
+  allowedToRun: boolean = true;
 
   /**
    * Function: isVertexIgnored

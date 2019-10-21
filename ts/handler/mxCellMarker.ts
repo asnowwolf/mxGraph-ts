@@ -66,13 +66,13 @@ export class mxCellMarker extends mxEventSource {
    * Specifies if the marker is enabled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: hotspotEnabled
    *
    * Specifies if the hotspot is enabled. Default is false.
    */
-  hotspotEnabled: boolean;
+  hotspotEnabled: boolean = true;
   /**
    * Variable: currentColor
    *

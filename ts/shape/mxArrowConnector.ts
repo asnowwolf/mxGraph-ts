@@ -58,7 +58,7 @@ export class mxArrowConnector extends mxShape {
    * reasons.
    * @example true
    */
-  useSvgBoundingBox: boolean;
+  useSvgBoundingBox: boolean = true;
 
   /**
    * Variable: resetStyles

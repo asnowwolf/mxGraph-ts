@@ -81,61 +81,61 @@ export class mxOutline {
    *
    * Renderhint to be used for the outline graph. Default is faster.
    */
-  graphRenderHint: any;
+  graphRenderHint: any = faster;
   /**
    * Variable: enabled
    *
    * Specifies if events are handled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: showViewport
    *
    * Specifies a viewport rectangle should be shown. Default is true.
    * @example true
    */
-  showViewport: boolean;
+  showViewport: boolean = true;
   /**
    * Variable: border
    *
    * Border to be added at the bottom and right. Default is 10.
    * @example 10
    */
-  border: number;
+  border: number = 10;
   /**
    * Variable: enabled
    *
    * Specifies the size of the sizer handler. Default is 8.
    * @example 8
    */
-  sizerSize: number;
+  sizerSize: number = 8;
   /**
    * Variable: labelsVisible
    *
    * Specifies if labels should be visible in the outline. Default is false.
    */
-  labelsVisible: boolean;
+  labelsVisible: boolean = true;
   /**
    * Variable: updateOnPan
    *
    * Specifies if <update> should be called for <mxEvent.PAN> in the source
    * graph. Default is false.
    */
-  updateOnPan: boolean;
+  updateOnPan: boolean = false;
   /**
    * Variable: sizerImage
    *
    * Optional <mxImage> to be used for the sizer. Default is null.
    */
-  sizerImage: any;
+  sizerImage: any = null;
   /**
    * Variable: minScale
    *
    * Minimum scale to be used. Default is 0.001.
    * @example 0.0001
    */
-  minScale: number;
+  minScale: number = 0.0001;
   /**
    * Variable: suspended
    *
@@ -152,7 +152,7 @@ export class mxOutline {
    * }
    * (end)
    */
-  suspended: boolean;
+  suspended: boolean = 0.001;
   /**
    * Variable: forceVmlHandles
    *
@@ -174,7 +174,7 @@ export class mxOutline {
   /**
    * @example true
    */
-  active: boolean;
+  active: boolean = true;
   dx0: any;
   dy0: any;
   index: number;

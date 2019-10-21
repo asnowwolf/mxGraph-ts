@@ -29,6 +29,7 @@ export let mxClient = {
   IS_POINTER: !!window.PointerEvent && !(navigator.appVersion.indexOf('Mac') > 0),
   IS_LOCAL: document.location.href.indexOf('http://') < 0 && document.location.href.indexOf('https://') < 0,
   defaultBundles: [],
+  imageBasePath: '',
   isBrowserSupported() {
     return mxClient.IS_VML || mxClient.IS_SVG;
   },

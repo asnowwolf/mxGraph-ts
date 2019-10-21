@@ -57,13 +57,13 @@ export class mxConstraintHandler {
    * Specifies if events are handled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: highlightColor
    *
    * Specifies the color for the highlight. Default is <mxConstants.DEFAULT_VALID_COLOR>.
    */
-  highlightColor: string;
+  highlightColor: string = true;
   focusIcons: any;
   focusHighlight: any;
   currentConstraint: any;

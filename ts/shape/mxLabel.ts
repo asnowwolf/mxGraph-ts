@@ -42,21 +42,21 @@ export class mxLabel extends mxRectangleShape {
    * Default value for image spacing. Default is 2.
    * @example 2
    */
-  spacing: number;
+  spacing: number = 2;
   /**
    * Variable: indicatorSize
    *
    * Default width and height for the indicicator. Default is 10.
    * @example 10
    */
-  indicatorSize: number;
+  indicatorSize: number = 10;
   /**
    * Variable: indicatorSpacing
    *
    * Default spacing between image and indicator. Default is 2.
    * @example 2
    */
-  indicatorSpacing: number;
+  indicatorSpacing: number = 2;
   indicator: this;
 
   /**

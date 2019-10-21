@@ -46,7 +46,7 @@ export class mxDragSource {
    *
    * <mxPoint> that specifies the offset of the <dragElement>. Default is null.
    */
-  dragOffset: any;
+  dragOffset: any = null;
   /**
    * Variable: dragElement
    *
@@ -66,13 +66,13 @@ export class mxDragSource {
    * Specifies if this drag source is enabled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: currentGraph
    *
    * Reference to the <mxGraph> that is the current drop target.
    */
-  currentgraph: mxGraph;
+  currentgraph: mxGraph = true;
   /**
    * Variable: currentDropTarget
    *
@@ -103,42 +103,42 @@ export class mxDragSource {
    * Specifies if the graph should scroll automatically. Default is true.
    * @example true
    */
-  autoscroll: boolean;
+  autoscroll: boolean = true;
   /**
    * Variable: guidesEnabled
    *
    * Specifies if <mxGuide> should be enabled. Default is true.
    * @example true
    */
-  guidesEnabled: boolean;
+  guidesEnabled: boolean = true;
   /**
    * Variable: gridEnabled
    *
    * Specifies if the grid should be allowed. Default is true.
    * @example true
    */
-  gridEnabled: boolean;
+  gridEnabled: boolean = true;
   /**
    * Variable: highlightDropTargets
    *
    * Specifies if drop targets should be highlighted. Default is true.
    * @example true
    */
-  highlightDropTargets: boolean;
+  highlightDropTargets: boolean = true;
   /**
    * Variable: dragElementZIndex
    *
    * ZIndex for the drag element. Default is 100.
    * @example 100
    */
-  dragElementZIndex: number;
+  dragElementZIndex: number = 100;
   /**
    * Variable: dragElementOpacity
    *
    * Opacity of the drag element in %. Default is 70.
    * @example 70
    */
-  dragElementOpacity: number;
+  dragElementOpacity: number = 70;
   /**
    * Variable: checkEventSource
    *
@@ -146,7 +146,7 @@ export class mxDragSource {
    * is true.
    * @example true
    */
-  checkEventSource: boolean;
+  checkEventSource: boolean = true;
   mouseMoveHandler: Function;
   mouseUpHandler: Function;
   eventSource: any;

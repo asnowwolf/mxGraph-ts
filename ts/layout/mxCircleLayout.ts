@@ -37,21 +37,21 @@ export class mxCircleLayout extends mxGraphLayout {
    * Boolean specifying if the circle should be moved to the top,
    * left corner specified by <x0> and <y0>. Default is false.
    */
-  moveCircle: boolean;
+  moveCircle: boolean = 100;
   /**
    * Variable: x0
    *
    * Integer specifying the left coordinate of the circle.
    * Default is 0.
    */
-  x0: number;
+  x0: number = 0;
   /**
    * Variable: y0
    *
    * Integer specifying the top coordinate of the circle.
    * Default is 0.
    */
-  y0: number;
+  y0: number = 0;
   /**
    * Variable: resetEdges
    *
@@ -59,7 +59,7 @@ export class mxCircleLayout extends mxGraphLayout {
    * Default is true.
    * @example true
    */
-  resetEdges: boolean;
+  resetEdges: boolean = true;
   /**
    * Variable: disableEdgeStyle
    *
@@ -67,7 +67,7 @@ export class mxCircleLayout extends mxGraphLayout {
    * modified by the result. Default is true.
    * @example true
    */
-  disableEdgeStyle: boolean;
+  disableEdgeStyle: boolean = true;
 
   /**
    * Function: execute

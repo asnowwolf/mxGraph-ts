@@ -90,7 +90,7 @@ export class mxCellTracker extends mxCellMarker {
   /**
    * @example true
    */
-  destroyed: boolean;
+  destroyed: boolean = true;
 
   /**
    * Function: mouseDown

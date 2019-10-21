@@ -27,14 +27,10 @@ import { mxGraph } from '../view/mxGraph';
 import { mxGraphLayout, WeightedCellSorter } from './mxGraphLayout';
 
 export class mxCompactTreeLayout extends mxGraphLayout {
-  constructor(graph: mxGraph, horizontal: any, invert: any) {
+  constructor(graph: mxGraph, private horizontal: boolean = true, private invert: boolean = false) {
     super(graph);
-    this.horizontal = (!!horizontal) ? horizontal : true;
-    this.invert = (!!invert) ? invert : false;
   }
 
-  horizontal: any;
-  invert: any;
   /**
    * Variable: resizeParent
    *
@@ -42,7 +38,7 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    * children. Default is true.
    * @example true
    */
-  resizeParent: boolean;
+  resizeParent: boolean = true;
   /**
    * Variable: maintainParentLocation
    *
@@ -50,38 +46,38 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    * top, left corner stays the same before and after execution of
    * the layout. Default is false for backwards compatibility.
    */
-  maintainParentLocation: boolean;
+  maintainParentLocation: boolean = true;
   /**
    * Variable: groupPadding
    *
    * Padding added to resized parents. Default is 10.
    * @example 10
    */
-  groupPadding: number;
+  groupPadding: number = 10;
   /**
    * Variable: groupPaddingTop
    *
    * Top padding added to resized parents. Default is 0.
    */
-  groupPaddingTop: number;
+  groupPaddingTop: number = 10;
   /**
    * Variable: groupPaddingRight
    *
    * Right padding added to resized parents. Default is 0.
    */
-  groupPaddingRight: number;
+  groupPaddingRight: number = 0;
   /**
    * Variable: groupPaddingBottom
    *
    * Bottom padding added to resized parents. Default is 0.
    */
-  groupPaddingBottom: number;
+  groupPaddingBottom: number = 0;
   /**
    * Variable: groupPaddingLeft
    *
    * Left padding added to resized parents. Default is 0.
    */
-  groupPaddingLeft: number;
+  groupPaddingLeft: number = 0;
   /**
    * Variable: parentsChanged
    *
@@ -95,28 +91,28 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    * Specifies if the tree should be moved to the top, left corner
    * if it is inside a top-level layer. Default is false.
    */
-  moveTree: boolean;
+  moveTree: boolean = false;
   /**
    * Variable: visited
    *
    * Specifies if the tree should be moved to the top, left corner
    * if it is inside a top-level layer. Default is false.
    */
-  visited: any;
+  visited: any = false;
   /**
    * Variable: levelDistance
    *
    * Holds the levelDistance. Default is 10.
    * @example 10
    */
-  levelDistance: number;
+  levelDistance: number = 10;
   /**
    * Variable: nodeDistance
    *
    * Holds the nodeDistance. Default is 20.
    * @example 20
    */
-  nodeDistance: number;
+  nodeDistance: number = 20;
   /**
    * Variable: resetEdges
    *
@@ -124,28 +120,28 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    * Default is true.
    * @example true
    */
-  resetEdges: boolean;
+  resetEdges: boolean = true;
   /**
    * Variable: prefHozEdgeSep
    *
    * The preferred horizontal distance between edges exiting a vertex.
    * @example 5
    */
-  prefHozEdgeSep: number;
+  prefHozEdgeSep: number = 5;
   /**
    * Variable: prefVertEdgeOff
    *
    * The preferred vertical offset between edges exiting a vertex.
    * @example 4
    */
-  prefVertEdgeOff: number;
+  prefVertEdgeOff: number = 4;
   /**
    * Variable: minEdgeJetty
    *
    * The minimum distance for an edge jetty from a vertex.
    * @example 8
    */
-  minEdgeJetty: number;
+  minEdgeJetty: number = 8;
   /**
    * Variable: channelBuffer
    *
@@ -153,21 +149,21 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    * where edge control points should not be placed.
    * @example 4
    */
-  channelBuffer: number;
+  channelBuffer: number = 4;
   /**
    * Variable: edgeRouting
    *
    * Whether or not to apply the internal tree edge routing.
    * @example true
    */
-  edgeRouting: boolean;
+  edgeRouting: boolean = true;
   /**
    * Variable: sortEdges
    *
    * Specifies if edges should be sorted according to the order of their
    * opposite terminal cell in the model.
    */
-  sortEdges: boolean;
+  sortEdges: boolean = 10;
   /**
    * Variable: alignRanks
    *
@@ -237,7 +233,7 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    * root - Optional <mxCell> that will be used as the root of the tree.
    * Overrides <root> if specified.
    */
-  execute(parent: any, root: any): void {
+  execute(parent: mxCell, root?: mxCell): void {
     this.parent = parent;
     const model = this.graph.getModel();
     if (!root) {

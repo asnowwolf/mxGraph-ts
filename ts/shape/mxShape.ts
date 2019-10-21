@@ -86,21 +86,21 @@ export class mxShape {
    * Holds the scale in which the shape is being painted.
    * @example 1
    */
-  scale: number;
+  scale: number = 1;
   /**
    * Variable: antiAlias
    *
    * Rendering hint for configuring the canvas.
    * @example true
    */
-  antiAlias: boolean;
+  antiAlias: boolean = true;
   /**
    * Variable: minSvgStrokeWidth
    *
    * Minimum stroke width for SVG output.
    * @example 1
    */
-  minSvgStrokeWidth: number;
+  minSvgStrokeWidth: number = 1;
   /**
    * Variable: bounds
    *
@@ -145,28 +145,28 @@ export class mxShape {
    * to the canvas in <createSvgCanvas> if <pointerEvents> is true.
    * @example 8
    */
-  svgStrokeTolerance: number;
+  svgStrokeTolerance: number = 8;
   /**
    * Variable: pointerEvents
    *
    * Specifies if pointer events should be handled. Default is true.
    * @example true
    */
-  pointerEvents: boolean;
+  pointerEvents: boolean = true;
   /**
    * Variable: svgPointerEvents
    *
    * Specifies if pointer events should be handled. Default is true.
    * @example all
    */
-  svgPointerEvents: string;
+  svgPointerEvents: string = all;
   /**
    * Variable: shapePointerEvents
    *
    * Specifies if pointer events outside of shape should be handled. Default
    * is false.
    */
-  shapePointerEvents: boolean;
+  shapePointerEvents: boolean = 8;
   /**
    * Variable: stencilPointerEvents
    *
@@ -180,7 +180,7 @@ export class mxShape {
    * Scale for improving the precision of VML rendering. Default is 1.
    * @example 1
    */
-  vmlScale: number;
+  vmlScale: number = 1;
   /**
    * Variable: outline
    *
@@ -189,38 +189,38 @@ export class mxShape {
    * not be painted for outlines. Default is false. This should be set before
    * calling <apply>.
    */
-  outline: boolean;
+  outline: boolean = 1;
   /**
    * Variable: visible
    *
    * Specifies if the shape is visible. Default is true.
    * @example true
    */
-  visible: boolean;
+  visible: boolean = true;
   /**
    * Variable: useSvgBoundingBox
    *
    * Allows to use the SVG bounding box in SVG. Default is false for performance
    * reasons.
    */
-  useSvgBoundingBox: boolean;
+  useSvgBoundingBox: boolean = true;
   /**
    * @example 1
    */
-  strokewidth: number;
+  strokewidth: number = 1;
   rotation: number;
   /**
    * @example 100
    */
-  opacity: number;
+  opacity: number = 100;
   /**
    * @example 100
    */
-  fillOpacity: number;
+  fillOpacity: number = 100;
   /**
    * @example 100
    */
-  strokeOpacity: number;
+  strokeOpacity: number = 100;
   flipH: boolean;
   flipV: boolean;
   oldGradients: any;

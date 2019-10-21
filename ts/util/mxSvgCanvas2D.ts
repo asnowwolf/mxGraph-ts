@@ -95,7 +95,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    *
    * Reference to the container for the SVG content.
    */
-  root: any;
+  root: any = false;
   /**
    * Variable: gradients
    *
@@ -122,21 +122,21 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * Defaul is true.
    * @example true
    */
-  matchHtmlAlignment: boolean;
+  matchHtmlAlignment: boolean = true;
   /**
    * Variable: textEnabled
    *
    * Specifies if text output should be enabled. Default is true.
    * @example true
    */
-  textEnabled: boolean;
+  textEnabled: boolean = true;
   /**
    * Variable: foEnabled
    *
    * Specifies if use of foreignObject for HTML markup is allowed. Default is true.
    * @example true
    */
-  foEnabled: boolean;
+  foEnabled: boolean = true;
   /**
    * Variable: foAltText
    *
@@ -145,7 +145,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * text is added to the exported document.
    * @example [Object]
    */
-  foAltText: string;
+  foAltText: string = true;
   /**
    * Variable: foOffset
    *
@@ -176,7 +176,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * Minimum stroke width for output.
    * @example 1
    */
-  minStrokeWidth: number;
+  minStrokeWidth: number = 1;
   /**
    * Variable: refCount
    *
@@ -190,21 +190,21 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * all pointer events. Default is false. This is only needed in Firefox to disable
    * control-clicks on images.
    */
-  blockImagePointerEvents: boolean;
+  blockImagePointerEvents: boolean = false;
   /**
    * Variable: lineHeightCorrection
    *
    * Correction factor for <mxConstants.LINE_HEIGHT> in HTML output. Default is 1.
    * @example 1
    */
-  lineHeightCorrection: number;
+  lineHeightCorrection: number = 1;
   /**
    * Variable: pointerEventsValue
    *
    * Default value for active pointer events. Default is all.
    * @example all
    */
-  pointerEventsValue: string;
+  pointerEventsValue: string = all;
   /**
    * Variable: fontMetricsPadding
    *
@@ -212,7 +212,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * in font metrics on different platforms in pixels. Default is 10.
    * @example 10
    */
-  fontMetricsPadding: number;
+  fontMetricsPadding: number = 10;
   /**
    * Variable: cacheOffsetSize
    *
@@ -220,7 +220,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    * This is used to speed up repaint of text in <updateText>.
    * @example true
    */
-  cacheOffsetSize: boolean;
+  cacheOffsetSize: boolean = true;
   originalRoot: any;
 
   /**

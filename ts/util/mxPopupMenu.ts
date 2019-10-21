@@ -51,47 +51,47 @@ export class mxPopupMenu {
    * Specifies the zIndex for the popupmenu and its shadow. Default is 1006.
    * @example 10006
    */
-  zIndex: number;
+  zIndex: number = 10006;
   /**
    * Variable: useLeftButtonForPopup
    *
    * Specifies if popupmenus should be activated by clicking the left mouse
    * button. Default is false.
    */
-  useLeftButtonForPopup: boolean;
+  useLeftButtonForPopup: boolean = 1006;
   /**
    * Variable: enabled
    *
    * Specifies if events are handled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: itemCount
    *
    * Contains the number of times <addItem> has been called for a new menu.
    */
-  itemCount: number;
+  itemCount: number = true;
   /**
    * Variable: autoExpand
    *
    * Specifies if submenus should be expanded on mouseover. Default is false.
    */
-  autoExpand: boolean;
+  autoExpand: boolean = false;
   /**
    * Variable: smartSeparators
    *
    * Specifies if separators should only be added if a menu item follows them.
    * Default is false.
    */
-  smartSeparators: boolean;
+  smartSeparators: boolean = false;
   /**
    * Variable: labels
    *
    * Specifies if any labels should be visible. Default is true.
    * @example true
    */
-  labels: boolean;
+  labels: boolean = true;
   table: boolean;
   tbody: any;
   div: HTMLElement;

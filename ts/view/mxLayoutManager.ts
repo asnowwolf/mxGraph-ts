@@ -27,6 +27,7 @@
  *
  * graph - Reference to the enclosing graph.
  */
+import { mxGraphLayout } from '../layout/mxGraphLayout';
 import { mxCell } from '../model/mxCell';
 import {
   mxChildChange,
@@ -71,20 +72,20 @@ export class mxLayoutManager {
    * the cell hierarchy. Default is true.
    * @example true
    */
-  bubbling: boolean;
+  bubbling: boolean = true;
   /**
    * Variable: enabled
    *
    * Specifies if event handling is enabled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: updateHandler
    *
    * Holds the function that handles the endUpdate event.
    */
-  updateHandler: Function;
+  updateHandler: Function = true;
 
   /**
    * Function: isEnabled
@@ -163,8 +164,8 @@ export class mxLayoutManager {
    *
    * Returns the layout to be executed for the given graph and parent.
    */
-  getLayout(parent: any): any {
-    return null;
+  getLayout(parent: any): mxGraphLayout | undefined {
+    return;
   }
 
   /**

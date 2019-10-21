@@ -68,14 +68,14 @@
  */
 import { mxEvent } from './mxEvent';
 import { mxEventObject } from './mxEventObject';
+import { mxEventSource } from './mxEventSource';
 
-export class mxUndoManager {
-  constructor(size: any) {
-    this.size = (!!size) ? size : 100;
+export class mxUndoManager extends mxEventSource {
+  constructor(public size: number = 100) {
+    super();
     this.clear();
   }
 
-  size: any;
   /**
    * Variable: history
    *
@@ -87,7 +87,7 @@ export class mxUndoManager {
    *
    * Index of the element to be added next.
    */
-  indexOfNextAdd: number;
+  indexOfNextAdd: number = 0;
 
   /**
    * Function: isEmpty

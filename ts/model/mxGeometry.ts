@@ -71,7 +71,7 @@ import { mxRectangle } from '../util/mxRectangle';
 import { mxUtils } from '../util/mxUtils';
 
 export class mxGeometry extends mxRectangle {
-  constructor(x: number, y: number, width: number, height: number) {
+  constructor(x: number = 0, y: number = 0, width: number = 0, height: number = 0) {
     super(x, y, width, height);
   }
 
@@ -81,14 +81,14 @@ export class mxGeometry extends mxRectangle {
    * Global switch to translate the points in translate. Default is true.
    * @example true
    */
-  TRANSLATE_CONTROL_POINTS: boolean;
+  TRANSLATE_CONTROL_POINTS: boolean = true;
   /**
    * Variable: alternateBounds
    *
    * Stores alternate values for x, y, width and height in a rectangle. See
    * <swap> to exchange the values. Default is null.
    */
-  alternateBounds: any;
+  alternateBounds: any = true;
   /**
    * Variable: sourcePoint
    *
@@ -104,7 +104,7 @@ export class mxGeometry extends mxRectangle {
    * corresponding edge does not have a target vertex. Otherwise it is
    * ignored. Default is null.
    */
-  targetPoint: any;
+  targetPoint: any = null;
   /**
    * Variable: points
    *
@@ -113,7 +113,7 @@ export class mxGeometry extends mxRectangle {
    * use <targetPoint> and <sourcePoint> or set the terminals of the edge to
    * a non-null value. Default is null.
    */
-  points: any;
+  points: any = null;
   /**
    * Variable: offset
    *
@@ -123,7 +123,7 @@ export class mxGeometry extends mxRectangle {
    * coordinates. For absolute geometries (for vertices), this defines the
    * offset for the label. Default is null.
    */
-  offset: any;
+  offset: any = null;
   /**
    * Variable: relative
    *
@@ -139,7 +139,7 @@ export class mxGeometry extends mxRectangle {
    *
    * Default is false.
    */
-  relative: boolean;
+  relative: boolean = false;
   x: number;
   y: number;
   width: number;

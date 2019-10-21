@@ -55,7 +55,7 @@ export class mxMorphing extends mxAnimation {
    *
    * Contains the current step.
    */
-  step: number;
+  step: number = 6;
   /**
    * Variable: cells
    *

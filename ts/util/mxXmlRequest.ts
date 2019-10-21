@@ -107,7 +107,7 @@ export class mxXmlRequest {
    * In all other browsers the requested mime type is set to
    * text/plain; charset=x-user-defined. Default is false.
    */
-  binary: boolean;
+  binary: boolean = POST;
   /**
    * Variable: withCredentials
    *

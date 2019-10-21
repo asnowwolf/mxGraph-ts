@@ -36,7 +36,7 @@ export class mxPopupMenuHandler {
    * them. Default is true.
    * @example true
    */
-  selectOnPopup: boolean;
+  selectOnPopup: boolean = true;
   /**
    * Variable: clearSelectionOnBackground
    *
@@ -44,13 +44,13 @@ export class mxPopupMenuHandler {
    * the diagram background. Default is true.
    * @example true
    */
-  clearSelectionOnBackground: boolean;
+  clearSelectionOnBackground: boolean = true;
   /**
    * Variable: triggerX
    *
    * X-coordinate of the mouse down event.
    */
-  triggerX: any;
+  triggerX: any = true;
   /**
    * Variable: triggerY
    *

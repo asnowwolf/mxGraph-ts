@@ -48,7 +48,7 @@ export class mxSwimlane extends mxShape {
    * and imageheight are defined in the style. Value is 16.
    * @example 16
    */
-  imageSize: number;
+  imageSize: number = 16;
 
   /**
    * Function: isRoundable

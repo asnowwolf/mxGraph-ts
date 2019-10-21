@@ -10,13 +10,13 @@ export class mxUrlConverter {
    * Specifies if the converter is enabled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: baseUrl
    *
    * Specifies the base URL to be used as a prefix for relative URLs.
    */
-  baseUrl: string;
+  baseUrl: string = true;
   /**
    * Variable: baseDomain
    *

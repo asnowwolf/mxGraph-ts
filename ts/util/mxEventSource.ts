@@ -41,13 +41,13 @@ export class mxEventSource {
    * Specifies if events can be fired. Default is true.
    * @example true
    */
-  eventsEnabled: boolean;
+  eventsEnabled: boolean = true;
   /**
    * Variable: eventSource
    *
    * Optional source for events. Default is null.
    */
-  eventSource: any;
+  eventSource: any = true;
 
   /**
    * Function: isEventsEnabled

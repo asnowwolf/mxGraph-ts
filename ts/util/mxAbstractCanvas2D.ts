@@ -78,13 +78,13 @@ export class mxAbstractCanvas2D {
    * Switch for rotation of HTML. Default is false.
    * @example true
    */
-  rotateHtml: boolean;
+  rotateHtml: boolean = true;
   /**
    * Variable: lastX
    *
    * Holds the last x coordinate.
    */
-  lastX: number;
+  lastX: number = false;
   /**
    * Variable: lastY
    *
@@ -97,41 +97,41 @@ export class mxAbstractCanvas2D {
    * Contains the string used for moving in paths. Default is 'M'.
    * @example M
    */
-  moveOp: string;
+  moveOp: string = M;
   /**
    * Variable: lineOp
    *
    * Contains the string used for moving in paths. Default is 'L'.
    * @example L
    */
-  lineOp: string;
+  lineOp: string = L;
   /**
    * Variable: quadOp
    *
    * Contains the string used for quadratic paths. Default is 'Q'.
    * @example Q
    */
-  quadOp: string;
+  quadOp: string = Q;
   /**
    * Variable: curveOp
    *
    * Contains the string used for bezier curves. Default is 'C'.
    * @example C
    */
-  curveOp: string;
+  curveOp: string = C;
   /**
    * Variable: closeOp
    *
    * Holds the operator for closing curves. Default is 'Z'.
    * @example Z
    */
-  closeOp: string;
+  closeOp: string = Z;
   /**
    * Variable: pointerEvents
    *
    * Boolean value that specifies if events should be handled. Default is false.
    */
-  pointerEvents: boolean;
+  pointerEvents: boolean = 'M';
 
   /**
    * Function: createUrlConverter

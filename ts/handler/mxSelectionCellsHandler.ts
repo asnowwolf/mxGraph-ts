@@ -56,14 +56,14 @@ export class mxSelectionCellsHandler extends mxEventSource {
    * Specifies if events are handled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: maxHandlers
    *
    * Defines the maximum number of handlers to paint individually. Default is 100.
    * @example 100
    */
-  maxHandlers: number;
+  maxHandlers: number = 100;
 
   /**
    * Function: isEnabled

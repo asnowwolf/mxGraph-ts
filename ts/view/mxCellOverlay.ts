@@ -79,7 +79,7 @@ export class mxCellOverlay {
    * from the origin to the point defined by the alignment. Default is 0.5.
    * @example 0.5
    */
-  defaultOverlap: number;
+  defaultOverlap: number = 0.5;
 
   /**
    * Function: getBounds

@@ -60,7 +60,7 @@ export class mxCellHighlight {
    * Specifies if the highlights should appear on top of everything
    * else in the overlay pane. Default is false.
    */
-  keepOnTop: boolean;
+  keepOnTop: boolean = false;
   /**
    * Variable: spacing
    *
@@ -68,7 +68,7 @@ export class mxCellHighlight {
    * Default is 2.
    * @example 2
    */
-  spacing: number;
+  spacing: number = 2;
   shape: any;
 
   /**

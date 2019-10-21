@@ -67,7 +67,7 @@ export class mxCellRenderer {
    * orientation of a swimlane. Default is true.
    * @example true
    */
-  legacyControlPosition: boolean;
+  legacyControlPosition: boolean = true;
   /**
    * Variable: legacySpacing
    *
@@ -75,28 +75,28 @@ export class mxCellRenderer {
    * fill or width. Default is true for backwards compatiblity.
    * @example true
    */
-  legacySpacing: boolean;
+  legacySpacing: boolean = true;
   /**
    * Variable: antiAlias
    *
    * Anti-aliasing option for new shapes. Default is true.
    * @example true
    */
-  antiAlias: boolean;
+  antiAlias: boolean = true;
   /**
    * Variable: minSvgStrokeWidth
    *
    * Minimum stroke width for SVG output.
    * @example 1
    */
-  minSvgStrokeWidth: number;
+  minSvgStrokeWidth: number = 1;
   /**
    * Variable: forceControlClickHandler
    *
    * Specifies if the enabled state of the graph should be ignored in the control
    * click handler (to allow folding in disabled graphs). Default is false.
    */
-  forceControlClickHandler: boolean;
+  forceControlClickHandler: boolean = true;
 
   /**
    * Function: initializeShape

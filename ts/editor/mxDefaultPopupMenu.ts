@@ -33,17 +33,16 @@ import { mxUtils } from '../util/mxUtils';
 import { mxEditor } from './mxEditor';
 
 export class mxDefaultPopupMenu {
-  constructor(config: any) {
+  constructor(public config?: XMLDocument) {
     this.config = config;
   }
 
-  config: any;
   /**
    * Variable: imageBasePath
    *
    * Base path for all icon attributes in the config. Default is null.
    */
-  imageBasePath: any;
+  imageBasePath: any = null;
 
   /**
    * Function: createMenu
@@ -252,12 +251,14 @@ export class mxDefaultPopupMenu {
     conditions['validRoot'] = isCell && editor.graph.isValidRoot(cell);
     conditions['emptyValidRoot'] = conditions['validRoot'] && childCount == 0;
     conditions['swimlane'] = isCell && editor.graph.isSwimlane(cell);
-    const condNodes = this.config.getElementsByTagName('condition');
-    for (let i = 0; i < condNodes.length; i++) {
-      const funct = mxUtils.eval(mxUtils.getTextContent(condNodes[i]));
-      const name = condNodes[i].getAttribute('name');
-      if (!!name && typeof (funct) == 'function') {
-        conditions[name] = funct(editor, cell, evt);
+    if (this.config) {
+      const condNodes = this.config.getElementsByTagName('condition');
+      for (let i = 0; i < condNodes.length; i++) {
+        const funct = mxUtils.eval(mxUtils.getTextContent(condNodes[i]));
+        const name = condNodes[i].getAttribute('name');
+        if (!!name && typeof (funct) == 'function') {
+          conditions[name] = funct(editor, cell, evt);
+        }
       }
     }
     return conditions;

@@ -189,7 +189,7 @@ import { mxRectangle } from './mxRectangle';
 import { mxUtils } from './mxUtils';
 
 export class mxWindow {
-  constructor(title: string, content: any, x: number, y: number, width: number, height: number, minimizable: boolean, movable: boolean, replaceNode: any, style: any) {
+  constructor(title: string, content?: HTMLElement, x?: number, y?: number, width?: number, height?: number, minimizable: boolean = true, movable: boolean = true, replaceNode?: HTMLElement, style: string = 'mxWindow') {
     if (!!content) {
       minimizable = (!!minimizable) ? minimizable : true;
       this.content = content;
@@ -216,7 +216,7 @@ export class mxWindow {
    *
    * URL of the image to be used for the close icon in the titlebar.
    */
-  closeImage: any;
+  closeImage: any = true;
   /**
    * Variable: minimizeImage
    *
@@ -261,14 +261,14 @@ export class mxWindow {
    * is false then the window is hidden using <setVisible>. Default is true.
    * @example true
    */
-  destroyOnClose: boolean;
+  destroyOnClose: boolean = true;
   /**
    * Variable: contentHeightCorrection
    *
    * Defines the correction factor for computing the height of the contentWrapper.
    * Default is 6 for IE 7/8 standards mode and 2 for all other browsers and modes.
    */
-  contentHeightCorrection: any;
+  contentHeightCorrection: any = true;
   /**
    * Variable: title
    *

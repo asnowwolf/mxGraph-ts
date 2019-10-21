@@ -56,7 +56,7 @@ export class mxParallelEdgeLayout extends mxGraphLayout {
    * Defines the spacing between the parallels. Default is 20.
    * @example 20
    */
-  spacing: number;
+  spacing: number = 20;
 
   /**
    * Function: execute

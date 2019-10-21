@@ -36,7 +36,7 @@ export class mxToolbar {
    * Specifies if events are handled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: noReset
    *
@@ -45,7 +45,7 @@ export class mxToolbar {
    * if the toolbar item is double clicked to avoid a reset after a single
    * use of the item.
    */
-  noReset: boolean;
+  noReset: boolean = true;
   /**
    * Variable: updateDefaultMode
    *
@@ -58,7 +58,7 @@ export class mxToolbar {
    * the previously selected item.
    * @example true
    */
-  updateDefaultMode: boolean;
+  updateDefaultMode: boolean = true;
   menu: mxPopupMenu;
   currentImg: any;
   defaultMode: any;

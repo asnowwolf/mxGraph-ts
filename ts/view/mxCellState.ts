@@ -46,21 +46,21 @@ export class mxCellState {
    *
    * Specifies if the style is invalid. Default is false.
    */
-  invalidStyle: boolean;
+  invalidStyle: boolean = false;
   /**
    * Variable: invalid
    *
    * Specifies if the state is invalid. Default is true.
    * @example true
    */
-  invalid: boolean;
+  invalid: boolean = true;
   /**
    * Variable: absolutePoints
    *
    * Holds an array of <mxPoints> that represent the absolute points of an
    * edge.
    */
-  absolutePoints: any;
+  absolutePoints: any = true;
   /**
    * Variable: visibleSourceState
    *

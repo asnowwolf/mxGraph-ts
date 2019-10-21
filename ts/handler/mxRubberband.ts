@@ -69,20 +69,20 @@ export class mxRubberband {
    * is 20.
    * @example 20
    */
-  defaultOpacity: number;
+  defaultOpacity: number = 20;
   /**
    * Variable: enabled
    *
    * Specifies if events are handled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: div
    *
    * Holds the DIV element which is currently visible.
    */
-  div: HTMLElement;
+  div: HTMLElement = true;
   /**
    * Variable: sharedDiv
    *
@@ -106,7 +106,7 @@ export class mxRubberband {
    *
    * Optional fade out effect. Default is false.
    */
-  fadeOut: boolean;
+  fadeOut: boolean = false;
   first: mxPoint;
   dragHandler: Function;
   dropHandler: Function;
@@ -117,7 +117,7 @@ export class mxRubberband {
   /**
    * @example true
    */
-  destroyed: boolean;
+  destroyed: boolean = true;
 
   /**
    * Function: isEnabled

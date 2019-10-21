@@ -200,7 +200,7 @@ import { mxCell } from './mxCell';
 import { mxCellPath } from './mxCellPath';
 
 export class mxGraphModel {
-  constructor(root: any) {
+  constructor(root?: mxCell) {
     this.currentEdit = this.createUndoableEdit();
     if (!!root) {
       this.setRoot(root);
@@ -231,7 +231,7 @@ export class mxGraphModel {
    * ancestor of their terminals. Default is true.
    * @example true
    */
-  maintainEdgeParent: boolean;
+  maintainEdgeParent: boolean = true;
   /**
    * Variable: ignoreRelativeEdgeParent
    *
@@ -239,7 +239,7 @@ export class mxGraphModel {
    * common ancestors of an edge's terminals. Default is true.
    * @example true
    */
-  ignoreRelativeEdgeParent: boolean;
+  ignoreRelativeEdgeParent: boolean = true;
   /**
    * Variable: createIds
    *
@@ -247,13 +247,13 @@ export class mxGraphModel {
    * Default is true.
    * @example true
    */
-  createIds: boolean;
+  createIds: boolean = true;
   /**
    * Variable: prefix
    *
    * Defines the prefix of new Ids. Default is an empty string.
    */
-  prefix: string;
+  prefix: string = true;
   /**
    * Variable: postfix
    *
@@ -444,7 +444,7 @@ export class mxGraphModel {
    *
    * root - <mxCell> that specifies the new root.
    */
-  setRoot(root: any): any {
+  setRoot(root: mxCell): any {
     this.execute(new mxRootChange(this, root));
     return root;
   }

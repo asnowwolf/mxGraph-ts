@@ -44,7 +44,7 @@ export class mxCylinder extends mxShape {
    * of the cylinder shape.
    * @example 40
    */
-  maxHeight: number;
+  maxHeight: number = 40;
   /**
    * Variable: svgStrokeTolerance
    *

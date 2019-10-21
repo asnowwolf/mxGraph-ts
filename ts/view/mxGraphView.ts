@@ -86,7 +86,7 @@ export class mxGraphView {
    * If the resource for this key does not exist then the value is used as
    * the status message. Default is 'done'.
    */
-  doneResource: any;
+  doneResource: any = 'done';
   /**
    * Function: updatingDocumentResource
    *
@@ -94,7 +94,7 @@ export class mxGraphView {
    * being updated. If the resource for this key does not exist then the
    * value is used as the status message. Default is 'updatingDocument'.
    */
-  updatingDocumentResource: any;
+  updatingDocumentResource: any = 'updatingDocument';
   /**
    * Variable: allowEval
    *
@@ -103,7 +103,7 @@ export class mxGraphView {
    * to objects using <mxStyleRegistry>. Default is false. NOTE: Enabling this
    * switch carries a possible security risk.
    */
-  allowEval: boolean;
+  allowEval: boolean = false;
   /**
    * Variable: captureDocumentGesture
    *
@@ -111,7 +111,7 @@ export class mxGraphView {
    * graph container. Default is true.
    * @example true
    */
-  captureDocumentGesture: boolean;
+  captureDocumentGesture: boolean = true;
   /**
    * Variable: optimizeVmlReflows
    *
@@ -120,7 +120,7 @@ export class mxGraphView {
    * Default is true.
    * @example true
    */
-  optimizeVmlReflows: boolean;
+  optimizeVmlReflows: boolean = true;
   /**
    * Variable: rendering
    *
@@ -128,20 +128,20 @@ export class mxGraphView {
    * methods of <mxCellRenderer> in <graph>. Default is true.
    * @example true
    */
-  rendering: boolean;
+  rendering: boolean = true;
   /**
    * Variable: currentRoot
    *
    * <mxCell> that acts as the root of the displayed cell hierarchy.
    */
-  currentRoot: any;
+  currentRoot: any = true;
   /**
    * Variable: scale
    *
    * Specifies the scale. Default is 1 (100%).
    * @example 1
    */
-  scale: number;
+  scale: number = 1;
   /**
    * Variable: updateStyle
    *
@@ -149,7 +149,7 @@ export class mxGraphView {
    * is false then the style is only updated if the state is created or if the
    * style of the cell was changed. Default is false.
    */
-  updateStyle: boolean;
+  updateStyle: boolean = false;
   /**
    * Variable: lastNode
    *

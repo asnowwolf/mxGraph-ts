@@ -218,25 +218,25 @@ export class mxStencil {
    *
    * Holds an array of <mxConnectionConstraints> as defined in the shape.
    */
-  constraints: any;
+  constraints: any = '1';
   /**
    * Variable: aspect
    *
    * Holds the aspect of the shape. Default is 'auto'.
    */
-  aspect: any;
+  aspect: any = 'auto';
   /**
    * Variable: w0
    *
    * Holds the width of the shape. Default is 100.
    */
-  w0: any;
+  w0: any = 100;
   /**
    * Variable: h0
    *
    * Holds the height of the shape. Default is 100.
    */
-  h0: any;
+  h0: any = 100;
   /**
    * Variable: bgNodes
    *

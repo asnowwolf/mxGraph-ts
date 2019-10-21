@@ -79,13 +79,13 @@ export class mxCell {
    *
    * Holds the Id. Default is null.
    */
-  id: any;
+  id: any = null;
   /**
    * Variable: geometry
    *
    * Holds the <mxGeometry>. Default is null.
    */
-  geometry: any;
+  geometry: any = null;
   /**
    * Variable: style
    *
@@ -98,33 +98,33 @@ export class mxCell {
    *
    * Specifies whether the cell is a vertex. Default is false.
    */
-  vertex: boolean;
+  vertex: boolean = false;
   /**
    * Variable: edge
    *
    * Specifies whether the cell is an edge. Default is false.
    */
-  edge: boolean;
+  edge: boolean = false;
   /**
    * Variable: connectable
    *
    * Specifies whether the cell is connectable. Default is true.
    * @example true
    */
-  connectable: boolean;
+  connectable: boolean = true;
   /**
    * Variable: visible
    *
    * Specifies whether the cell is visible. Default is true.
    * @example true
    */
-  visible: boolean;
+  visible: boolean = true;
   /**
    * Variable: collapsed
    *
    * Specifies whether the cell is collapsed. Default is false.
    */
-  collapsed: boolean;
+  collapsed: boolean = true;
   /**
    * Variable: parent
    *

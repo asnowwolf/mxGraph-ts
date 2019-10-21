@@ -25,6 +25,7 @@ import { mxConstants } from '../util/mxConstants';
 import { mxDictionary } from '../util/mxDictionary';
 import { mxPoint } from '../util/mxPoint';
 import { mxRectangle } from '../util/mxRectangle';
+import { mxGraph } from '../view/mxGraph';
 
 export class mxGraphLayout {
   constructor(graph: mxGraph) {
@@ -39,13 +40,13 @@ export class mxGraphLayout {
    * its available. Default is true.
    * @example true
    */
-  useBoundingBox: boolean;
+  useBoundingBox: boolean = true;
   /**
    * Variable: parent
    *
    * The parent cell of the layout, if any
    */
-  parent: any;
+  parent: any = true;
 
   /**
    * Function: moveCell
@@ -424,7 +425,7 @@ export class WeightedCellSorter {
    *
    * Whether or not to flip equal weight values.
    */
-  nudge: boolean;
+  nudge: boolean = null;
   /**
    * Variable: visited
    *

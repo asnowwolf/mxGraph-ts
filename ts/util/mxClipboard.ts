@@ -1,25 +1,44 @@
-export let mxClipboard = {
-  STEPSIZE: 10, insertCount: 1, cells: null, setCells(cells) {
+import { mxCell } from '../model/mxCell';
+import { mxGraph } from '../view/mxGraph';
+
+export class MxClipboard {
+  STEPSIZE: number = 10;
+  insertCount: number = 1;
+  cells: mxCell[] = [];
+
+  setCells(cells) {
     mxClipboard.cells = cells;
-  }, getCells() {
+  }
+
+  getCells() {
     return mxClipboard.cells;
-  }, isEmpty() {
+  }
+
+  isEmpty() {
     return !mxClipboard.getCells();
-  }, cut(graph, cells) {
+  }
+
+  cut(graph: mxGraph, cells: mxCell[] = []) {
     cells = mxClipboard.copy(graph, cells);
     mxClipboard.insertCount = 0;
     mxClipboard.removeCells(graph, cells);
     return cells;
-  }, removeCells(graph, cells) {
+  }
+
+  removeCells(graph: mxGraph, cells: mxCell[] = []) {
     graph.removeCells(cells);
-  }, copy(graph, cells) {
+  }
+
+  copy(graph: mxGraph, cells: mxCell[] = []) {
     cells = cells || graph.getSelectionCells();
     const result = graph.getExportableCells(graph.model.getTopmostCells(cells));
     mxClipboard.insertCount = 1;
     mxClipboard.setCells(graph.cloneCells(result));
     return result;
-  }, paste(graph) {
-    let cells = undefined;
+  }
+
+  paste(graph: mxGraph) {
+    let cells: mxCell[] = [];
     if (!mxClipboard.isEmpty()) {
       cells = graph.getImportableCells(mxClipboard.getCells());
       const delta = mxClipboard.insertCount * mxClipboard.STEPSIZE;
@@ -29,5 +48,7 @@ export let mxClipboard = {
       graph.setSelectionCells(cells);
     }
     return cells;
-  },
-};
+  }
+}
+
+export let mxClipboard = new MxClipboard();

@@ -21,107 +21,105 @@ import { mxCell } from '../model/mxCell';
 import { mxConstants } from '../util/mxConstants';
 import { mxRectangle } from '../util/mxRectangle';
 import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from '../view/mxGraph';
 import { mxGraphLayout } from './mxGraphLayout';
 
 export class mxStackLayout extends mxGraphLayout {
-  constructor(graph: mxGraph, horizontal: any, spacing: any, x0: any, y0: any, border: any) {
+  constructor(
+      public graph: mxGraph,
+      private horizontal: boolean = true,
+      private spacing: number = 0,
+      private x0: number = 0,
+      private y0: number = 0,
+      private border: number = 0,
+  ) {
     super(graph);
-    this.horizontal = (!!horizontal) ? horizontal : true;
-    this.spacing = (!!spacing) ? spacing : 0;
-    this.x0 = (!!x0) ? x0 : 0;
-    this.y0 = (!!y0) ? y0 : 0;
-    this.border = (!!border) ? border : 0;
   }
 
-  horizontal: any;
-  spacing: any;
-  x0: any;
-  y0: any;
-  border: any;
   /**
    * Variable: marginTop
    *
    * Top margin for the child area. Default is 0.
    */
-  marginTop: number;
+  marginTop: number = 0;
   /**
    * Variable: marginLeft
    *
    * Top margin for the child area. Default is 0.
    */
-  marginLeft: number;
+  marginLeft: number = 0;
   /**
    * Variable: marginRight
    *
    * Top margin for the child area. Default is 0.
    */
-  marginRight: number;
+  marginRight: number = 0;
   /**
    * Variable: marginBottom
    *
    * Top margin for the child area. Default is 0.
    */
-  marginBottom: number;
+  marginBottom: number = 0;
   /**
    * Variable: keepFirstLocation
    *
    * Boolean indicating if the location of the first cell should be
    * kept, that is, it will not be moved to x0 or y0.
    */
-  keepFirstLocation: boolean;
+  keepFirstLocation: boolean = 0;
   /**
    * Variable: fill
    *
    * Boolean indicating if dimension should be changed to fill out the parent
    * cell. Default is false.
    */
-  fill: boolean;
+  fill: boolean = false;
   /**
    * Variable: resizeParent
    *
    * If the parent should be resized to match the width/height of the
    * stack. Default is false.
    */
-  resizeParent: boolean;
+  resizeParent: boolean = false;
   /**
    * Variable: resizeParentMax
    *
    * Use maximum of existing value and new value for resize of parent.
    * Default is false.
    */
-  resizeParentMax: boolean;
+  resizeParentMax: boolean = false;
   /**
    * Variable: resizeLast
    *
    * If the last element should be resized to fill out the parent. Default is
    * false. If <resizeParent> is true then this is ignored.
    */
-  resizeLast: boolean;
+  resizeLast: boolean = false;
   /**
    * Variable: wrap
    *
    * Value at which a new column or row should be created. Default is null.
    */
-  wrap: any;
+  wrap: any = null;
   /**
    * Variable: borderCollapse
    *
    * If the strokeWidth should be ignored. Default is true.
    * @example true
    */
-  borderCollapse: boolean;
+  borderCollapse: boolean = true = true;
   /**
    * Variable: allowGaps
    *
    * If gaps should be allowed in the stack. Default is false.
    */
-  allowGaps: boolean;
+  allowGaps: boolean = false;
   /**
    * Variable: gridSize
    *
    * Grid size for alignment of position and size. Default is 0.
    */
-  gridSize: number;
+  gridSize: number = 0;
 
   /**
    * Function: isHorizontal

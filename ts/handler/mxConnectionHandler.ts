@@ -196,7 +196,7 @@ export class mxConnectionHandler extends mxEventSource {
    * the connect icon. This has precendence over <moveIconBack> when set
    * to true. Default is false.
    */
-  moveIconFront: boolean;
+  moveIconFront: boolean = false;
   /**
    * Variable: moveIconBack
    *
@@ -204,35 +204,35 @@ export class mxConnectionHandler extends mxEventSource {
    * be set to true if the icons of the connection handler conflict with other
    * handles, such as the vertex label move handle. Default is false.
    */
-  moveIconBack: boolean;
+  moveIconBack: boolean = false;
   /**
    * Variable: connectImage
    *
    * <mxImage> that is used to trigger the creation of a new connection. This
    * is used in <createIcons>. Default is null.
    */
-  connectImage: any;
+  connectImage: any = null;
   /**
    * Variable: targetConnectImage
    *
    * Specifies if the connect icon should be centered on the target state
    * while connections are being previewed. Default is false.
    */
-  targetConnectImage: boolean;
+  targetConnectImage: boolean = false;
   /**
    * Variable: enabled
    *
    * Specifies if events are handled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
   /**
    * Variable: select
    *
    * Specifies if new edges should be selected. Default is true.
    * @example true
    */
-  select: boolean;
+  select: boolean = true;
   /**
    * Variable: createTarget
    *
@@ -243,7 +243,7 @@ export class mxConnectionHandler extends mxEventSource {
    * the source cell and the newly created vertex in <createTargetVertex>, which
    * can be overridden to create a new target. Default is false.
    */
-  createTarget: boolean;
+  createTarget: boolean = true;
   /**
    * Variable: marker
    *
@@ -277,7 +277,7 @@ export class mxConnectionHandler extends mxEventSource {
    * button when highlighting the source. Default is false, that is, the
    * handler only highlights the source if no button is being pressed.
    */
-  ignoreMouseDown: boolean;
+  ignoreMouseDown: boolean = false;
   /**
    * Variable: first
    *
@@ -335,20 +335,20 @@ export class mxConnectionHandler extends mxEventSource {
    * enabled. This will allow to place the connection point along the outline of
    * the highlighted target. Default is false.
    */
-  outlineConnect: boolean;
+  outlineConnect: boolean = false;
   /**
    * Variable: livePreview
    *
    * Specifies if the actual shape of the edge state should be used for the preview.
    * Default is false. (Ignored if no edge state is created in <createEdgeState>.)
    */
-  livePreview: boolean;
+  livePreview: boolean = false;
   /**
    * Variable: cursor
    *
    * Specifies the cursor to be used while the handler is active. Default is null.
    */
-  cursor: any;
+  cursor: any = null;
   /**
    * Variable: insertBeforeSource
    *

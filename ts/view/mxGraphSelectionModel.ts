@@ -60,7 +60,7 @@ export class mxGraphSelectionModel {
    * If the resource for this key does not exist then the value is used as
    * the status message. Default is 'done'.
    */
-  doneResource: any;
+  doneResource: any = 'done';
   /**
    * Variable: updatingSelectionResource
    *
@@ -68,14 +68,14 @@ export class mxGraphSelectionModel {
    * being updated. If the resource for this key does not exist then the
    * value is used as the status message. Default is 'updatingSelection'.
    */
-  updatingSelectionResource: any;
+  updatingSelectionResource: any = 'updatingSelection';
   /**
    * Variable: singleSelection
    *
    * Specifies if only one selected item at a time is allowed.
    * Default is false.
    */
-  singleSelection: boolean;
+  singleSelection: boolean = false;
 
   /**
    * Function: isSingleSelection

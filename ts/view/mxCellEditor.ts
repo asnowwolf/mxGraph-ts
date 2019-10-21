@@ -166,7 +166,7 @@ export class mxCellEditor {
    * Default is true.
    * @example true
    */
-  autoSize: boolean;
+  autoSize: boolean = true;
   /**
    * Variable: selectText
    *
@@ -174,7 +174,7 @@ export class mxCellEditor {
    * true.
    * @example true
    */
-  selectText: boolean;
+  selectText: boolean = true;
   /**
    * Variable: emptyLabelText
    *
@@ -184,7 +184,7 @@ export class mxCellEditor {
    * value is only displayed before the first keystroke and is never used as the
    * actual editing value.
    */
-  emptyLabelText: any;
+  emptyLabelText: any = true;
   /**
    * Variable: escapeCancelsEditing
    *
@@ -193,26 +193,26 @@ export class mxCellEditor {
    * editing on Shift+Escape instead. Default is true.
    * @example true
    */
-  escapeCancelsEditing: boolean;
+  escapeCancelsEditing: boolean = true;
   /**
    * Variable: textNode
    *
    * Reference to the label DOM node that has been hidden.
    */
-  textNode: string;
+  textNode: string = true;
   /**
    * Variable: zIndex
    *
    * Specifies the zIndex for the textarea. Default is 5.
    * @example 5
    */
-  zIndex: number;
+  zIndex: number = 5;
   /**
    * Variable: minResize
    *
    * Defines the minimum width and height to be used in <resize>. Default is 0x20px.
    */
-  minResize: mxRectangle;
+  minResize: mxRectangle = 5;
   /**
    * Variable: wordWrapPadding
    *
@@ -225,7 +225,7 @@ export class mxCellEditor {
    *
    * If <focusLost> should be called if <textarea> loses the focus. Default is false.
    */
-  blurEnabled: boolean;
+  blurEnabled: boolean = false;
   /**
    * Variable: initialValue
    *

@@ -36,7 +36,7 @@ export class mxImageExport {
    *
    * Specifies if overlays should be included in the export. Default is false.
    */
-  includeOverlays: boolean;
+  includeOverlays: boolean = false;
 
   /**
    * Function: drawState

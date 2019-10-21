@@ -37,7 +37,7 @@ export class mxHandle {
    *
    * Specifies the <mxImage> to be used to render the handle. Default is null.
    */
-  ignoreGrid: boolean;
+  ignoreGrid: boolean = null;
   shape: mxRectangle;
 
   /**

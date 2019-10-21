@@ -133,7 +133,7 @@ export class mxCodec {
    *
    * Specifies if default values should be encoded. Default is false.
    */
-  encodeDefaults: boolean;
+  encodeDefaults: boolean = false;
 
   /**
    * Function: putObject

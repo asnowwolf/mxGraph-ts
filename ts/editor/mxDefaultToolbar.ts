@@ -35,16 +35,19 @@
  * container - DOM node that contains the toolbar.
  * editor - Reference to the enclosing <mxEditor>.
  */
+import { mxCell } from '../model/mxCell';
 import { mxGeometry } from '../model/mxGeometry';
 import { mxClient } from '../mxClient';
 import { mxEvent } from '../util/mxEvent';
 import { mxEventObject } from '../util/mxEventObject';
+import { mxEventSource } from '../util/mxEventSource';
 import { mxToolbar } from '../util/mxToolbar';
 import { mxUtils } from '../util/mxUtils';
 import { mxEditor } from './mxEditor';
 
-export class mxDefaultToolbar {
-  constructor(container: HTMLElement, editor: mxEditor) {
+export class mxDefaultToolbar extends mxEventSource {
+  constructor(container: HTMLElement | null, editor: mxEditor) {
+    super();
     this.editor = editor;
     if (!!container && !!editor) {
       this.init(container);
@@ -300,7 +303,7 @@ export class mxDefaultToolbar {
    * evt - Mouse event that represents the drop.
    * target - Optional <mxCell> that represents the drop target.
    */
-  drop(vertex: any, evt: Event, target: string): void {
+  drop(vertex: any, evt: Event, target: mxCell): void {
     const graph = this.editor.graph;
     const model = graph.getModel();
     if (!target || model.isEdge(target) || !this.connectOnDrop || !graph.isCellConnectable(target)) {
@@ -325,7 +328,7 @@ export class mxDefaultToolbar {
    * evt - Mouse event that represents the drop.
    * parent - Optional <mxCell> that represents the parent.
    */
-  insert(vertex: any, evt: Event, target: string): any {
+  insert(vertex: any, evt: Event, target: mxCell): any {
     const graph = this.editor.graph;
     if (graph.canImportCell(vertex)) {
       const x = mxEvent.getClientX(evt);
@@ -353,7 +356,7 @@ export class mxDefaultToolbar {
     const graph = this.editor.graph;
     const model = graph.getModel();
     if (!!source && graph.isCellConnectable(vertex) && graph.isEdgeValid(null, source, vertex)) {
-      let edge = undefined;
+      let edge: mxCell;
       model.beginUpdate();
       try {
         const geo = model.getGeometry(source);
@@ -400,7 +403,7 @@ export class mxDefaultToolbar {
   installDropHandler(img: any, dropHandler: Function): void {
     const sprite = document.createElement('img');
     sprite.setAttribute('src', img.getAttribute('src'));
-    const loader = (evt) => {
+    const loader = () => {
       sprite.style.width = (2 * img.offsetWidth) + 'px';
       sprite.style.height = (2 * img.offsetHeight) + 'px';
       mxUtils.makeDraggable(img, this.editor.graph, dropHandler, sprite);
@@ -423,8 +426,8 @@ export class mxDefaultToolbar {
    */
   destroy(): void {
     if (!!this.resetHandler) {
-      this.editor.graph.removeListener('dblclick', this.resetHandler);
-      this.editor.removeListener('escape', this.resetHandler);
+      this.editor.graph.removeListener(this.resetHandler);
+      this.editor.removeListener(this.resetHandler);
       this.resetHandler = undefined;
     }
     if (!!this.toolbar) {

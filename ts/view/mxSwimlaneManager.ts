@@ -19,12 +19,10 @@ import { mxConstants } from '../util/mxConstants';
 import { mxEvent } from '../util/mxEvent';
 import { mxRectangle } from '../util/mxRectangle';
 import { mxUtils } from '../util/mxUtils';
+import { mxGraph } from './mxGraph';
 
 export class mxSwimlaneManager {
-  constructor(graph: mxGraph, horizontal: any, addEnabled: any, resizeEnabled: any) {
-    this.horizontal = (!!horizontal) ? horizontal : true;
-    this.addEnabled = (!!addEnabled) ? addEnabled : true;
-    this.resizeEnabled = (!!resizeEnabled) ? resizeEnabled : true;
+  constructor(graph: mxGraph, private horizontal: boolean = true, private addEnabled: boolean = true, private resizeEnabled: boolean = true) {
     this.addHandler = (sender, evt) => {
       if (this.isEnabled() && this.isAddEnabled()) {
         this.cellsAdded(evt.getProperty('cells'));
@@ -38,9 +36,6 @@ export class mxSwimlaneManager {
     this.setGraph(graph);
   }
 
-  horizontal: any;
-  addEnabled: any;
-  resizeEnabled: any;
   addHandler: Function;
   resizeHandler: Function;
   /**
@@ -55,7 +50,7 @@ export class mxSwimlaneManager {
    * Specifies if event handling is enabled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
 
   /**
    * Function: isEnabled

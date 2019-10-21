@@ -63,7 +63,7 @@ export class mxDoubleEllipse extends mxShape {
    * Scale for improving the precision of VML rendering. Default is 10.
    * @example 10
    */
-  vmlScale: number;
+  vmlScale: number = 10;
 
   /**
    * Function: paintBackground

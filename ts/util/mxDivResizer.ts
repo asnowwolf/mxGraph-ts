@@ -37,7 +37,7 @@ import { mxEvent } from './mxEvent';
 import { mxUtils } from './mxUtils';
 
 export class mxDivResizer {
-  constructor(div: HTMLElement, container: HTMLElement) {
+  constructor(div: HTMLElement, container?: EventTarget) {
     if (div.nodeName.toLowerCase() == 'div') {
       if (!container) {
         container = window;
@@ -65,7 +65,7 @@ export class mxDivResizer {
   /**
    * @example true
    */
-  handlingResize: boolean;
+  handlingResize: boolean = true;
 
   /**
    * Function: resize

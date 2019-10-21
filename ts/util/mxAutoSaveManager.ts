@@ -50,7 +50,7 @@ export class mxAutoSaveManager {
    * Default is 10.
    * @example 10
    */
-  autoSaveDelay: number;
+  autoSaveDelay: number = 10;
   /**
    * Variable: autoSaveThrottle
    *
@@ -61,7 +61,7 @@ export class mxAutoSaveManager {
    * <autoSaveThreshold> changes within that timespan. Default is 2.
    * @example 2
    */
-  autoSaveThrottle: number;
+  autoSaveThrottle: number = 2;
   /**
    * Variable: autoSaveThreshold
    *
@@ -70,13 +70,13 @@ export class mxAutoSaveManager {
    * condition below is true. Default is 5.
    * @example 5
    */
-  autoSaveThreshold: number;
+  autoSaveThreshold: number = 5;
   /**
    * Variable: ignoredChanges
    *
    * Counter for ignored changes in autosave.
    */
-  ignoredChanges: number;
+  ignoredChanges: number = 10;
   /**
    * Variable: lastSnapshot
    *
@@ -89,7 +89,7 @@ export class mxAutoSaveManager {
    * Specifies if event handling is enabled. Default is true.
    * @example true
    */
-  enabled: boolean;
+  enabled: boolean = true;
 
   /**
    * Function: isEnabled

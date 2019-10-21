@@ -60,13 +60,13 @@ export class mxUndoableEdit {
    *
    * Specifies if this edit has been undone. Default is false.
    */
-  undone: boolean;
+  undone: boolean = false;
   /**
    * Variable: redone
    *
    * Specifies if this edit has been redone. Default is false.
    */
-  redone: boolean;
+  redone: boolean = false;
 
   /**
    * Function: isEmpty

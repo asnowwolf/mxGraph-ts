@@ -48,7 +48,7 @@ export class mxImageShape extends mxShape {
    * Switch to preserve image aspect. Default is true.
    * @example true
    */
-  preserveImageAspect: boolean;
+  preserveImageAspect: boolean = true;
   gradient: any;
   flipH: any;
   flipV: any;

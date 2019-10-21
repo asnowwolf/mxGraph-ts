@@ -30,20 +30,20 @@ export class mxGuide {
    * Specifies if horizontal guides are enabled. Default is true.
    * @example true
    */
-  horizontal: boolean;
+  horizontal: boolean = true;
   /**
    * Variable: vertical
    *
    * Specifies if vertical guides are enabled. Default is true.
    * @example true
    */
-  vertical: boolean;
+  vertical: boolean = true;
   /**
    * Variable: vertical
    *
    * Holds the <mxShape> for the horizontal guide.
    */
-  guideX: any;
+  guideX: any = true;
   /**
    * Variable: vertical
    *
@@ -55,7 +55,7 @@ export class mxGuide {
    *
    * Specifies if rounded coordinates should be used. Default is false.
    */
-  rounded: boolean;
+  rounded: boolean = false;
 
   /**
    * Function: setStates
