@@ -83,7 +83,7 @@ export class mxToolbar {
    * factoryMethod - Optional factory method for popup menu, eg.
    * function(menu, evt, cell) { menu.addItem('Hello, World!'); }
    */
-  addItem(title: string, icon: any, funct: () => any, pressedIcon: any, style: any, factoryMethod: any): any {
+  addItem(title: string, icon: any, funct: Function, pressedIcon: any, style: any, factoryMethod: any): any {
     const img = document.createElement((!!icon) ? 'img' : 'button');
     const initialClassName = style || ((!!factoryMethod) ? 'mxToolbarMode' : 'mxToolbarItem');
     img.className = initialClassName;
@@ -224,7 +224,7 @@ export class mxToolbar {
    * be selected at a time. The currently selected item is the default item
    * after a reset of the toolbar.
    */
-  addSwitchMode(title: string, icon: any, funct: () => any, pressedIcon: any, style: any): any {
+  addSwitchMode(title: string, icon: any, funct: Function, pressedIcon: any, style: any): any {
     const img = document.createElement('img');
     img.initialClassName = style || 'mxToolbarMode';
     img.className = img.initialClassName;
@@ -274,7 +274,7 @@ export class mxToolbar {
    * The function argument uses the following signature: funct(evt, cell) where
    * evt is the native mouse event and cell is the cell under the mouse.
    */
-  addMode(title: string, icon: any, funct: () => any, pressedIcon: any, style: any, toggle: any): any {
+  addMode(title: string, icon: any, funct: Function, pressedIcon: any, style: any, toggle: any): any {
     toggle = (!!toggle) ? toggle : true;
     const img = document.createElement((!!icon) ? 'img' : 'button');
     img.initialClassName = style || 'mxToolbarMode';
@@ -310,7 +310,7 @@ export class mxToolbar {
    * DOM node as selected. This function fires a select event with the given
    * function as a parameter.
    */
-  selectMode(domNode: any, funct: () => any): void {
+  selectMode(domNode: any, funct: Function): void {
     if (this.selectedMode != domNode) {
       if (!!this.selectedMode) {
         const tmp = this.selectedMode.altIcon;

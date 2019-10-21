@@ -1214,7 +1214,7 @@ export class mxEditor extends mxEventSource {
    * });
    * (end)
    */
-  addAction(actionname: any, funct: () => any): void {
+  addAction(actionname: any, funct: Function): void {
     this.actions[actionname] = funct;
   }
 

@@ -38,6 +38,7 @@
 import { mxGeometry } from '../model/mxGeometry';
 import { mxClient } from '../mxClient';
 import { mxEvent } from '../util/mxEvent';
+import { mxEventObject } from '../util/mxEventObject';
 import { mxToolbar } from '../util/mxToolbar';
 import { mxUtils } from '../util/mxUtils';
 import { mxEditor } from './mxEditor';
@@ -94,11 +95,11 @@ export class mxDefaultToolbar {
   init(container: HTMLElement): void {
     if (!!container) {
       this.toolbar = new mxToolbar(container);
-      this.toolbar.addListener(mxEvent.SELECT, (sender, evt) => {
+      this.toolbar.addListener(mxEvent.SELECT, (sender, evt: mxEventObject) => {
         const funct = evt.getProperty('function');
         if (!!funct) {
-          this.editor.insertFunction = () => {
-            funct.apply(this, arguments);
+          this.editor.insertFunction = (...args: any[]) => {
+            funct.apply(this, args);
             this.toolbar.resetMode();
           };
         } else {
@@ -229,7 +230,7 @@ export class mxDefaultToolbar {
    * first and only argument that is executed after the mode has been
    * selected.
    */
-  addMode(title: string, icon: any, mode: any, pressed: any, funct: () => any): any {
+  addMode(title: string, icon: any, mode: any, pressed: any, funct: Function): any {
     const clickHandler = mxUtils.bind(this, function () {
       this.editor.setMode(mode);
       if (!!funct) {

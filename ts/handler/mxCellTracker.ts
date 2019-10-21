@@ -74,7 +74,7 @@ import { mxUtils } from '../util/mxUtils';
 import { mxCellMarker } from './mxCellMarker';
 
 export class mxCellTracker extends mxCellMarker {
-  constructor(graph: mxGraph, color: string, funct: () => any) {
+  constructor(graph: mxGraph, color: string, funct: Function) {
     super(graph, color);
     this.graph.addMouseListener(this);
     if (!!funct) {

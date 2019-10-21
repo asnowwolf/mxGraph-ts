@@ -170,7 +170,7 @@ export class mxPopupMenu {
    * active - Optional boolean indicating if the menu should implement any event handling.
    * Default is true.
    */
-  addItem(title: string, image: any, funct: () => any, parent: any, iconCls: string, enabled: boolean, active: any): any {
+  addItem(title: string, image: any, funct: Function, parent: any, iconCls: string, enabled: boolean, active: any): any {
     parent = parent || this;
     this.itemCount++;
     if (parent.willAddSeparator) {

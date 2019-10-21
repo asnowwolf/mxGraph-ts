@@ -128,7 +128,7 @@ export class mxKeyHandler {
    * code - Integer that specifies the keycode.
    * funct - JavaScript function that takes the key event as an argument.
    */
-  bindKey(code: any, funct: () => any): void {
+  bindKey(code: any, funct: Function): void {
     this.normalKeys[code] = funct;
   }
 
@@ -143,7 +143,7 @@ export class mxKeyHandler {
    * code - Integer that specifies the keycode.
    * funct - JavaScript function that takes the key event as an argument.
    */
-  bindShiftKey(code: any, funct: () => any): void {
+  bindShiftKey(code: any, funct: Function): void {
     this.shiftKeys[code] = funct;
   }
 
@@ -158,7 +158,7 @@ export class mxKeyHandler {
    * code - Integer that specifies the keycode.
    * funct - JavaScript function that takes the key event as an argument.
    */
-  bindControlKey(code: any, funct: () => any): void {
+  bindControlKey(code: any, funct: Function): void {
     this.controlKeys[code] = funct;
   }
 
@@ -173,7 +173,7 @@ export class mxKeyHandler {
    * code - Integer that specifies the keycode.
    * funct - JavaScript function that takes the key event as an argument.
    */
-  bindControlShiftKey(code: any, funct: () => any): void {
+  bindControlShiftKey(code: any, funct: Function): void {
     this.controlShiftKeys[code] = funct;
   }
 

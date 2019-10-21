@@ -93,7 +93,7 @@ export class mxEventSource {
    *
    * The parameters of the listener are the sender and an <mxEventObject>.
    */
-  addListener(name: string, funct: () => any): void {
+  addListener(name: string, funct: Function): void {
     if (!this.eventListeners) {
       this.eventListeners = [];
     }
@@ -106,7 +106,7 @@ export class mxEventSource {
    *
    * Removes all occurrences of the given listener from <eventListeners>.
    */
-  removeListener(funct: () => any): void {
+  removeListener(funct: Function): void {
     if (!!this.eventListeners) {
       let i = 0;
       while (i < this.eventListeners.length) {
