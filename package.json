@@ -10,9 +10,9 @@
   },
   "author": "Zhicheng WANG<asnowwolf@gmail.com>",
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "@awesome-fe/jsdoc-to-ts": "0.0.4",
+    "ts-node": "^8.4.1",
     "tslint": "^5.20.0",
     "typescript": "^3.6.4"
   }
