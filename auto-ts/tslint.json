@@ -1,6 +1,7 @@
 {
   "rules": {
-    "no-js-class": true
+    "no-js-class": true,
+    "no-global-function-expression": true
   },
   "rulesDirectory": [
     "../config/rules"

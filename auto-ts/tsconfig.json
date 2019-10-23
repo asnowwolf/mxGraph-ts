@@ -20,6 +20,7 @@
     "lib": [
       "es2017",
       "dom",
+      "es2016.array.include",
       "esnext.array"
     ]
   },
