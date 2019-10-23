@@ -14,9 +14,8 @@ function walk(ctx: Lint.WalkContext): void {
       const statement = node as ts.VariableStatement;
       const decl = statement.declarationList.declarations[0];
       if (decl && decl.initializer && decl.initializer.kind === ts.SyntaxKind.FunctionExpression) {
-        const fn = decl.initializer as ts.FunctionExpression;
         const fix = [
-          new Lint.Replacement(node.getStart(), node.getEnd() - node.getStart(), toFunctionDeclaration(decl.name, fn)),
+          new Lint.Replacement(node.getStart(), node.getEnd() - node.getStart(), toFunctionDeclaration(decl)),
         ];
         ctx.addFailureAtNode(node, `ES5 class - ${decl.name.getText()}`, fix);
       }
