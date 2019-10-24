@@ -42,11 +42,11 @@ import {
 
 export class Rule extends Lint.Rules.AbstractRule {
   public apply(sourceFile: SourceFile): Lint.RuleFailure[] {
-    return this.applyWithFunction(sourceFile, walk);
+    return this.applyWithFunction(sourceFile, walkForClass);
   }
 }
 
-function walk(ctx: Lint.WalkContext): void {
+function walkForClass(ctx: Lint.WalkContext): void {
   forEachChild(ctx.sourceFile, (node) => {
     // 一旦碰到符合特征的函数表达式，则将其移除并改写为相应的 es6 形式
     // 一旦碰到符合特征的 .prototype.xxx = function 表达式，则将其添加到相应的 es6 类中作为方法

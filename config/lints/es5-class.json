@@ -1,0 +1,8 @@
+{
+  "extends": [
+    "./custom.json"
+  ],
+  "rules": {
+    "no-js-class": true
+  }
+}

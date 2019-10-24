@@ -1,8 +1,0 @@
-{
-  "rules": {
-    "no-js-class": true
-  },
-  "rulesDirectory": [
-    "../config/rules"
-  ]
-}

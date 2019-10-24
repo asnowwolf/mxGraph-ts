@@ -4,7 +4,9 @@ import {
   addSyntheticLeadingComment,
   BinaryExpression,
   CallExpression,
+  createCall,
   createSourceFile,
+  createSuper,
   EmitHint,
   ExpressionStatement,
   Node,
@@ -84,4 +86,8 @@ export function findEs5SuperCalls(statements: readonly Statement[]): CallExpress
       .map(it => it as CallExpression)
       .filter(it => superCallPattern.test(it.expression.getText()))
       .filter(it => it.arguments[0].kind === SyntaxKind.ThisKeyword);
+}
+
+export function createTsSuperCall(fn: CallExpression): CallExpression {
+  return createCall(createSuper(), [], fn.arguments.slice(1));
 }
