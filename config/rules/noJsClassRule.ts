@@ -1,106 +1,49 @@
 import * as Lint from 'tslint';
 import {
-  addSyntheticLeadingComment,
   BinaryExpression,
   BindingName,
+  CallExpression,
+  ClassElement,
   createClassDeclaration,
   createConstructor,
+  createExpressionWithTypeArguments,
+  createHeritageClause,
+  createIdentifier,
   createMethod,
   createModifiersFromModifierFlags,
   createProperty,
-  createSourceFile,
   Expression,
   ExpressionStatement,
   forEachChild,
   FunctionDeclaration,
   FunctionExpression,
+  HeritageClause,
   Identifier,
   MethodDeclaration,
   ModifierFlags,
-  Node,
+  NewExpression,
   PropertyAccessExpression,
   PropertyDeclaration,
-  ScriptTarget,
   SourceFile,
+  Statement,
   SyntaxKind,
   VariableStatement,
 } from 'typescript';
-import { isGlobalMember, isStaticMember, toText } from './utils/ts-utils';
+import {
+  cloneNode,
+  copyJsDoc,
+  findEs5SuperCalls,
+  getMembers,
+  isStaticMember,
+  removeNode,
+  superCallPattern,
+  toText,
+} from './utils/ts-utils';
 
 export class Rule extends Lint.Rules.AbstractRule {
   public apply(sourceFile: SourceFile): Lint.RuleFailure[] {
     return this.applyWithFunction(sourceFile, walk);
   }
-}
-
-function copyJsDoc(from: Node, to: Node): void {
-  const comments = (from as any).jsDoc || [];
-  comments.forEach(comment => addSyntheticLeadingComment(to, SyntaxKind.MultiLineCommentTrivia, `*\n${comment.comment}\n`, true));
-}
-
-function parseText<T extends Node>(fullText: string): T {
-  const sourceFile = createSourceFile('anonymous.js', fullText, ScriptTarget.ES2015);
-  const statement = sourceFile.statements[0];
-  if (statement.kind === SyntaxKind.ExpressionStatement) {
-    return (statement as ExpressionStatement).expression as any as T;
-  } else {
-    return statement as any as T;
-  }
-}
-
-function cloneNode<T extends Node>(body?: T): T {
-  return parseText<T>(body!.getFullText());
-}
-
-function functionToMethod(expression: BinaryExpression, className: string): MethodDeclaration | undefined {
-  const left = expression.left as PropertyAccessExpression;
-  const right = expression.right as FunctionExpression;
-  if (isGlobalMember(left, className)) {
-    return;
-  }
-
-  const modifierFlags = isStaticMember(left, className) ? ModifierFlags.Static : ModifierFlags.None;
-  const method = createMethod(undefined, createModifiersFromModifierFlags(modifierFlags), undefined, left.name.text, undefined, undefined, right.parameters, undefined, cloneNode(right.body));
-  copyJsDoc(expression.parent, method);
-  return method;
-}
-
-function initializerToProperty(expression: BinaryExpression, className: string): PropertyDeclaration | undefined {
-  const left = expression.left as PropertyAccessExpression;
-  const right = expression.right as Expression;
-  if (isGlobalMember(left, className)) {
-    return;
-  }
-  const modifierFlags = isStaticMember(left, className) ? ModifierFlags.Static : ModifierFlags.None;
-  const property = createProperty(undefined, createModifiersFromModifierFlags(modifierFlags), left.name.text, undefined, undefined, cloneNode(right));
-  copyJsDoc(expression.parent, property);
-  return property;
-}
-
-function generateClass(node: FunctionDeclaration | FunctionExpression, name: string): string {
-  const members = node.getSourceFile().statements.map(statement => {
-    if (statement.kind === SyntaxKind.ExpressionStatement) {
-      const expression = (statement as ExpressionStatement).expression;
-      if (expression.kind === SyntaxKind.BinaryExpression) {
-        const { left, right } = expression as BinaryExpression;
-        if (left.kind === SyntaxKind.PropertyAccessExpression) {
-          if (right.kind === SyntaxKind.FunctionExpression) {
-            return functionToMethod(expression as BinaryExpression, name);
-          } else {
-            return initializerToProperty(expression as BinaryExpression, name);
-          }
-        }
-      }
-    }
-  }).filter(it => !!it).map(it => it!);
-  const constructor = createConstructor(undefined, undefined, node.parameters, cloneNode(node.body));
-  copyJsDoc(node, constructor);
-  const cls = createClassDeclaration(undefined, createModifiersFromModifierFlags(ModifierFlags.Export), name, undefined, undefined, [constructor, ...members]);
-  return toText(cls);
-}
-
-function isClassName(name?: Identifier | BindingName): boolean {
-  return !!name && /^(mx)?[A-Z]\w+$/.test(name.getText());
 }
 
 function walk(ctx: Lint.WalkContext): void {
@@ -117,7 +60,7 @@ function walk(ctx: Lint.WalkContext): void {
           if (isClassName(decl.name)) {
             const fn = decl.initializer as FunctionExpression;
             const fix = [
-              new Lint.Replacement(node.getStart(), node.getEnd() - node.getStart(), generateClass(fn, decl.name.getText())),
+              new Lint.Replacement(node.getStart(), node.getWidth(), generateClass(fn, decl.name.getText(), ctx)),
             ];
             ctx.addFailureAtNode(node, `ES5 class - ${decl.name.getText()}`, fix);
           }
@@ -129,38 +72,129 @@ function walk(ctx: Lint.WalkContext): void {
           return;
         }
         const fix = [
-          new Lint.Replacement(node.getStart(), node.getEnd() - node.getStart(), generateClass(fn, fn.name.text)),
+          new Lint.Replacement(node.getStart(), node.getWidth(), generateClass(fn, fn.name.text, ctx)),
         ];
         if (isClassName(fn.name)) {
           ctx.addFailureAtNode(node, `ES5 class - ${fn.name.getText()}`, fix);
-        }
-        break;
-      case SyntaxKind.ExpressionStatement:
-        const statement = node as ExpressionStatement;
-        if (statement.expression.kind) {
-          const assign = statement.expression as BinaryExpression;
-          if (!assign.right) {
-            return;
-          }
-          if (assign.left.kind === SyntaxKind.PropertyAccessExpression) {
-            const left = assign.left as PropertyAccessExpression;
-            if (!left.name) {
-              return;
-            }
-            const removeIt = [
-              new Lint.Replacement(node.getFullStart(), node.getFullWidth(), ''),
-            ];
-
-            if (assign.right.kind === SyntaxKind.FunctionDeclaration || assign.right.kind === SyntaxKind.FunctionExpression) {
-              ctx.addFailureAtNode(assign, `ES5 method - ${left.name.text}`, removeIt);
-            } else {
-              ctx.addFailureAtNode(assign, `ES5 property - ${left.name.text}`, removeIt);
-            }
-          }
         }
         break;
       default:
         // console.debug('Unprocessed node kind: ', node.kind);
     }
   });
+}
+
+function generateClass(node: FunctionDeclaration | FunctionExpression, className: string, ctx: Lint.WalkContext): string {
+  const statements = node.getSourceFile().statements;
+  const members = generateMembers(statements, className);
+  const constructor = createConstructor(undefined, undefined, node.parameters, cloneNode(node.body));
+  copyJsDoc(node, constructor);
+  const cls = createClassDeclaration(undefined, createModifiersFromModifierFlags(ModifierFlags.Export), className, undefined, getHeritageClauses(node), [constructor, ...members]);
+  [
+    ...getConstructorAssignments(statements, className),
+    ...getPrototypeAssignments(statements, className),
+    ...getMembers(statements, className),
+    ...findExtendCalls(statements, className),
+  ].forEach(it => ctx.addFailureAtNode(it, 'ES5 member removed', [removeNode(it)]));
+  return toText(cls);
+}
+
+function generateMember(it: BinaryExpression, className: string): ClassElement {
+  if (it.right.kind === SyntaxKind.FunctionExpression) {
+    return functionToMethod(it, className);
+  } else {
+    return assignmentToProperty(it, className);
+  }
+}
+
+function generateMembers(statements: readonly Statement[], className: string): ClassElement[] {
+  return getMembers(statements, className)
+      .filter(it => !new RegExp(`^${className}\.prototype(\.constructor)?$`).test(it.left.getText()))
+      .map(it => generateMember(it, className));
+}
+
+function functionToMethod(expression: BinaryExpression, className: string): MethodDeclaration {
+  const left = expression.left as PropertyAccessExpression;
+  const right = expression.right as FunctionExpression;
+  const modifierFlags = isStaticMember(left, className) ? ModifierFlags.Static : ModifierFlags.None;
+  const method = createMethod(undefined, createModifiersFromModifierFlags(modifierFlags), undefined, left.name.text, undefined, undefined, right.parameters, undefined, cloneNode(right.body));
+  copyJsDoc(expression.parent, method);
+  return method;
+}
+
+function assignmentToProperty(expression: BinaryExpression, className: string): PropertyDeclaration {
+  const left = expression.left as PropertyAccessExpression;
+  const right = expression.right as Expression;
+  const modifierFlags = isStaticMember(left, className) ? ModifierFlags.Static : ModifierFlags.None;
+  const property = createProperty(undefined, createModifiersFromModifierFlags(modifierFlags), left.name.text, undefined, undefined, cloneNode(right));
+  copyJsDoc(expression.parent, property);
+  return property;
+}
+
+function findExtendCalls(statements: readonly Statement[], className: string): CallExpression[] {
+  return statements
+      .filter(it => it.kind === SyntaxKind.ExpressionStatement)
+      .map(it => it as ExpressionStatement)
+      .filter(it => it.expression.kind === SyntaxKind.CallExpression)
+      .map(it => it.expression as CallExpression)
+      .filter(it => it.expression.getText() === 'mxUtils.extend')
+      .filter(it => it.arguments.length === 2)
+      .filter(it => (it.arguments[0]).getText() === className);
+}
+
+function findByExtend(statements: readonly Statement[], className: string): string | undefined {
+  const calls = findExtendCalls(statements, className);
+  if (!calls.length) {
+    return;
+  }
+  const lastCall = calls[calls.length - 1];
+  return lastCall.arguments[1].getText();
+}
+
+function findNameBySuperCall(statements: readonly Statement[]): string | undefined {
+  const calls = findEs5SuperCalls(statements)
+      .map(it => it.expression.getText().match(superCallPattern))
+      .filter(it => !!it)
+      .map(it => it![1]);
+  return calls[0];
+}
+
+function getPrototypeAssignments(statements: readonly Statement[], className: string): BinaryExpression[] {
+  return getMembers(statements, className)
+      .filter(it => (it.left as PropertyAccessExpression).getText() === `${className}.prototype`)
+      .filter(it => it.right.kind === SyntaxKind.NewExpression);
+}
+
+function getConstructorAssignments(statements: readonly Statement[], className: string) {
+  return getMembers(statements, className)
+      .filter(it => (it.left as PropertyAccessExpression).getText() === `${className}.prototype.constructor`);
+}
+
+function findPrototype(statements: readonly Statement[], className: string): string | undefined {
+  const assignments = getPrototypeAssignments(statements, className);
+  if (assignments.length) {
+    const right = assignments[assignments.length - 1].right;
+    if (right.kind === SyntaxKind.NewExpression) {
+      return (right as NewExpression).expression.getText();
+    }
+  }
+}
+
+function getHeritageClauses(node: FunctionDeclaration | FunctionExpression): HeritageClause[] | undefined {
+  if (!node.name || !node.body) {
+    return;
+  }
+  const className = node.name.text;
+  const sourceFile = node.getSourceFile();
+  const name = findByExtend(sourceFile.statements, className) ||
+      findPrototype(sourceFile.statements, className) ||
+      findNameBySuperCall(node.body.statements);
+  if (!name) {
+    return;
+  }
+  return [createHeritageClause(SyntaxKind.ExtendsKeyword, [createExpressionWithTypeArguments(undefined, createIdentifier(name))])];
+}
+
+function isClassName(name?: Identifier | BindingName): boolean {
+  return !!name && /^(mx)?[A-Z]\w+$/.test(name.getText());
 }
