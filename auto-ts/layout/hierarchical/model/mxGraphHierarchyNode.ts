@@ -35,7 +35,7 @@ export class mxGraphHierarchyNode extends mxGraphAbstractHierarchyCell {
      cell - the real graph cell this node represents
      */
     constructor(cell) {
-        mxGraphAbstractHierarchyCell.apply(this, arguments);
+        super(...Array.from(arguments));
         this.cell = cell;
         this.id = mxObjectIdentity.get(cell);
         this.connectsAsTarget = [];

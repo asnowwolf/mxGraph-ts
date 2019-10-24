@@ -149,7 +149,7 @@ export class mxCellTracker extends mxCellMarker {
    <mxCellMarker.getCell>.
    */
   constructor(graph, color, funct) {
-    mxCellMarker.call(this, graph, color);
+    super(graph, color);
     this.graph.addMouseListener(this);
     if (funct != null) {
       this.getCell = funct;

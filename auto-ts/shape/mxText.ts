@@ -117,7 +117,7 @@ export class mxText extends mxShape {
    overflow - Value of the overflow style. Default is 'visible'.
    */
   constructor(value, bounds, align, valign, color, family, size, fontStyle, spacing, spacingTop, spacingRight, spacingBottom, spacingLeft, horizontal, background, border, wrap, clipped, overflow, labelPadding, textDirection) {
-    mxShape.call(this);
+    super();
     this.value = value;
     this.bounds = bounds;
     this.color = (color != null) ? color : 'black';

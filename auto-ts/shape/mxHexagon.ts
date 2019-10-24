@@ -27,7 +27,7 @@ export class mxHexagon extends mxActor {
      Constructs a new hexagon shape.
      */
     constructor() {
-        mxActor.call(this);
+        super();
     }
 
     /**

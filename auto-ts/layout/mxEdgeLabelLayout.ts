@@ -55,7 +55,7 @@ export class mxEdgeLabelLayout extends mxGraphLayout {
      graph - <mxGraph> that contains the cells.
      */
     constructor(graph, radius) {
-        mxGraphLayout.call(this, graph);
+        super(graph);
     }
 
     /**

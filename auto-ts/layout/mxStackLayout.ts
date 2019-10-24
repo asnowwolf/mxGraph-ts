@@ -47,7 +47,7 @@ export class mxStackLayout extends mxGraphLayout {
      spacing, orientation and offset.
      */
     constructor(graph, horizontal, spacing, x0, y0, border) {
-        mxGraphLayout.call(this, graph);
+        super(graph);
         this.horizontal = (horizontal != null) ? horizontal : true;
         this.spacing = (spacing != null) ? spacing : 0;
         this.x0 = (x0 != null) ? x0 : 0;

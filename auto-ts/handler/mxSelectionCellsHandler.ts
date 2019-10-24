@@ -53,7 +53,7 @@ export class mxSelectionCellsHandler extends mxEventSource {
      graph - Reference to the enclosing <mxGraph>.
      */
     constructor(graph) {
-        mxEventSource.call(this);
+        super();
         this.graph = graph;
         this.handlers = new mxDictionary();
         this.graph.addMouseListener(this);

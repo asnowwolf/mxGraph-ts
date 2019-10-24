@@ -45,7 +45,7 @@ export class mxFastOrganicLayout extends mxGraphLayout {
      Constructs a new fast organic layout for the specified graph.
      */
     constructor(graph) {
-        mxGraphLayout.call(this, graph);
+        super(graph);
     }
 
     /**

@@ -47,7 +47,7 @@ export class mxCompactTreeLayout extends mxGraphLayout {
    and orientation.
    */
   constructor(graph, horizontal, invert) {
-    mxGraphLayout.call(this, graph);
+    super(graph);
     this.horizontal = (horizontal != null) ? horizontal : true;
     this.invert = (invert != null) ? invert : false;
   }

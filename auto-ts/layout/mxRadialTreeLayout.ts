@@ -45,7 +45,7 @@ export class mxRadialTreeLayout extends mxCompactTreeLayout {
      Constructs a new radial tree layout for the specified graph
      */
     constructor(graph) {
-        mxCompactTreeLayout.call(this, graph, false);
+        super(graph, false);
     }
 
     /**

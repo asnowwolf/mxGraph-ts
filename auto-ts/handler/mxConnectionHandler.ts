@@ -321,7 +321,7 @@ export class mxConnectionHandler extends mxEventSource {
    the <mxCell> that represents the new edge.
    */
   constructor(graph, factoryMethod) {
-    mxEventSource.call(this);
+    super();
     if (graph != null) {
       this.graph = graph;
       this.factoryMethod = factoryMethod;

@@ -53,7 +53,7 @@ export class mxPartitionLayout extends mxGraphLayout {
      spacing, orientation and offset.
      */
     constructor(graph, horizontal, spacing, border) {
-        mxGraphLayout.call(this, graph);
+        super(graph);
         this.horizontal = (horizontal != null) ? horizontal : true;
         this.spacing = spacing || 0;
         this.border = border || 0;

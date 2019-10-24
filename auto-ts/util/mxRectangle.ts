@@ -31,7 +31,7 @@ export class mxRectangle extends mxPoint {
    are given then the respective default values are used.
    */
   constructor(x, y, width, height) {
-    mxPoint.call(this, x, y);
+    super(x, y);
     this.width = (width != null) ? width : 0;
     this.height = (height != null) ? height : 0;
   }

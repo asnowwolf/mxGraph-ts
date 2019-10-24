@@ -49,7 +49,7 @@ export class mxLabel extends mxRectangleShape {
      1. This is stored in <strokewidth>.
      */
     constructor(bounds, fill, stroke, strokewidth) {
-        mxRectangleShape.call(this, bounds, fill, stroke, strokewidth);
+        super(bounds, fill, stroke, strokewidth);
     }
 
     /**

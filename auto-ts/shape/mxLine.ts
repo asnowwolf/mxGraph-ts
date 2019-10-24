@@ -49,7 +49,7 @@ export class mxLine extends mxShape {
    1. This is stored in <strokewidth>.
    */
   constructor(bounds, stroke, strokewidth) {
-    mxShape.call(this);
+    super();
     this.bounds = bounds;
     this.stroke = stroke;
     this.strokewidth = (strokewidth != null) ? strokewidth : 1;

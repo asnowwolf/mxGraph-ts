@@ -51,7 +51,7 @@ export class mxImageShape extends mxRectangleShape {
      0. This is stored in <strokewidth>.
      */
     constructor(bounds, image, fill, stroke, strokewidth) {
-        mxShape.call(this);
+        super();
         this.bounds = bounds;
         this.image = image;
         this.fill = fill;

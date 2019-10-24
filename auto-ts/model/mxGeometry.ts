@@ -145,7 +145,7 @@ export class mxGeometry extends mxRectangle {
    the control points of an edge.
    */
   constructor(x, y, width, height) {
-    mxRectangle.call(this, x, y, width, height);
+    super(x, y, width, height);
   }
 
   /**

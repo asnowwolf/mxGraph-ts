@@ -65,7 +65,7 @@ export class mxArrow extends mxShape {
      is <mxConstants.ARROW_SIZE>. This is stored in <endSize>.
      */
     constructor(points, fill, stroke, strokewidth, arrowWidth, spacing, endSize) {
-        mxShape.call(this);
+        super();
         this.points = points;
         this.fill = fill;
         this.stroke = stroke;

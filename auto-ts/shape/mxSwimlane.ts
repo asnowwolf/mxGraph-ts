@@ -59,7 +59,7 @@ export class mxSwimlane extends mxShape {
    1. This is stored in <strokewidth>.
    */
   constructor(bounds, fill, stroke, strokewidth) {
-    mxShape.call(this);
+    super();
     this.bounds = bounds;
     this.fill = fill;
     this.stroke = stroke;

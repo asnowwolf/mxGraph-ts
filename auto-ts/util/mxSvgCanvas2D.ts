@@ -113,7 +113,7 @@ export class mxSvgCanvas2D extends mxAbstractCanvas2D {
    stroke-miterlimit globally. Default is false.
    */
   constructor(root, styleEnabled) {
-    mxAbstractCanvas2D.call(this);
+    super();
     this.root = root;
     this.gradients = [];
     this.defs = null;

@@ -9,7 +9,7 @@ export class mxEdgeSegmentHandler extends mxElbowEdgeHandler {
      Copyright (c) 2006-2015, Gaudenz Alder
      */
     constructor(state) {
-        mxEdgeHandler.call(this, state);
+        super(state);
     }
 
     /**

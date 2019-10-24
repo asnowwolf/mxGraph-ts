@@ -49,7 +49,7 @@ export class mxPolyline extends mxShape {
      1. This is stored in <strokewidth>.
      */
     constructor(points, stroke, strokewidth) {
-        mxShape.call(this);
+        super();
         this.points = points;
         this.stroke = stroke;
         this.strokewidth = (strokewidth != null) ? strokewidth : 1;

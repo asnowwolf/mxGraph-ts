@@ -89,7 +89,7 @@ export class mxCellMarker extends mxEventSource {
      <mxConstants.DEFAULT_HOTSPOT>.
      */
     constructor(graph, validColor, invalidColor, hotspot) {
-        mxEventSource.call(this);
+      super();
         if (graph != null) {
             this.graph = graph;
             this.validColor = (validColor != null) ? validColor : mxConstants.DEFAULT_VALID_COLOR;

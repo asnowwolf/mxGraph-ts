@@ -43,7 +43,7 @@ export class mxHierarchicalLayout extends mxGraphLayout {
      deterministic. Default is true.
      */
     constructor(graph, orientation, deterministic) {
-        mxGraphLayout.call(this, graph);
+        super(graph);
         this.orientation = (orientation != null) ? orientation : mxConstants.DIRECTION_NORTH;
         this.deterministic = (deterministic != null) ? deterministic : true;
     }

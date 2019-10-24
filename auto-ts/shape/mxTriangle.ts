@@ -27,7 +27,7 @@ export class mxTriangle extends mxActor {
    Constructs a new triangle shape.
    */
   constructor() {
-    mxActor.call(this);
+    super();
   }
 
   /**

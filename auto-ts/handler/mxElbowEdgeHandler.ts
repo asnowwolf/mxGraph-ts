@@ -41,7 +41,7 @@ export class mxElbowEdgeHandler extends mxEdgeHandler {
      state - <mxCellState> of the cell to be modified.
      */
     constructor(state) {
-        mxEdgeHandler.call(this, state);
+        super(state);
     }
 
     /**

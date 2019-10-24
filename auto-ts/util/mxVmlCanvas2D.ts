@@ -36,7 +36,7 @@
  */
 export class mxVmlCanvas2D {
   constructor(root) {
-    mxAbstractCanvas2D.call(this);
+    super();
     this.root = root;
   }
 

@@ -35,7 +35,7 @@ export class mxGraphHierarchyEdge extends mxGraphAbstractHierarchyCell {
      edges - a list of real graph edges this abstraction represents
      */
     constructor(edges) {
-        mxGraphAbstractHierarchyCell.apply(this, arguments);
+        super(...Array.from(arguments));
         this.edges = edges;
         this.ids = [];
         for (var i = 0; i < edges.length; i++) {

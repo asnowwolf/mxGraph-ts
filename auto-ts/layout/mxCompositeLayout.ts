@@ -65,7 +65,7 @@ export class mxCompositeLayout extends mxGraphLayout {
      the first layout of the above array is used to handle moves.
      */
     constructor(graph, layouts, master) {
-        mxGraphLayout.call(this, graph);
+        super(graph);
         this.layouts = layouts;
         this.master = master;
     }

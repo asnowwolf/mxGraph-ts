@@ -61,7 +61,7 @@ export class mxXmlCanvas2D extends mxAbstractCanvas2D {
    Constructs a new abstract canvas.
    */
   constructor(root) {
-    mxAbstractCanvas2D.call(this);
+    super();
     this.root = root;
     this.writeDefaults();
   }

@@ -82,7 +82,7 @@ export class mxMorphing extends mxAnimation {
    delay - Optional delay between the animation steps. Passed to <mxAnimation>.
    */
   constructor(graph, steps, ease, delay) {
-    mxAnimation.call(this, delay);
+    super(delay);
     this.graph = graph;
     this.steps = (steps != null) ? steps : 6;
     this.ease = (ease != null) ? ease : 1.5;

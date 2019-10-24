@@ -53,7 +53,7 @@ export class mxConnector extends mxPolyline {
    1. This is stored in <strokewidth>.
    */
   constructor(points, stroke, strokewidth) {
-    mxPolyline.call(this, points, stroke, strokewidth);
+    super(points, stroke, strokewidth);
   }
 
   /**

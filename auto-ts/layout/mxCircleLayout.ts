@@ -55,7 +55,7 @@ export class mxCircleLayout extends mxGraphLayout {
      radius - Optional radius as an int. Default is 100.
      */
     constructor(graph, radius) {
-        mxGraphLayout.call(this, graph);
+        super(graph);
         this.radius = (radius != null) ? radius : 100;
     }
 
