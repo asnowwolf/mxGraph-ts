@@ -30,28 +30,19 @@
  * variable - The fieldname for the change data.
  * @class
  */
-var mxGenericChangeCodec = function (obj, variable) {
-  var codec = new mxObjectCodec(obj, ['model', 'previous'], ['cell']);
-
-  /**
-   * Function: afterDecode
-   *
-   * Restores the state by assigning the previous value.
-   */
-  codec.afterDecode = function (dec, node, obj) {
-    // Allows forward references in sessions. This is a workaround
-    // for the sequence of edits in mxGraph.moveCells and cellsAdded.
-    if (mxUtils.isNode(obj.cell)) {
-      obj.cell = dec.decodeCell(obj.cell, false);
-    }
-
-    obj.previous = obj[variable];
-
-    return obj;
-  };
-
-  return codec;
-};
+export class mxGenericChangeCodec {
+  constructor(obj, variable) {
+    var codec = new mxObjectCodec(obj, ['model', 'previous'], ['cell']);
+    codec.afterDecode = function (dec, node, obj) {
+      if (mxUtils.isNode(obj.cell)) {
+        obj.cell = dec.decodeCell(obj.cell, false);
+      }
+      obj.previous = obj[variable];
+      return obj;
+    };
+    return codec;
+  }
+}
 
 // 可以用 codec 编码后传输给协作者
 // Registers the codecs
