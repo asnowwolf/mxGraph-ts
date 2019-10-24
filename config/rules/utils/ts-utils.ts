@@ -6,8 +6,10 @@ import {
   CallExpression,
   createCall,
   createSourceFile,
+  createSpread,
   createSuper,
   EmitHint,
+  Expression,
   ExpressionStatement,
   Node,
   PropertyAccessExpression,
@@ -88,6 +90,15 @@ export function findEs5SuperCalls(statements: readonly Statement[]): CallExpress
       .filter(it => it.arguments[0].kind === SyntaxKind.ThisKeyword);
 }
 
+const expArrayFromArguments = parseScript<Expression>('Array.from(arguments)');
+
 export function createTsSuperCall(fn: CallExpression): CallExpression {
-  return createCall(createSuper(), [], fn.arguments.slice(1));
+  const restArgs = fn.arguments.slice(1).map(it => {
+    if (it.getText() === 'arguments') {
+      return createSpread(expArrayFromArguments);
+    } else {
+      return it;
+    }
+  });
+  return createCall(createSuper(), [], restArgs);
 }
