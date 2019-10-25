@@ -1,5 +1,6 @@
 import * as Lint from 'tslint';
 import * as ts from 'typescript';
+import { isFunctionExpression, isVariableStatement } from 'typescript';
 import { toFunctionDeclaration } from './utils/ts-utils';
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -10,10 +11,9 @@ export class Rule extends Lint.Rules.AbstractRule {
 
 function walk(ctx: Lint.WalkContext): void {
   ts.forEachChild(ctx.sourceFile, (node) => {
-    if (node.kind === ts.SyntaxKind.VariableStatement) {
-      const statement = node as ts.VariableStatement;
-      const decl = statement.declarationList.declarations[0];
-      if (decl && decl.initializer && decl.initializer.kind === ts.SyntaxKind.FunctionExpression) {
+    if (isVariableStatement(node)) {
+      const decl = node.declarationList.declarations[0];
+      if (decl && isFunctionExpression(decl.initializer)) {
         const fix = [
           new Lint.Replacement(node.getStart(), node.getEnd() - node.getStart(), toFunctionDeclaration(decl)),
         ];

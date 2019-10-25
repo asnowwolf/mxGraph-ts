@@ -19,15 +19,19 @@ import {
   FunctionExpression,
   HeritageClause,
   Identifier,
+  isCallExpression,
+  isExpressionStatement,
+  isFunctionDeclaration,
+  isFunctionExpression,
+  isNewExpression,
+  isVariableStatement,
   MethodDeclaration,
   ModifierFlags,
-  NewExpression,
   PropertyAccessExpression,
   PropertyDeclaration,
   SourceFile,
   Statement,
   SyntaxKind,
-  VariableStatement,
 } from 'typescript';
 import {
   cloneNode,
@@ -52,34 +56,28 @@ function walkForClass(ctx: Lint.WalkContext): void {
     // 一旦碰到符合特征的 .prototype.xxx = function 表达式，则将其添加到相应的 es6 类中作为方法
     // 一旦碰到符合特征的 .xxx = function 表达式，则将其添加到相应的 es6 类中作为静态方法
     // 找到所有对未声明的 this.xxx 属性的赋值，则将其作为属性添加到相应的 es6 类中
-    switch (node.kind) {
-      case SyntaxKind.VariableStatement:
-        const n = node as VariableStatement;
-        const decl = n.declarationList.declarations[0];
-        if (decl && decl.initializer && decl.initializer.kind === SyntaxKind.FunctionExpression) {
-          if (isClassName(decl.name)) {
-            const fn = decl.initializer as FunctionExpression;
-            const fix = [
-              new Lint.Replacement(node.getStart(), node.getWidth(), generateClass(fn, decl.name.getText(), ctx)),
-            ];
-            ctx.addFailureAtNode(node, `ES5 class - ${decl.name.getText()}`, fix);
-          }
+    if (isVariableStatement(node)) {
+      const decl = node.declarationList.declarations[0];
+      if (decl && decl.initializer && isFunctionExpression(decl.initializer)) {
+        if (isClassName(decl.name)) {
+          const fix = [
+            new Lint.Replacement(node.getStart(), node.getWidth(), generateClass(decl.initializer, decl.name.getText(), ctx)),
+          ];
+          ctx.addFailureAtNode(node, `ES5 class - ${decl.name.getText()}`, fix);
         }
-        break;
-      case SyntaxKind.FunctionDeclaration:
-        const fn = (node as FunctionDeclaration);
-        if (!fn.name) {
-          return;
-        }
-        const fix = [
-          new Lint.Replacement(node.getStart(), node.getWidth(), generateClass(fn, fn.name.text, ctx)),
-        ];
-        if (isClassName(fn.name)) {
-          ctx.addFailureAtNode(node, `ES5 class - ${fn.name.getText()}`, fix);
-        }
-        break;
-      default:
-        // console.debug('Unprocessed node kind: ', node.kind);
+      }
+    } else if (isFunctionDeclaration(node)) {
+      if (!node.name) {
+        return;
+      }
+      const fix = [
+        new Lint.Replacement(node.getStart(), node.getWidth(), generateClass(node, node.name.text, ctx)),
+      ];
+      if (isClassName(node.name)) {
+        ctx.addFailureAtNode(node, `ES5 class - ${node.name.getText()}`, fix);
+      }
+    } else {
+      // console.debug('Unprocessed node kind: ', node.kind);
     }
   });
 }
@@ -100,7 +98,7 @@ function generateClass(node: FunctionDeclaration | FunctionExpression, className
 }
 
 function generateMember(it: BinaryExpression, className: string): ClassElement {
-  if (it.right.kind === SyntaxKind.FunctionExpression) {
+  if (isFunctionExpression(it.right)) {
     return functionToMethod(it, className);
   } else {
     return assignmentToProperty(it, className);
@@ -133,9 +131,9 @@ function assignmentToProperty(expression: BinaryExpression, className: string): 
 
 function findExtendCalls(statements: readonly Statement[], className: string): CallExpression[] {
   return statements
-      .filter(it => it.kind === SyntaxKind.ExpressionStatement)
+      .filter(it => isExpressionStatement(it))
       .map(it => it as ExpressionStatement)
-      .filter(it => it.expression.kind === SyntaxKind.CallExpression)
+      .filter(it => isCallExpression(it.expression))
       .map(it => it.expression as CallExpression)
       .filter(it => it.expression.getText() === 'mxUtils.extend')
       .filter(it => it.arguments.length === 2)
@@ -162,7 +160,7 @@ function findNameBySuperCall(statements: readonly Statement[]): string | undefin
 function getPrototypeAssignments(statements: readonly Statement[], className: string): BinaryExpression[] {
   return getMembers(statements, className)
       .filter(it => (it.left as PropertyAccessExpression).getText() === `${className}.prototype`)
-      .filter(it => it.right.kind === SyntaxKind.NewExpression);
+      .filter(it => isNewExpression(it.right));
 }
 
 function getConstructorAssignments(statements: readonly Statement[], className: string) {
@@ -174,8 +172,8 @@ function findPrototype(statements: readonly Statement[], className: string): str
   const assignments = getPrototypeAssignments(statements, className);
   if (assignments.length) {
     const right = assignments[assignments.length - 1].right;
-    if (right.kind === SyntaxKind.NewExpression) {
-      return (right as NewExpression).expression.getText();
+    if (isNewExpression(right)) {
+      return right.expression.getText();
     }
   }
 }

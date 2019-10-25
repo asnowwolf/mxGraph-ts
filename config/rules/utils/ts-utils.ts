@@ -11,6 +11,10 @@ import {
   EmitHint,
   Expression,
   ExpressionStatement,
+  isBinaryExpression,
+  isCallExpression,
+  isExpressionStatement,
+  isPropertyAccessExpression,
   Node,
   PropertyAccessExpression,
   ScriptTarget,
@@ -50,8 +54,8 @@ export function copyJsDoc(from: Node, to: Node): void {
 export function parseScript<T extends Node>(script: string): T {
   const sourceFile = createSourceFile('anonymous.js', script, ScriptTarget.ES2015);
   const statement = sourceFile.statements[0];
-  if (statement.kind === SyntaxKind.ExpressionStatement) {
-    return (statement as ExpressionStatement).expression as any as T;
+  if (isExpressionStatement(statement)) {
+    return statement.expression as any as T;
   } else {
     return statement as any as T;
   }
@@ -67,11 +71,11 @@ export function removeNode(node: Node): Lint.Replacement {
 
 export function getMembers(statements: readonly Statement[], className: string): BinaryExpression[] {
   return statements
-      .filter(it => it.kind === SyntaxKind.ExpressionStatement)
+      .filter(it => isExpressionStatement(it))
       .map(it => (it as ExpressionStatement).expression)
-      .filter(it => it.kind === SyntaxKind.BinaryExpression)
+      .filter(it => isBinaryExpression(it))
       .map(it => it as BinaryExpression)
-      .filter(it => it.left.kind === SyntaxKind.PropertyAccessExpression)
+      .filter(it => isPropertyAccessExpression(it.left))
       .filter(it => !isGlobalMember(it.left as PropertyAccessExpression, className))
       .filter(it => !!it)
       .map(it => it!);
@@ -81,10 +85,10 @@ export const superCallPattern = /^(\w+)\.(call|apply)$/;
 
 export function findEs5SuperCalls(statements: readonly Statement[]): CallExpression[] {
   return statements
-      .filter(it => it.kind === SyntaxKind.ExpressionStatement)
+      .filter(it => isExpressionStatement(it))
       .map(it => it as ExpressionStatement)
       .map(it => it.expression)
-      .filter(it => it.kind === SyntaxKind.CallExpression)
+      .filter(it => isCallExpression(it))
       .map(it => it as CallExpression)
       .filter(it => superCallPattern.test(it.expression.getText()))
       .filter(it => it.arguments[0].kind === SyntaxKind.ThisKeyword);
