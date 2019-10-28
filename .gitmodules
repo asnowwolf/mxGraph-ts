@@ -1,0 +1,6 @@
+[submodule "dts/mxgraph-types"]
+	path = dts/mxgraph-types
+	url = git@github.com:asnowwolf/mxgraph-types.git
+[submodule "dts/mxGraph-typescript-types"]
+	path = dts/mxGraph-typescript-types
+	url = git@github.com:asnowwolf/mxGraph-typescript-types.git
