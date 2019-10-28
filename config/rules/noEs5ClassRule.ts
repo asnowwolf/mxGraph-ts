@@ -2,7 +2,6 @@ import * as Lint from 'tslint';
 import {
   BinaryExpression,
   BindingName,
-  CallExpression,
   ClassElement,
   createClassDeclaration,
   createConstructor,
@@ -13,14 +12,12 @@ import {
   createModifiersFromModifierFlags,
   createProperty,
   Expression,
-  ExpressionStatement,
   forEachChild,
   FunctionDeclaration,
   FunctionExpression,
   HeritageClause,
   Identifier,
   isBinaryExpression,
-  isCallExpression,
   isExpressionStatement,
   isFunctionDeclaration,
   isFunctionExpression,
@@ -39,9 +36,10 @@ import {
   cloneNode,
   copyJsDoc,
   findEs5SuperCalls,
+  findExtendCalls,
   getMembers,
+  getPrototypeAssignments,
   isStaticMember,
-  removeNode,
   superCallPattern,
   toText,
 } from './utils/ts-utils';
@@ -105,12 +103,6 @@ function generateClass(node: FunctionDeclaration | FunctionExpression, className
   const constructor = createConstructor(undefined, undefined, node.parameters, cloneNode(node.body));
   copyJsDoc(node, constructor);
   const cls = createClassDeclaration(undefined, createModifiersFromModifierFlags(ModifierFlags.Export), className, undefined, getHeritageClauses(node), [constructor, ...members]);
-  [
-    ...getConstructorAssignments(statements, className),
-    ...getPrototypeAssignments(statements, className),
-    ...getMembers(statements, className),
-    ...findExtendCalls(statements, className),
-  ].forEach(it => ctx.addFailureAtNode(it, 'ES5 member removed', [removeNode(it)]));
   return toText(cls);
 }
 
@@ -146,17 +138,6 @@ function assignmentToProperty(expression: BinaryExpression, className: string): 
   return property;
 }
 
-function findExtendCalls(statements: readonly Statement[], className: string): CallExpression[] {
-  return statements
-      .filter(it => isExpressionStatement(it))
-      .map(it => it as ExpressionStatement)
-      .filter(it => isCallExpression(it.expression))
-      .map(it => it.expression as CallExpression)
-      .filter(it => it.expression.getText() === 'mxUtils.extend')
-      .filter(it => it.arguments.length === 2)
-      .filter(it => (it.arguments[0]).getText() === className);
-}
-
 function findByExtend(statements: readonly Statement[], className: string): string | undefined {
   const calls = findExtendCalls(statements, className);
   if (!calls.length) {
@@ -172,17 +153,6 @@ function findNameBySuperCall(statements: readonly Statement[]): string | undefin
       .filter(it => !!it)
       .map(it => it![1]);
   return calls[0];
-}
-
-function getPrototypeAssignments(statements: readonly Statement[], className: string): BinaryExpression[] {
-  return getMembers(statements, className)
-      .filter(it => (it.left as PropertyAccessExpression).getText() === `${className}.prototype`)
-      .filter(it => isNewExpression(it.right));
-}
-
-function getConstructorAssignments(statements: readonly Statement[], className: string) {
-  return getMembers(statements, className)
-      .filter(it => (it.left as PropertyAccessExpression).getText() === `${className}.prototype.constructor`);
 }
 
 function findPrototype(statements: readonly Statement[], className: string): string | undefined {

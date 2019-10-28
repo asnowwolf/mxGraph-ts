@@ -14,6 +14,7 @@ import {
   isBinaryExpression,
   isCallExpression,
   isExpressionStatement,
+  isNewExpression,
   isPropertyAccessExpression,
   Node,
   PropertyAccessExpression,
@@ -105,4 +106,26 @@ export function createTsSuperCall(fn: CallExpression): CallExpression {
     }
   });
   return createCall(createSuper(), [], restArgs);
+}
+
+export function findExtendCalls(statements: readonly Statement[], className: string): CallExpression[] {
+  return statements
+      .filter(it => isExpressionStatement(it))
+      .map(it => it as ExpressionStatement)
+      .filter(it => isCallExpression(it.expression))
+      .map(it => it.expression as CallExpression)
+      .filter(it => it.expression.getText() === 'mxUtils.extend')
+      .filter(it => it.arguments.length === 2)
+      .filter(it => (it.arguments[0]).getText() === className);
+}
+
+export function getPrototypeAssignments(statements: readonly Statement[], className: string): BinaryExpression[] {
+  return getMembers(statements, className)
+      .filter(it => (it.left as PropertyAccessExpression).getText() === `${className}.prototype`)
+      .filter(it => isNewExpression(it.right));
+}
+
+export function getConstructorAssignments(statements: readonly Statement[], className: string) {
+  return getMembers(statements, className)
+      .filter(it => (it.left as PropertyAccessExpression).getText() === `${className}.prototype.constructor`);
 }

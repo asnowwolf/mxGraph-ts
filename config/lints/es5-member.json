@@ -3,6 +3,6 @@
     "./custom.json"
   ],
   "rules": {
-    "no-es5-class": true
+    "no-es5-member": true
   }
 }
