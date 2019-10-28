@@ -19,10 +19,12 @@ import {
   FunctionExpression,
   HeritageClause,
   Identifier,
+  isBinaryExpression,
   isCallExpression,
   isExpressionStatement,
   isFunctionDeclaration,
   isFunctionExpression,
+  isIdentifier,
   isNewExpression,
   isVariableStatement,
   MethodDeclaration,
@@ -64,6 +66,21 @@ function walkForClass(ctx: Lint.WalkContext): void {
             new Lint.Replacement(node.getStart(), node.getWidth(), generateClass(decl.initializer, decl.name.getText(), ctx)),
           ];
           ctx.addFailureAtNode(node, `ES5 class - ${decl.name.getText()}`, fix);
+        }
+      }
+    } else if (isExpressionStatement(node)) {
+      const expression = node.expression;
+      if (isBinaryExpression(expression) && expression.operatorToken.kind === SyntaxKind.EqualsToken) {
+        const left = expression.left as Identifier;
+        if (isIdentifier(left) && isClassName(left)) {
+          const body = expression.right;
+          if (isFunctionExpression(body)) {
+            const name = left.text;
+            const fix = [
+              new Lint.Replacement(node.getStart(), node.getWidth(), generateClass(body, name, ctx)),
+            ];
+            ctx.addFailureAtNode(node, `ES5 class - ${name}`, fix);
+          }
         }
       }
     } else if (isFunctionDeclaration(node)) {
