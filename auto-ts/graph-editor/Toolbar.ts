@@ -5,20 +5,657 @@
  * Construcs a new toolbar for the given editor.
  * @class
  */
-function Toolbar(editorUi, container) {
-  this.editorUi = editorUi;
-  this.container = container;
-  this.staticElements = [];
-  this.init();
+export class Toolbar {
+  /**
+   Copyright (c) 2006-2012, JGraph Ltd
+   */
+  /**
+   Construcs a new toolbar for the given editor.
+   */
+  constructor(editorUi, container) {
+    this.editorUi = editorUi;
+    this.container = container;
+    this.staticElements = [];
+    this.init();
+    this.gestureHandler = mxUtils.bind(this, function (evt) {
+      if (this.editorUi.currentMenu != null && mxEvent.getSource(evt) != this.editorUi.currentMenu.div) {
+        this.hideMenu();
+      }
+    });
+    mxEvent.addGestureListeners(document, this.gestureHandler);
+  }
 
-  // Global handler to hide the current menu
-  this.gestureHandler = mxUtils.bind(this, function (evt) {
-    if (this.editorUi.currentMenu != null && mxEvent.getSource(evt) != this.editorUi.currentMenu.div) {
-      this.hideMenu();
+  /**
+   Image for the dropdown arrow.
+   */
+  dropdownImage = (!mxClient.IS_SVG) ? IMAGE_PATH + :;
+  /**
+   Image element for the dropdown arrow.
+   */
+  dropdownImageHtml = +((!EditorUi.compactUi) ? :) + +Toolbar.prototype.dropdownImage +;
+  /**
+   Defines the background for selected buttons.
+   */
+  selectedBackground =;
+  /**
+   Defines the background for selected buttons.
+   */
+  unselectedBackground =;
+  /**
+   Array that contains the DOM nodes that should never be removed.
+   */
+  staticElements = null;
+
+  /**
+   Adds the toolbar elements.
+   */
+  init() {
+    var sw = screen.width;
+    sw -= (screen.height >) ? :;
+    if (sw >=) {
+      var formatMenu = this.addMenu(, mxResources.get() + +mxResources.get() +, true, , null, true);
+      this.addDropDownArrow(formatMenu, , , , -, -, , -);
+      this.addSeparator();
     }
-  });
+    var viewMenu = this.addMenu(, mxResources.get() +, true, , null, true);
+    viewMenu.showDisabled = true;
+    viewMenu.style.whiteSpace =;
+    viewMenu.style.position =;
+    viewMenu.style.overflow =;
+    if (EditorUi.compactUi) {
+      viewMenu.style.width = (mxClient.IS_QUIRKS) ? :;
+    } else {
+      viewMenu.style.width = (mxClient.IS_QUIRKS) ? :;
+    }
+    if (sw >=) {
+      this.addSeparator();
+      var elts = this.addItems([]);
+      elts[].setAttribute(, mxResources.get() + +this.editorUi.actions.get().shortcut +);
+      elts[].setAttribute(, mxResources.get() + +this.editorUi.actions.get().shortcut +);
+    }
+    this.updateZoom = mxUtils.bind(this, function () {
+      viewMenu.innerHTML = Math.round(this.editorUi.editor.graph.view.scale *) + +this.dropdownImageHtml;
+      if (EditorUi.compactUi) {
+        viewMenu.getElementsByTagName()[].style.right =;
+        viewMenu.getElementsByTagName()[].style.top =;
+      }
+    });
+    this.editorUi.editor.graph.view.addListener(mxEvent.EVENT_SCALE, this.updateZoom);
+    this.editorUi.editor.addListener(, this.updateZoom);
+    var elts = this.addItems([, ]);
+    elts[].setAttribute(, mxResources.get() + +this.editorUi.actions.get().shortcut +);
+    elts[].setAttribute(, mxResources.get() + +this.editorUi.actions.get().shortcut +);
+    if (sw >=) {
+      var elts = this.addItems([]);
+      elts[].setAttribute(, mxResources.get() + +this.editorUi.actions.get().shortcut +);
+    }
+    if (sw >=) {
+      this.addItems([, ]);
+    }
+    if (sw >=) {
+      this.addItems([]);
+      if (sw >=) {
+        this.addItems([]);
+        if (sw >=) {
+          this.addItems([]);
+        }
+      }
+    }
+    if (sw >=) {
+      this.addSeparator();
+      if (sw >=) {
+        this.edgeShapeMenu = this.addMenuFunction(, mxResources.get(), false, mxUtils.bind(this, function (menu) {
+          this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_SHAPE], [null, null], , null, true).setAttribute(, mxResources.get());
+          this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_SHAPE], [, null], , null, true).setAttribute(, mxResources.get());
+          this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_SHAPE], [, null], , null, true).setAttribute(, mxResources.get());
+          this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_SHAPE], [, null], , null, true).setAttribute(, mxResources.get());
+        }));
+        this.addDropDownArrow(this.edgeShapeMenu, , , , , , , -);
+      }
+      this.edgeStyleMenu = this.addMenuFunction(, mxResources.get(), false, mxUtils.bind(this, function (menu) {
+        this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [null, null, null], , null, true).setAttribute(, mxResources.get());
+        this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [, null, null], , null, true).setAttribute(, mxResources.get());
+        this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [, null, null, null], , null, true).setAttribute(, mxResources.get());
+        this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [, , null, null], , null, true).setAttribute(, mxResources.get());
+        this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [, null, null, null], , null, true).setAttribute(, mxResources.get());
+        this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [, , null, null], , null, true).setAttribute(, mxResources.get());
+        this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [, , null], , null, true).setAttribute(, mxResources.get());
+        this.editorUi.menus.edgeStyleChange(menu, , [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [, null, null], , null, true).setAttribute(, mxResources.get());
+      }));
+      this.addDropDownArrow(this.edgeStyleMenu, , , , , , , -);
+    }
+    this.addSeparator();
+    var insertMenu = this.addMenu(, mxResources.get() + +mxResources.get() +, true, , null, true);
+    this.addDropDownArrow(insertMenu, , , , -, -, , -);
+  }
 
-  mxEvent.addGestureListeners(document, this.gestureHandler);
+  /**
+   Adds the toolbar elements.
+   */
+  addDropDownArrow(menu, sprite, width, atlasWidth, left, top, atlasDelta, atlasLeft) {
+    atlasDelta = (atlasDelta != null) ? atlasDelta :;
+    left = (EditorUi.compactUi) ? left : atlasLeft;
+    menu.style.whiteSpace =;
+    menu.style.overflow =;
+    menu.style.position =;
+    menu.innerHTML = +sprite + +left + +top + +this.dropdownImageHtml;
+    menu.style.width = (mxClient.IS_QUIRKS) ? atlasWidth + : (atlasWidth - atlasDelta) +;
+    if (mxClient.IS_QUIRKS) {
+      menu.style.height = (EditorUi.compactUi) ? :;
+    }
+    if (EditorUi.compactUi) {
+      menu.getElementsByTagName()[].style.left =;
+      menu.getElementsByTagName()[].style.top =;
+      menu.style.width = (mxClient.IS_QUIRKS) ? width + : (width -) +;
+    }
+  }
+
+  /**
+   Sets the current font name.
+   */
+  setFontName(value) {
+    if (this.fontMenu != null) {
+      this.fontMenu.innerHTML = +mxUtils.htmlEntities(value) + +this.dropdownImageHtml;
+    }
+  }
+
+  /**
+   Sets the current font name.
+   */
+  setFontSize(value) {
+    if (this.sizeMenu != null) {
+      this.sizeMenu.innerHTML = +value + +this.dropdownImageHtml;
+    }
+  }
+
+  /**
+   Hides the current menu.
+   */
+  createTextToolbar() {
+    var graph = this.editorUi.editor.graph;
+    var styleElt = this.addMenu(, mxResources.get(), true);
+    styleElt.style.position =;
+    styleElt.style.whiteSpace =;
+    styleElt.style.overflow =;
+    styleElt.innerHTML = mxResources.get() + this.dropdownImageHtml;
+    if (EditorUi.compactUi) {
+      styleElt.style.paddingRight =;
+      styleElt.getElementsByTagName()[].style.right =;
+      styleElt.getElementsByTagName()[].style.top =;
+    }
+    this.addSeparator();
+    this.fontMenu = this.addMenu(, mxResources.get(), true);
+    this.fontMenu.style.position =;
+    this.fontMenu.style.whiteSpace =;
+    this.fontMenu.style.overflow =;
+    this.fontMenu.style.width = (mxClient.IS_QUIRKS) ? :;
+    this.setFontName(Menus.prototype.defaultFont);
+    if (EditorUi.compactUi) {
+      this.fontMenu.style.paddingRight =;
+      this.fontMenu.getElementsByTagName()[].style.right =;
+      this.fontMenu.getElementsByTagName()[].style.top =;
+    }
+    this.addSeparator();
+    this.sizeMenu = this.addMenu(Menus.prototype.defaultFontSize, mxResources.get(), true);
+    this.sizeMenu.style.position =;
+    this.sizeMenu.style.whiteSpace =;
+    this.sizeMenu.style.overflow =;
+    this.sizeMenu.style.width = (mxClient.IS_QUIRKS) ? :;
+    this.setFontSize(Menus.prototype.defaultFontSize);
+    if (EditorUi.compactUi) {
+      this.sizeMenu.style.paddingRight =;
+      this.sizeMenu.getElementsByTagName()[].style.right =;
+      this.sizeMenu.getElementsByTagName()[].style.top =;
+    }
+    var elts = this.addItems([, , , , , ]);
+    elts[].setAttribute(, mxResources.get() + +this.editorUi.actions.get().shortcut +);
+    elts[].setAttribute(, mxResources.get() + +this.editorUi.actions.get().shortcut +);
+    elts[].setAttribute(, mxResources.get() + +this.editorUi.actions.get().shortcut +);
+    elts[].setAttribute(, mxResources.get() + +this.editorUi.actions.get().shortcut +);
+    elts[].setAttribute(, mxResources.get() + +this.editorUi.actions.get().shortcut +);
+    var alignMenu = this.addMenuFunction(, mxResources.get(), false, mxUtils.bind(this, function (menu) {
+      elt = menu.addItem(, null, mxUtils.bind(this, function (evt) {
+        graph.cellEditor.alignText(mxConstants.ALIGN_LEFT, evt);
+      }), null);
+      elt.setAttribute(, mxResources.get());
+      elt = menu.addItem(, null, mxUtils.bind(this, function (evt) {
+        graph.cellEditor.alignText(mxConstants.ALIGN_CENTER, evt);
+      }), null);
+      elt.setAttribute(, mxResources.get());
+      elt = menu.addItem(, null, mxUtils.bind(this, function (evt) {
+        graph.cellEditor.alignText(mxConstants.ALIGN_RIGHT, evt);
+      }), null);
+      elt.setAttribute(, mxResources.get());
+      elt = menu.addItem(, null, mxUtils.bind(this, function () {
+        document.execCommand(, false, null);
+      }), null);
+      elt.setAttribute(, mxResources.get());
+      elt = menu.addItem(, null, mxUtils.bind(this, function () {
+        document.execCommand(, false, null);
+      }), null);
+      elt.setAttribute(, mxResources.get());
+      elt = menu.addItem(, null, mxUtils.bind(this, function () {
+        document.execCommand(, false, null);
+      }), null);
+      elt.setAttribute(, mxResources.get());
+      elt = menu.addItem(, null, mxUtils.bind(this, function () {
+        document.execCommand(, false, null);
+      }), null);
+      elt.setAttribute(, mxResources.get());
+      elt = menu.addItem(, null, mxUtils.bind(this, function () {
+        document.execCommand(, false, null);
+      }), null);
+      elt.setAttribute(, mxResources.get());
+    }));
+    alignMenu.style.position =;
+    alignMenu.style.whiteSpace =;
+    alignMenu.style.overflow =;
+    alignMenu.innerHTML = +this.dropdownImageHtml;
+    alignMenu.style.width = (mxClient.IS_QUIRKS) ? :;
+    if (EditorUi.compactUi) {
+      alignMenu.getElementsByTagName()[].style.left =;
+      alignMenu.getElementsByTagName()[].style.top =;
+    }
+    var formatMenu = this.addMenuFunction(, mxResources.get(), false, mxUtils.bind(this, function (menu) {
+      elt = menu.addItem(, null, this.editorUi.actions.get().funct, null);
+      elt.setAttribute(, mxResources.get() + +Editor.ctrlKey +);
+      elt = menu.addItem(, null, this.editorUi.actions.get().funct, null);
+      elt.setAttribute(, mxResources.get() + +Editor.ctrlKey +);
+      elt = menu.addItem(, null, this.editorUi.actions.get().funct, null);
+      elt.setAttribute(, mxResources.get());
+      elt = menu.addItem(, null, this.editorUi.actions.get().funct, null);
+      elt.setAttribute(, mxResources.get());
+      elt = menu.addItem(, null, mxUtils.bind(this, function () {
+        document.execCommand(, false, null);
+      }), null);
+      elt.setAttribute(, mxResources.get());
+    }));
+    formatMenu.style.position =;
+    formatMenu.style.whiteSpace =;
+    formatMenu.style.overflow =;
+    formatMenu.innerHTML = +this.dropdownImageHtml;
+    formatMenu.style.width = (mxClient.IS_QUIRKS) ? :;
+    if (EditorUi.compactUi) {
+      formatMenu.getElementsByTagName()[].style.left =;
+      formatMenu.getElementsByTagName()[].style.top =;
+    }
+    this.addSeparator();
+    this.addButton(, mxResources.get(), function () {
+      graph.cellEditor.toggleViewMode();
+      if (graph.cellEditor.textarea.innerHTML.length > && (graph.cellEditor.textarea.innerHTML != || !graph.cellEditor.clearOnChange)) {
+        window.setTimeout(function () {
+          document.execCommand(, false, null);
+        });
+      }
+    });
+    this.addSeparator();
+    var insertMenu = this.addMenuFunction(, mxResources.get(), true, mxUtils.bind(this, function (menu) {
+      menu.addItem(mxResources.get(), null, mxUtils.bind(this, function () {
+        this.editorUi.actions.get().funct();
+      }));
+      menu.addItem(mxResources.get(), null, mxUtils.bind(this, function () {
+        this.editorUi.actions.get().funct();
+      }));
+      menu.addItem(mxResources.get(), null, mxUtils.bind(this, function () {
+        document.execCommand(, false, null);
+      }));
+    }));
+    insertMenu.style.whiteSpace =;
+    insertMenu.style.overflow =;
+    insertMenu.style.position =;
+    insertMenu.innerHTML = +this.dropdownImageHtml;
+    insertMenu.style.width = (mxClient.IS_QUIRKS) ? :;
+    if (EditorUi.compactUi) {
+      insertMenu.getElementsByTagName()[].style.left =;
+      insertMenu.getElementsByTagName()[].style.top =;
+      insertMenu.style.width = (mxClient.IS_QUIRKS) ? :;
+    }
+    this.addSeparator();
+    var elt = this.addMenuFunction(, mxResources.get(), false, mxUtils.bind(this, function (menu) {
+      var elt = graph.getSelectedElement();
+      var cell = graph.getParentByNames(elt, [], graph.cellEditor.text2);
+      var row = graph.getParentByName(elt, , graph.cellEditor.text2);
+      if (row == null) {
+        this.editorUi.menus.addInsertTableItem(menu);
+      } else {
+        var table = graph.getParentByName(row, , graph.cellEditor.text2);
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          try {
+            graph.selectNode(graph.insertColumn(table, (cell != null) ? cell.cellIndex :));
+          } catch (e) {
+            this.editorUi.handleError(e);
+          }
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          try {
+            graph.selectNode(graph.insertColumn(table, (cell != null) ? cell.cellIndex + : -));
+          } catch (e) {
+            this.editorUi.handleError(e);
+          }
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          if (cell != null) {
+            try {
+              graph.deleteColumn(table, cell.cellIndex);
+            } catch (e) {
+              this.editorUi.handleError(e);
+            }
+          }
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          try {
+            graph.selectNode(graph.insertRow(table, row.sectionRowIndex));
+          } catch (e) {
+            this.editorUi.handleError(e);
+          }
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          try {
+            graph.selectNode(graph.insertRow(table, row.sectionRowIndex +));
+          } catch (e) {
+            this.editorUi.handleError(e);
+          }
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          try {
+            graph.deleteRow(table, row.sectionRowIndex);
+          } catch (e) {
+            this.editorUi.handleError(e);
+          }
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          var color = table.style.borderColor.replace(, function ($0, $1, $2, $3) {
+            return +(+Number($1).toString()).substr(-) + (+Number($2).toString()).substr(-) + (+Number($3).toString()).substr(-);
+          });
+          this.editorUi.pickColor(color, function (newColor) {
+            if (newColor == null || newColor == mxConstants.NONE) {
+              table.removeAttribute();
+              table.style.border =;
+              table.style.borderCollapse =;
+            } else {
+              table.setAttribute(,);
+              table.style.border = +newColor;
+              table.style.borderCollapse =;
+            }
+          });
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          var color = table.style.backgroundColor.replace(, function ($0, $1, $2, $3) {
+            return +(+Number($1).toString()).substr(-) + (+Number($2).toString()).substr(-) + (+Number($3).toString()).substr(-);
+          });
+          this.editorUi.pickColor(color, function (newColor) {
+            if (newColor == null || newColor == mxConstants.NONE) {
+              table.style.backgroundColor =;
+            } else {
+              table.style.backgroundColor = newColor;
+            }
+          });
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          var value = table.getAttribute() ||;
+          var dlg = new FilenameDialog(this.editorUi, value, mxResources.get(), mxUtils.bind(this, function (newValue) {
+            if (newValue != null && newValue.length >) {
+              table.setAttribute(, newValue);
+            } else {
+              table.removeAttribute();
+            }
+          }), mxResources.get());
+          this.editorUi.showDialog(dlg.container, , , true, true);
+          dlg.init();
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          table.setAttribute(,);
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          table.setAttribute(,);
+        }), null);
+        elt.setAttribute(, mxResources.get());
+        elt = menu.addItem(, null, mxUtils.bind(this, function () {
+          table.setAttribute(,);
+        }), null);
+        elt.setAttribute(, mxResources.get());
+      }
+    }));
+    elt.style.position =;
+    elt.style.whiteSpace =;
+    elt.style.overflow =;
+    elt.innerHTML = +this.dropdownImageHtml;
+    elt.style.width = (mxClient.IS_QUIRKS) ? :;
+    if (EditorUi.compactUi) {
+      elt.getElementsByTagName()[].style.left =;
+      elt.getElementsByTagName()[].style.top =;
+    }
+  }
+
+  /**
+   Hides the current menu.
+   */
+  hideMenu() {
+    this.editorUi.hideCurrentMenu();
+  }
+
+  /**
+   Adds a label to the toolbar.
+   */
+  addMenu(label, tooltip, showLabels, name, c, showAll, ignoreState) {
+    var menu = this.editorUi.menus.get(name);
+    var elt = this.addMenuFunction(label, tooltip, showLabels, function () {
+      menu.funct.apply(menu, arguments);
+    }, c, showAll);
+    if (!ignoreState) {
+      menu.addListener(, function () {
+        elt.setEnabled(menu.enabled);
+      });
+    }
+    return elt;
+  }
+
+  /**
+   Adds a label to the toolbar.
+   */
+  addMenuFunction(label, tooltip, showLabels, funct, c, showAll) {
+    return this.addMenuFunctionInContainer((c != null) ? c : this.container, label, tooltip, showLabels, funct, showAll);
+  }
+
+  /**
+   Adds a label to the toolbar.
+   */
+  addMenuFunctionInContainer(container, label, tooltip, showLabels, funct, showAll) {
+    var elt = (showLabels) ? this.createLabel(label) : this.createButton(label);
+    this.initElement(elt, tooltip);
+    this.addMenuHandler(elt, showLabels, funct, showAll);
+    container.appendChild(elt);
+    return elt;
+  }
+
+  /**
+   Adds a separator to the separator.
+   */
+  addSeparator(c) {
+    c = (c != null) ? c : this.container;
+    var elt = document.createElement();
+    elt.className =;
+    c.appendChild(elt);
+    return elt;
+  }
+
+  /**
+   Adds given action item
+   */
+  addItems(keys, c, ignoreDisabled) {
+    var items = [];
+    for (var i =; i < keys.length; i++) {
+      var key = keys[i];
+      if (key ==) {
+        items.push(this.addSeparator(c));
+      } else {
+        items.push(this.addItem(+key.toLowerCase(), key, c, ignoreDisabled));
+      }
+    }
+    return items;
+  }
+
+  /**
+   Adds given action item
+   */
+  addItem(sprite, key, c, ignoreDisabled) {
+    var action = this.editorUi.actions.get(key);
+    var elt = null;
+    if (action != null) {
+      var tooltip = action.label;
+      if (action.shortcut != null) {
+        tooltip += +action.shortcut +;
+      }
+      elt = this.addButton(sprite, tooltip, action.funct, c);
+      if (!ignoreDisabled) {
+        elt.setEnabled(action.enabled);
+        action.addListener(, function () {
+          elt.setEnabled(action.enabled);
+        });
+      }
+    }
+    return elt;
+  }
+
+  /**
+   Adds a button to the toolbar.
+   */
+  addButton(classname, tooltip, funct, c) {
+    var elt = this.createButton(classname);
+    c = (c != null) ? c : this.container;
+    this.initElement(elt, tooltip);
+    this.addClickHandler(elt, funct);
+    c.appendChild(elt);
+    return elt;
+  }
+
+  /**
+   Initializes the given toolbar element.
+   */
+  initElement(elt, tooltip) {
+    if (tooltip != null) {
+      elt.setAttribute(, tooltip);
+    }
+    this.addEnabledState(elt);
+  }
+
+  /**
+   Adds enabled state with setter to DOM node (avoids JS wrapper).
+   */
+  addEnabledState(elt) {
+    var classname = elt.className;
+    elt.setEnabled = function (value) {
+      elt.enabled = value;
+      if (value) {
+        elt.className = classname;
+      } else {
+        elt.className = classname +;
+      }
+    };
+    elt.setEnabled(true);
+  }
+
+  /**
+   Adds enabled state with setter to DOM node (avoids JS wrapper).
+   */
+  addClickHandler(elt, funct) {
+    if (funct != null) {
+      mxEvent.addListener(elt, , function (evt) {
+        if (elt.enabled) {
+          funct(evt);
+        }
+        mxEvent.consume(evt);
+      });
+      mxEvent.addListener(elt, (mxClient.IS_POINTER) ? :, mxUtils.bind(this, function (evt) {
+        evt.preventDefault();
+      }));
+    }
+  }
+
+  /**
+   Creates and returns a new button.
+   */
+  createButton(classname) {
+    var elt = document.createElement();
+    elt.className =;
+    var inner = document.createElement();
+    if (classname != null) {
+      inner.className = +classname;
+    }
+    elt.appendChild(inner);
+    return elt;
+  }
+
+  /**
+   Creates and returns a new button.
+   */
+  createLabel(label, tooltip) {
+    var elt = document.createElement();
+    elt.className =;
+    mxUtils.write(elt, label);
+    return elt;
+  }
+
+  /**
+   Adds a handler for showing a menu in the given element.
+   */
+  addMenuHandler(elt, showLabels, funct, showAll) {
+    if (funct != null) {
+      var graph = this.editorUi.editor.graph;
+      var menu = null;
+      var show = true;
+      mxEvent.addListener(elt, , mxUtils.bind(this, function (evt) {
+        if (show && (elt.enabled == null || elt.enabled)) {
+          graph.popupMenuHandler.hideMenu();
+          menu = new mxPopupMenu(funct);
+          menu.div.className +=;
+          menu.showDisabled = showAll;
+          menu.labels = showLabels;
+          menu.autoExpand = true;
+          var offset = mxUtils.getOffset(elt);
+          menu.popup(offset.x, offset.y + elt.offsetHeight, null, evt);
+          this.editorUi.setCurrentMenu(menu, elt);
+          if (!showLabels && menu.div.scrollHeight > menu.div.clientHeight) {
+            menu.div.style.width =;
+          }
+          menu.hideMenu = mxUtils.bind(this, function () {
+            mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
+            this.editorUi.resetCurrentMenu();
+            menu.destroy();
+          });
+          menu.addListener(mxEvent.EVENT_HIDE, mxUtils.bind(this, function () {
+            this.currentElt = null;
+          }));
+        }
+        show = true;
+        mxEvent.consume(evt);
+      }));
+      mxEvent.addListener(elt, (mxClient.IS_POINTER) ? :, mxUtils.bind(this, function (evt) {
+        show = this.currentElt != elt;
+        evt.preventDefault();
+      }));
+    }
+  }
+
+  /**
+   Adds a handler for showing a menu in the given element.
+   */
+  destroy() {
+    if (this.gestureHandler != null) {
+      mxEvent.removeGestureListeners(document, this.gestureHandler);
+      this.gestureHandler = null;
+    }
+  }
 };
 
 /**

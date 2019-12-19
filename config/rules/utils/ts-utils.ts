@@ -62,8 +62,8 @@ export function parseScript<T extends Node>(script: string): T {
   }
 }
 
-export function cloneNode<T extends Node>(body?: T): T {
-  return parseScript<T>(body!.getFullText());
+export function cloneNode<T extends Node>(body?: T): T | undefined {
+  return body;
 }
 
 export function removeNode(node: Node): Lint.Replacement {
